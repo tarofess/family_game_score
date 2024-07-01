@@ -14,11 +14,16 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+Player _$PlayerFromJson(Map<String, dynamic> json) {
+  return _Player.fromJson(json);
+}
+
 /// @nodoc
 mixin _$Player {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $PlayerCopyWith<Player> get copyWith => throw _privateConstructorUsedError;
 }
@@ -98,9 +103,12 @@ class __$$PlayerImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$PlayerImpl implements _Player {
   const _$PlayerImpl({required this.id, required this.name});
+
+  factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PlayerImplFromJson(json);
 
   @override
   final int id;
@@ -121,6 +129,7 @@ class _$PlayerImpl implements _Player {
             (identical(other.name, name) || other.name == name));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name);
 
@@ -129,11 +138,20 @@ class _$PlayerImpl implements _Player {
   @pragma('vm:prefer-inline')
   _$$PlayerImplCopyWith<_$PlayerImpl> get copyWith =>
       __$$PlayerImplCopyWithImpl<_$PlayerImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PlayerImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _Player implements Player {
   const factory _Player({required final int id, required final String name}) =
       _$PlayerImpl;
+
+  factory _Player.fromJson(Map<String, dynamic> json) = _$PlayerImpl.fromJson;
 
   @override
   int get id;

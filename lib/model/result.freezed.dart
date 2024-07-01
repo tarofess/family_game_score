@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+Result _$ResultFromJson(Map<String, dynamic> json) {
+  return _Result.fromJson(json);
+}
+
 /// @nodoc
 mixin _$Result {
   int get id => throw _privateConstructorUsedError;
@@ -22,6 +26,7 @@ mixin _$Result {
   int get round => throw _privateConstructorUsedError;
   int get score => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ResultCopyWith<Result> get copyWith => throw _privateConstructorUsedError;
 }
@@ -131,7 +136,7 @@ class __$$ResultImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$ResultImpl implements _Result {
   const _$ResultImpl(
       {required this.id,
@@ -139,6 +144,9 @@ class _$ResultImpl implements _Result {
       required this.sessionId,
       required this.round,
       required this.score});
+
+  factory _$ResultImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ResultImplFromJson(json);
 
   @override
   final int id;
@@ -170,6 +178,7 @@ class _$ResultImpl implements _Result {
             (identical(other.score, score) || other.score == score));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, playerId, sessionId, round, score);
@@ -179,6 +188,13 @@ class _$ResultImpl implements _Result {
   @pragma('vm:prefer-inline')
   _$$ResultImplCopyWith<_$ResultImpl> get copyWith =>
       __$$ResultImplCopyWithImpl<_$ResultImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ResultImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _Result implements Result {
@@ -188,6 +204,8 @@ abstract class _Result implements Result {
       required final int sessionId,
       required final int round,
       required final int score}) = _$ResultImpl;
+
+  factory _Result.fromJson(Map<String, dynamic> json) = _$ResultImpl.fromJson;
 
   @override
   int get id;
