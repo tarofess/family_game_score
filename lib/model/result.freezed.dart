@@ -23,7 +23,6 @@ mixin _$Result {
   int get id => throw _privateConstructorUsedError;
   int get playerId => throw _privateConstructorUsedError;
   int get sessionId => throw _privateConstructorUsedError;
-  int get round => throw _privateConstructorUsedError;
   int get score => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +35,7 @@ abstract class $ResultCopyWith<$Res> {
   factory $ResultCopyWith(Result value, $Res Function(Result) then) =
       _$ResultCopyWithImpl<$Res, Result>;
   @useResult
-  $Res call({int id, int playerId, int sessionId, int round, int score});
+  $Res call({int id, int playerId, int sessionId, int score});
 }
 
 /// @nodoc
@@ -55,7 +54,6 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
     Object? id = null,
     Object? playerId = null,
     Object? sessionId = null,
-    Object? round = null,
     Object? score = null,
   }) {
     return _then(_value.copyWith(
@@ -70,10 +68,6 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
       sessionId: null == sessionId
           ? _value.sessionId
           : sessionId // ignore: cast_nullable_to_non_nullable
-              as int,
-      round: null == round
-          ? _value.round
-          : round // ignore: cast_nullable_to_non_nullable
               as int,
       score: null == score
           ? _value.score
@@ -90,7 +84,7 @@ abstract class _$$ResultImplCopyWith<$Res> implements $ResultCopyWith<$Res> {
       __$$ResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int playerId, int sessionId, int round, int score});
+  $Res call({int id, int playerId, int sessionId, int score});
 }
 
 /// @nodoc
@@ -107,7 +101,6 @@ class __$$ResultImplCopyWithImpl<$Res>
     Object? id = null,
     Object? playerId = null,
     Object? sessionId = null,
-    Object? round = null,
     Object? score = null,
   }) {
     return _then(_$ResultImpl(
@@ -122,10 +115,6 @@ class __$$ResultImplCopyWithImpl<$Res>
       sessionId: null == sessionId
           ? _value.sessionId
           : sessionId // ignore: cast_nullable_to_non_nullable
-              as int,
-      round: null == round
-          ? _value.round
-          : round // ignore: cast_nullable_to_non_nullable
               as int,
       score: null == score
           ? _value.score
@@ -142,7 +131,6 @@ class _$ResultImpl implements _Result {
       {required this.id,
       required this.playerId,
       required this.sessionId,
-      required this.round,
       required this.score});
 
   factory _$ResultImpl.fromJson(Map<String, dynamic> json) =>
@@ -155,13 +143,11 @@ class _$ResultImpl implements _Result {
   @override
   final int sessionId;
   @override
-  final int round;
-  @override
   final int score;
 
   @override
   String toString() {
-    return 'Result(id: $id, playerId: $playerId, sessionId: $sessionId, round: $round, score: $score)';
+    return 'Result(id: $id, playerId: $playerId, sessionId: $sessionId, score: $score)';
   }
 
   @override
@@ -174,14 +160,12 @@ class _$ResultImpl implements _Result {
                 other.playerId == playerId) &&
             (identical(other.sessionId, sessionId) ||
                 other.sessionId == sessionId) &&
-            (identical(other.round, round) || other.round == round) &&
             (identical(other.score, score) || other.score == score));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, playerId, sessionId, round, score);
+  int get hashCode => Object.hash(runtimeType, id, playerId, sessionId, score);
 
   @JsonKey(ignore: true)
   @override
@@ -202,7 +186,6 @@ abstract class _Result implements Result {
       {required final int id,
       required final int playerId,
       required final int sessionId,
-      required final int round,
       required final int score}) = _$ResultImpl;
 
   factory _Result.fromJson(Map<String, dynamic> json) = _$ResultImpl.fromJson;
@@ -213,8 +196,6 @@ abstract class _Result implements Result {
   int get playerId;
   @override
   int get sessionId;
-  @override
-  int get round;
   @override
   int get score;
   @override

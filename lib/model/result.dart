@@ -9,7 +9,6 @@ class Result with _$Result {
     required int id,
     required int playerId,
     required int sessionId,
-    required int round,
     required int score,
   }) = _Result;
 

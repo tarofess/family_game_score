@@ -1,4 +1,5 @@
 import 'package:family_game_score/provider/player_provider.dart';
+import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,6 +9,7 @@ class ScoringView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final player = ref.watch(playerProvider);
+    final session = ref.watch(sessionProvider);
 
     return Scaffold(
         appBar: AppBar(
@@ -15,7 +17,7 @@ class ScoringView extends ConsumerWidget {
           leading: IconButton(
             icon: const Icon(Icons.check_circle_outline),
             onPressed: () {
-              showFinishGameDialog(context);
+              showFinishGameDialog(context, ref);
             },
           ),
           actions: [
@@ -31,30 +33,33 @@ class ScoringView extends ConsumerWidget {
             children: [
               const Text('現在の順位はこちら↓'),
               Expanded(
-                child: player.when(
-                  data: (data) => data.isNotEmpty
-                      ? ReorderableListView.builder(
-                          itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              key: Key(data[index].id.toString()),
-                              title: Text(data[index].name),
-                              trailing: ReorderableDragStartListener(
-                                index: index,
-                                child: const Icon(Icons.drag_handle),
-                              ),
-                            );
-                          },
-                          onReorder: (oldIndex, newIndex) {
-                            if (oldIndex < newIndex) {
-                              newIndex -= 1;
-                            }
-                            ref
-                                .read(playerProvider.notifier)
-                                .reorderPlayers(oldIndex, newIndex);
-                          },
-                        )
-                      : const Text('データがありません'),
+                child: session.when(
+                  data: (data) => player.when(
+                      data: (data) => data.isNotEmpty
+                          ? ReorderableListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  key: Key(data[index].id.toString()),
+                                  title: Text(data[index].name),
+                                  trailing: ReorderableDragStartListener(
+                                    index: index,
+                                    child: const Icon(Icons.drag_handle),
+                                  ),
+                                );
+                              },
+                              onReorder: (oldIndex, newIndex) {
+                                if (oldIndex < newIndex) {
+                                  newIndex -= 1;
+                                }
+                                ref
+                                    .read(playerProvider.notifier)
+                                    .reorderPlayer(oldIndex, newIndex);
+                              },
+                            )
+                          : const Text('データがありません'),
+                      error: (error, stackTrace) => Text('Error: $error'),
+                      loading: () => const CircularProgressIndicator()),
                   loading: () => const CircularProgressIndicator(),
                   error: (error, stackTrace) => Text('Error: $error'),
                 ),
@@ -94,7 +99,9 @@ class ScoringView extends ConsumerWidget {
     );
   }
 
-  void showFinishGameDialog(BuildContext context) {
+  void showFinishGameDialog(BuildContext context, WidgetRef ref) {
+    final session = ref.watch(sessionProvider);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -110,6 +117,9 @@ class ScoringView extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () {
+                ref
+                    .read(sessionProvider.notifier)
+                    .updateSession(session.value!);
                 // RankingViewに遷移
               },
               child: const Text('はい'),

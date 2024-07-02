@@ -14,13 +14,18 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+Session _$SessionFromJson(Map<String, dynamic> json) {
+  return _Session.fromJson(json);
+}
+
 /// @nodoc
 mixin _$Session {
   int get id => throw _privateConstructorUsedError;
+  int get round => throw _privateConstructorUsedError;
   String get begTime => throw _privateConstructorUsedError;
-  String get endTime => throw _privateConstructorUsedError;
-  int get currentRound => throw _privateConstructorUsedError;
+  String? get endTime => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $SessionCopyWith<Session> get copyWith => throw _privateConstructorUsedError;
 }
@@ -30,7 +35,7 @@ abstract class $SessionCopyWith<$Res> {
   factory $SessionCopyWith(Session value, $Res Function(Session) then) =
       _$SessionCopyWithImpl<$Res, Session>;
   @useResult
-  $Res call({int id, String begTime, String endTime, int currentRound});
+  $Res call({int id, int round, String begTime, String? endTime});
 }
 
 /// @nodoc
@@ -47,27 +52,27 @@ class _$SessionCopyWithImpl<$Res, $Val extends Session>
   @override
   $Res call({
     Object? id = null,
+    Object? round = null,
     Object? begTime = null,
-    Object? endTime = null,
-    Object? currentRound = null,
+    Object? endTime = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
+      round: null == round
+          ? _value.round
+          : round // ignore: cast_nullable_to_non_nullable
+              as int,
       begTime: null == begTime
           ? _value.begTime
           : begTime // ignore: cast_nullable_to_non_nullable
               as String,
-      endTime: null == endTime
+      endTime: freezed == endTime
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      currentRound: null == currentRound
-          ? _value.currentRound
-          : currentRound // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String?,
     ) as $Val);
   }
 }
@@ -79,7 +84,7 @@ abstract class _$$SessionImplCopyWith<$Res> implements $SessionCopyWith<$Res> {
       __$$SessionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String begTime, String endTime, int currentRound});
+  $Res call({int id, int round, String begTime, String? endTime});
 }
 
 /// @nodoc
@@ -94,52 +99,55 @@ class __$$SessionImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? round = null,
     Object? begTime = null,
-    Object? endTime = null,
-    Object? currentRound = null,
+    Object? endTime = freezed,
   }) {
     return _then(_$SessionImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
+      round: null == round
+          ? _value.round
+          : round // ignore: cast_nullable_to_non_nullable
+              as int,
       begTime: null == begTime
           ? _value.begTime
           : begTime // ignore: cast_nullable_to_non_nullable
               as String,
-      endTime: null == endTime
+      endTime: freezed == endTime
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
-              as String,
-      currentRound: null == currentRound
-          ? _value.currentRound
-          : currentRound // ignore: cast_nullable_to_non_nullable
-              as int,
+              as String?,
     ));
   }
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$SessionImpl implements _Session {
   const _$SessionImpl(
       {required this.id,
+      required this.round,
       required this.begTime,
-      required this.endTime,
-      required this.currentRound});
+      this.endTime});
+
+  factory _$SessionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SessionImplFromJson(json);
 
   @override
   final int id;
   @override
+  final int round;
+  @override
   final String begTime;
   @override
-  final String endTime;
-  @override
-  final int currentRound;
+  final String? endTime;
 
   @override
   String toString() {
-    return 'Session(id: $id, begTime: $begTime, endTime: $endTime, currentRound: $currentRound)';
+    return 'Session(id: $id, round: $round, begTime: $begTime, endTime: $endTime)';
   }
 
   @override
@@ -148,38 +156,46 @@ class _$SessionImpl implements _Session {
         (other.runtimeType == runtimeType &&
             other is _$SessionImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.round, round) || other.round == round) &&
             (identical(other.begTime, begTime) || other.begTime == begTime) &&
-            (identical(other.endTime, endTime) || other.endTime == endTime) &&
-            (identical(other.currentRound, currentRound) ||
-                other.currentRound == currentRound));
+            (identical(other.endTime, endTime) || other.endTime == endTime));
   }
 
+  @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, begTime, endTime, currentRound);
+  int get hashCode => Object.hash(runtimeType, id, round, begTime, endTime);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$SessionImplCopyWith<_$SessionImpl> get copyWith =>
       __$$SessionImplCopyWithImpl<_$SessionImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SessionImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _Session implements Session {
   const factory _Session(
       {required final int id,
+      required final int round,
       required final String begTime,
-      required final String endTime,
-      required final int currentRound}) = _$SessionImpl;
+      final String? endTime}) = _$SessionImpl;
+
+  factory _Session.fromJson(Map<String, dynamic> json) = _$SessionImpl.fromJson;
 
   @override
   int get id;
   @override
+  int get round;
+  @override
   String get begTime;
   @override
-  String get endTime;
-  @override
-  int get currentRound;
+  String? get endTime;
   @override
   @JsonKey(ignore: true)
   _$$SessionImplCopyWith<_$SessionImpl> get copyWith =>

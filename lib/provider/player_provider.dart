@@ -10,22 +10,34 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     state = const AsyncLoading();
 
     try {
-      _database = await openDatabase(
-        'family_game_score.db',
-        version: 1,
-        onCreate: (Database db, int version) async {
-          await db.execute(
-            'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
-          );
-        },
-      );
+      await openDB();
       final List<Map<String, dynamic>> response =
           await _database.rawQuery('SELECT * FROM Player');
-      return response.map((map) => Player.fromJson(map)).toList();
+      final players = response.map((map) => Player.fromJson(map)).toList();
+      state = AsyncData(players);
+      return players;
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       return [];
     }
+  }
+
+  Future<void> openDB() async {
+    _database = await openDatabase(
+      'family_game_score.db',
+      version: 1,
+      onCreate: (Database db, int version) async {
+        await db.execute(
+          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
+        );
+        await db.execute(
+          'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, begTime TEXT, endTime TEXT)',
+        );
+        await db.execute(
+          'CREATE TABLE Result(id INTEGER PRIMARY KEY AUTOINCREMENT, playerId INTEGER, sessionId INTEGER, score INTEGER)',
+        );
+      },
+    );
   }
 
   Future<void> createPlayer(String inputText) async {
@@ -87,7 +99,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     }
   }
 
-  void reorderPlayers(int oldIndex, int newIndex) {
+  void reorderPlayer(int oldIndex, int newIndex) {
     final List<Player> players = state.value ?? [];
     final playerToMove = players.removeAt(oldIndex);
     players.insert(newIndex, playerToMove);
