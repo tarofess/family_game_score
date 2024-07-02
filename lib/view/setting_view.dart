@@ -70,7 +70,7 @@ class SettingView extends ConsumerWidget {
       builder: (BuildContext context) {
         String inputText = '';
         return AlertDialog(
-          title: const Text('プレイヤー名を入力してください'),
+          title: const Text('名前を入力してください'),
           content: TextField(
             onChanged: (value) {
               inputText = value;

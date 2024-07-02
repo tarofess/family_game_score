@@ -1,5 +1,5 @@
-import "package:family_game_score/model/player.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
+import 'package:family_game_score/model/player.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
@@ -85,6 +85,13 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
+  }
+
+  void reorderPlayers(int oldIndex, int newIndex) {
+    final List<Player> players = state.value ?? [];
+    final playerToMove = players.removeAt(oldIndex);
+    players.insert(newIndex, playerToMove);
+    state = AsyncData(players);
   }
 }
 

@@ -1,7 +1,7 @@
-import 'package:family_game_score/provider/player_provider.dart';
+import 'package:family_game_score/view/home_view.dart';
+import 'package:family_game_score/view/result_history_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:family_game_score/view/tab_view.dart';
 import 'package:family_game_score/view/setting_view.dart';
 
 void main() {
@@ -15,30 +15,27 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final player = ref.watch(playerProvider);
-
-    return Scaffold(
-        body: Center(
-      child: player.when(
-          data: (data) {
-            if (data.isEmpty) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SettingView()),
-                );
-              });
-            } else {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TabView()),
-                );
-              });
-            }
-          },
-          error: (error, _) => const Text('エラーが発生しました'),
-          loading: () => const Center(child: CircularProgressIndicator())),
-    ));
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Family Game Score'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'ホーム'),
+              Tab(text: '過去の成績'),
+              Tab(text: '設定'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            HomeView(),
+            ResultHistoryView(),
+            SettingView(),
+          ],
+        ),
+      ),
+    );
   }
 }
