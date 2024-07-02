@@ -15,12 +15,12 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
         version: 1,
         onCreate: (Database db, int version) async {
           await db.execute(
-            'CREATE TABLE Players(ID INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT)',
+            'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
           );
         },
       );
       final List<Map<String, dynamic>> response =
-          await _database.rawQuery('SELECT * FROM Players');
+          await _database.rawQuery('SELECT * FROM Player');
       return response.map((map) => Player.fromJson(map)).toList();
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
@@ -28,20 +28,19 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     }
   }
 
-  Future<void> createPlayer(Player player) async {
+  Future<void> createPlayer(String inputText) async {
     state = const AsyncLoading();
 
     try {
       await _database.transaction((txn) async {
-        await txn.rawInsert(
-            'INSERT INTO Players(Name, TotalScore) VALUES(?, 0)',
-            [player.name]);
+        int id = await txn
+            .rawInsert('INSERT INTO Player(name) VALUES(?)', [inputText]);
+        final player = Player(id: id, name: inputText);
+        state = AsyncData([...state.value ?? [], player]);
       });
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
-
-    state = state.whenData((players) => [...players, player]);
   }
 
   Future<void> readPlayer() async {
@@ -49,29 +48,40 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
     try {
       final List<Map<String, dynamic>> mapList =
-          await _database.rawQuery('SELECT * FROM Players');
+          await _database.rawQuery('SELECT * FROM Player');
       state = AsyncData(mapList.map((map) => Player.fromJson(map)).toList());
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
   }
 
-  Future<void> updatePlayers(Player player) async {
+  Future<void> updatePlayer(Player player) async {
     state = const AsyncLoading();
 
     try {
       await _database.rawUpdate(
-          'UPDATE Players SET Name = ? WHERE ID = ?', [player.name, player.id]);
+          'UPDATE Player SET name = ? WHERE id = ?', [player.name, player.id]);
+      if (state.value != null) {
+        state = AsyncData(
+            state.value!.map((p) => p.id == player.id ? player : p).toList());
+      } else {
+        state = const AsyncData([]);
+      }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
   }
 
-  Future<void> deletePlayers(Player player) async {
+  Future<void> deletePlayer(Player player) async {
     state = const AsyncLoading();
     try {
-      await _database
-          .rawDelete('DELETE FROM Players WHERE ID = ?', [player.id]);
+      await _database.rawDelete('DELETE FROM Player WHERE id = ?', [player.id]);
+      if (state.value != null) {
+        state =
+            AsyncData(state.value!.where((p) => p.id != player.id).toList());
+      } else {
+        state = const AsyncData([]);
+      }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }

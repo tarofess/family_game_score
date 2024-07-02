@@ -1,7 +1,7 @@
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:family_game_score/view/top_view.dart';
+import 'package:family_game_score/view/tab_view.dart';
 import 'package:family_game_score/view/setting_view.dart';
 
 void main() {
@@ -32,7 +32,7 @@ class MyApp extends ConsumerWidget {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const TopView()),
+                  MaterialPageRoute(builder: (context) => const TabView()),
                 );
               });
             }
