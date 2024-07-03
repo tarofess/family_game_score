@@ -11,9 +11,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
     try {
       await openDB();
-      final List<Map<String, dynamic>> response =
-          await _database.rawQuery('SELECT * FROM Player');
-      final players = response.map((map) => Player.fromJson(map)).toList();
+      final players = await getAllPlayersFromDB();
       state = AsyncData(players);
       return players;
     } catch (e) {
@@ -31,7 +29,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
           'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
         );
         await db.execute(
-          'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, begTime TEXT, endTime TEXT)',
+          'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT)',
         );
         await db.execute(
           'CREATE TABLE Result(id INTEGER PRIMARY KEY AUTOINCREMENT, playerId INTEGER, sessionId INTEGER, score INTEGER)',
@@ -59,9 +57,8 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     state = const AsyncLoading();
 
     try {
-      final List<Map<String, dynamic>> mapList =
-          await _database.rawQuery('SELECT * FROM Player');
-      state = AsyncData(mapList.map((map) => Player.fromJson(map)).toList());
+      final players = await getAllPlayersFromDB();
+      state = AsyncData(players);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
     }
@@ -105,8 +102,16 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     players.insert(newIndex, playerToMove);
     state = AsyncData(players);
   }
+
+  Future<List<Player>> getAllPlayersFromDB() async {
+    final List<Map<String, dynamic>> response =
+        await _database.rawQuery('SELECT * FROM Player');
+    final players = response.map((map) => Player.fromJson(map)).toList();
+    return players;
+  }
 }
 
-final playerProvider = AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
+final playerNotifierProvider =
+    AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
   return PlayerNotifier();
 });

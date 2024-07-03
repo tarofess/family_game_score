@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingView extends ConsumerWidget {
-  const SettingView({Key? key}) : super(key: key);
+  const SettingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final player = ref.watch(playerProvider);
+    final playerProvider = ref.watch(playerNotifierProvider);
 
     return Scaffold(
         body: Center(
-          child: player.when(data: (data) {
+          child: playerProvider.when(data: (data) {
             if (data.isEmpty) {
               return const Text('プレイヤーが登録されていません');
             } else {
@@ -24,22 +24,22 @@ class SettingView extends ConsumerWidget {
                     direction: DismissDirection.horizontal,
                     background: Container(
                       color: Colors.red,
-                      child: const Icon(Icons.delete),
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: 16.0),
+                      child: const Icon(Icons.delete),
                     ),
                     secondaryBackground: Container(
                       color: Colors.green,
-                      child: const Icon(Icons.edit),
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.only(left: 16.0),
+                      child: const Icon(Icons.edit),
                     ),
                     onDismissed: (direction) {
                       if (direction == DismissDirection.endToStart) {
                         showEditPlayerDialog(context, ref, data[index]);
                       } else if (direction == DismissDirection.startToEnd) {
                         ref
-                            .read(playerProvider.notifier)
+                            .read(playerNotifierProvider.notifier)
                             .deletePlayer(data[index]);
                       }
                     },
@@ -82,14 +82,15 @@ class SettingView extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
-                print(inputText);
                 Navigator.pop(context);
               },
               child: const Text('キャンセル'),
             ),
             TextButton(
               onPressed: () {
-                ref.read(playerProvider.notifier).createPlayer(inputText);
+                ref
+                    .read(playerNotifierProvider.notifier)
+                    .createPlayer(inputText);
                 Navigator.pop(context);
               },
               child: const Text('OK'),
@@ -126,7 +127,7 @@ class SettingView extends ConsumerWidget {
             TextButton(
               onPressed: () {
                 ref
-                    .read(playerProvider.notifier)
+                    .read(playerNotifierProvider.notifier)
                     .updatePlayer(player.copyWith(name: inputText));
                 Navigator.pop(context);
               },

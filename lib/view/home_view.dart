@@ -4,24 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final player = ref.watch(playerProvider);
+    final playerProvider = ref.watch(playerNotifierProvider);
 
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          onPressed: player.value != null && player.value!.isNotEmpty
-              ? () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ScoringView()),
-                  );
-                }
-              : null,
+          onPressed:
+              playerProvider.value != null && playerProvider.value!.isNotEmpty
+                  ? () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ScoringView()),
+                      );
+                    }
+                  : null,
           child: const Text('ゲームスタート！'),
         ),
       ),
