@@ -44,11 +44,10 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
         if (response.isNotEmpty) {
           // すでにResultテーブルにデータがある場合はスコアを更新
           final results = response.map((e) => Result.fromJson(e)).toList();
-          final result = results.first;
 
           await database.rawUpdate(
               'UPDATE Result SET score = ? WHERE playerId = ? AND sessionId = ?',
-              [result.score + x * 10, player.id, session.id]);
+              [results.first.score + x * 10, player.id, session.id]);
         } else {
           // Resultテーブルにデータがない場合は新規登録
           await database.rawInsert(
@@ -57,38 +56,29 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
         }
         x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
       }
-      final results = await getResultsWithSessionFromDB();
-      state = AsyncData(results);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      rethrow;
-    } finally {
-      database?.close();
-    }
-  }
 
-  Future<void> updateRank() async {
-    Database? database;
-    final session = ref.read(sessionProvider).value!;
-
-    state = const AsyncLoading();
-
-    try {
-      database = await openDB();
-
-      final List<Map<String, dynamic>> results = await database.rawQuery(
+      /* 適切なrankへの更新処理 */
+      int rank = 1;
+      final resultsForRank = await database.rawQuery(
           'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
           [session.id]);
 
-      int rank = 1;
-      for (final result in results) {
-        await database.rawUpdate(
-            'UPDATE Result SET rank = ? WHERE id = ?', [rank, result['id']]);
-        rank += 1;
+      for (int index = 0; index < resultsForRank.length; index++) {
+        if (index >= 1 &&
+            resultsForRank[index]['score'] ==
+                resultsForRank[index - 1]['score']) {
+          // 同じスコアの場合は同じ順位にする
+          await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
+              [rank, resultsForRank[index]['id']]);
+        } else {
+          rank = index + 1;
+          await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
+              [rank, resultsForRank[index]['id']]);
+        }
       }
 
-      final updatedResults = await getResultsWithSessionFromDB();
-      state = AsyncData(updatedResults);
+      final results = await getResultsWithSessionFromDB();
+      state = AsyncData(results);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       rethrow;

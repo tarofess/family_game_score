@@ -40,7 +40,7 @@ class RankingView extends ConsumerWidget {
               child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10.0),
-                  leading: Text('${index + 1}位',
+                  leading: Text('${result.rank}位',
                       style: const TextStyle(fontSize: 14)),
                   title: Text(players.value!
                       .where((player) => player.id == result.playerId)

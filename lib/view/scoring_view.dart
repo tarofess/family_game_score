@@ -181,7 +181,6 @@ class ScoringView extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 try {
-                  await ref.read(resultProvider.notifier).updateRank();
                   ref.read(sessionProvider.notifier).updateEndTime();
                   await ref.read(sessionProvider.notifier).updateSession();
                   ref.read(sessionProvider.notifier).disposeSession();

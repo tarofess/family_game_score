@@ -39,7 +39,7 @@ class ResultHistoryNotifier
           INNER JOIN Session ON Result.sessionId = Session.id
           INNER JOIN Player ON Result.playerId = Player.id
           WHERE Session.endTime IS NOT NULL
-          ORDER BY Session.begTime
+          ORDER BY Session.begTime, Result.rank
         ''');
       final results = response.map((e) => ResultHistory.fromJson(e)).toList();
 
