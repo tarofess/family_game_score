@@ -184,6 +184,7 @@ class ScoringView extends ConsumerWidget {
                   ref.read(sessionProvider.notifier).updateEndTime();
                   await ref.read(sessionProvider.notifier).updateSession();
                   ref.read(sessionProvider.notifier).disposeSession();
+                  ref.read(playerProvider.notifier).resetOrder();
 
                   if (context.mounted) {
                     Navigator.of(context).pushAndRemoveUntil(

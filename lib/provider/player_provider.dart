@@ -121,6 +121,12 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     state = AsyncData(players);
   }
 
+  void resetOrder() {
+    final List<Player> players = state.value ?? [];
+    players.sort((a, b) => a.id.compareTo(b.id));
+    state = AsyncData(players);
+  }
+
   Future<List<Player>> getAllPlayersFromDB() async {
     Database? database;
 

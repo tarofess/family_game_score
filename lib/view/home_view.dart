@@ -29,7 +29,9 @@ class HomeView extends ConsumerWidget {
                           );
                         }
                       : null,
-                  child: const Text('ゲームスタート！'),
+                  child: sessionData == null
+                      ? const Text('ゲームスタート！')
+                      : const Text('ゲーム再開！'),
                 ),
               );
             },
