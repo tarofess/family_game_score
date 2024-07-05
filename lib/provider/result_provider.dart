@@ -52,13 +52,43 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
         } else {
           // Resultテーブルにデータがない場合は新規登録
           await database.rawInsert(
-              'INSERT INTO Result(playerId, sessionId, score) VALUES(?, ?, ?)',
+              'INSERT INTO Result(playerId, sessionId, score, rank) VALUES(?, ?, ?, 1)',
               [player.id, session.id, x * 10]);
         }
         x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
       }
       final results = await getResultsWithSessionFromDB();
       state = AsyncData(results);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+      rethrow;
+    } finally {
+      database?.close();
+    }
+  }
+
+  Future<void> updateRank() async {
+    Database? database;
+    final session = ref.read(sessionProvider).value!;
+
+    state = const AsyncLoading();
+
+    try {
+      database = await openDB();
+
+      final List<Map<String, dynamic>> results = await database.rawQuery(
+          'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
+          [session.id]);
+
+      int rank = 1;
+      for (final result in results) {
+        await database.rawUpdate(
+            'UPDATE Result SET rank = ? WHERE id = ?', [rank, result['id']]);
+        rank += 1;
+      }
+
+      final updatedResults = await getResultsWithSessionFromDB();
+      state = AsyncData(updatedResults);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
       rethrow;

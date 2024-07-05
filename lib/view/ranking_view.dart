@@ -16,7 +16,8 @@ class RankingView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('現在の順位'),
+        title:
+            session.value == null ? const Text('ランキング') : const Text('現在の順位'),
         actions: [
           if (session.value == null)
             IconButton(
@@ -32,12 +33,21 @@ class RankingView extends ConsumerWidget {
           itemCount: data.length,
           itemBuilder: (context, index) {
             final result = data[index];
-            return ListTile(
-              title: Text(players.value!
-                  .where((player) => player.id == result.playerId)
-                  .first
-                  .name),
-              subtitle: Text(result.score.toString()),
+            return Card(
+              elevation: 8.0,
+              margin:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+              child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10.0),
+                  leading: Text('${index + 1}位',
+                      style: const TextStyle(fontSize: 14)),
+                  title: Text(players.value!
+                      .where((player) => player.id == result.playerId)
+                      .first
+                      .name),
+                  trailing: Text('${result.score}ポイント',
+                      style: const TextStyle(fontSize: 14))),
             );
           },
         );

@@ -11,6 +11,7 @@ _$ResultImpl _$$ResultImplFromJson(Map<String, dynamic> json) => _$ResultImpl(
       playerId: (json['playerId'] as num).toInt(),
       sessionId: (json['sessionId'] as num).toInt(),
       score: (json['score'] as num).toInt(),
+      rank: (json['rank'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$ResultImplToJson(_$ResultImpl instance) =>
@@ -19,4 +20,5 @@ Map<String, dynamic> _$$ResultImplToJson(_$ResultImpl instance) =>
       'playerId': instance.playerId,
       'sessionId': instance.sessionId,
       'score': instance.score,
+      'rank': instance.rank,
     };

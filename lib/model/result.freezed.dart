@@ -24,6 +24,7 @@ mixin _$Result {
   int get playerId => throw _privateConstructorUsedError;
   int get sessionId => throw _privateConstructorUsedError;
   int get score => throw _privateConstructorUsedError;
+  int get rank => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,7 @@ abstract class $ResultCopyWith<$Res> {
   factory $ResultCopyWith(Result value, $Res Function(Result) then) =
       _$ResultCopyWithImpl<$Res, Result>;
   @useResult
-  $Res call({int id, int playerId, int sessionId, int score});
+  $Res call({int id, int playerId, int sessionId, int score, int rank});
 }
 
 /// @nodoc
@@ -55,6 +56,7 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
     Object? playerId = null,
     Object? sessionId = null,
     Object? score = null,
+    Object? rank = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -73,6 +75,10 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
               as int,
+      rank: null == rank
+          ? _value.rank
+          : rank // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -84,7 +90,7 @@ abstract class _$$ResultImplCopyWith<$Res> implements $ResultCopyWith<$Res> {
       __$$ResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int playerId, int sessionId, int score});
+  $Res call({int id, int playerId, int sessionId, int score, int rank});
 }
 
 /// @nodoc
@@ -102,6 +108,7 @@ class __$$ResultImplCopyWithImpl<$Res>
     Object? playerId = null,
     Object? sessionId = null,
     Object? score = null,
+    Object? rank = null,
   }) {
     return _then(_$ResultImpl(
       id: null == id
@@ -120,6 +127,10 @@ class __$$ResultImplCopyWithImpl<$Res>
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
               as int,
+      rank: null == rank
+          ? _value.rank
+          : rank // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -131,7 +142,8 @@ class _$ResultImpl implements _Result {
       {required this.id,
       required this.playerId,
       required this.sessionId,
-      required this.score});
+      required this.score,
+      required this.rank});
 
   factory _$ResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$ResultImplFromJson(json);
@@ -144,10 +156,12 @@ class _$ResultImpl implements _Result {
   final int sessionId;
   @override
   final int score;
+  @override
+  final int rank;
 
   @override
   String toString() {
-    return 'Result(id: $id, playerId: $playerId, sessionId: $sessionId, score: $score)';
+    return 'Result(id: $id, playerId: $playerId, sessionId: $sessionId, score: $score, rank: $rank)';
   }
 
   @override
@@ -160,12 +174,14 @@ class _$ResultImpl implements _Result {
                 other.playerId == playerId) &&
             (identical(other.sessionId, sessionId) ||
                 other.sessionId == sessionId) &&
-            (identical(other.score, score) || other.score == score));
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.rank, rank) || other.rank == rank));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, playerId, sessionId, score);
+  int get hashCode =>
+      Object.hash(runtimeType, id, playerId, sessionId, score, rank);
 
   @JsonKey(ignore: true)
   @override
@@ -186,7 +202,8 @@ abstract class _Result implements Result {
       {required final int id,
       required final int playerId,
       required final int sessionId,
-      required final int score}) = _$ResultImpl;
+      required final int score,
+      required final int rank}) = _$ResultImpl;
 
   factory _Result.fromJson(Map<String, dynamic> json) = _$ResultImpl.fromJson;
 
@@ -198,6 +215,8 @@ abstract class _Result implements Result {
   int get sessionId;
   @override
   int get score;
+  @override
+  int get rank;
   @override
   @JsonKey(ignore: true)
   _$$ResultImplCopyWith<_$ResultImpl> get copyWith =>

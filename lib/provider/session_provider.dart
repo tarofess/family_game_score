@@ -33,8 +33,8 @@ class SessionNotifier extends AsyncNotifier<Session?> {
         final int newID = maxIdResponse.first['maxId'] == null
             ? 1
             : maxIdResponse.first['maxId'] + 1;
-        final newSession =
-            Session(id: newID, round: 1, begTime: DateTime.now().toString());
+        final newSession = Session(
+            id: newID, round: 1, begTime: formatDateTime(DateTime.now()));
 
         await database.rawInsert(
             'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
@@ -90,8 +90,8 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   }
 
   void updateEndTime() {
-    state =
-        AsyncData(state.value!.copyWith(endTime: DateTime.now().toString()));
+    state = AsyncData(
+        state.value!.copyWith(endTime: formatDateTime(DateTime.now())));
   }
 
   void disposeSession() {
@@ -113,6 +113,16 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     } finally {
       database?.close();
     }
+  }
+
+  String formatDateTime(DateTime dateTime) {
+    final year = dateTime.year.toString();
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+
+    return '$year年$month月$day日 $hour時$minute分';
   }
 }
 

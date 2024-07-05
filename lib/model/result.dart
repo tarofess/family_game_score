@@ -10,6 +10,7 @@ class Result with _$Result {
     required int playerId,
     required int sessionId,
     required int score,
+    required int rank,
   }) = _Result;
 
   factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
