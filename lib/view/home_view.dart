@@ -8,23 +8,54 @@ class HomeView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerProvider = ref.watch(playerNotifierProvider);
+    final players = ref.watch(playerProvider);
 
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed:
-              playerProvider.value != null && playerProvider.value!.isNotEmpty
+      body: players.when(
+        data: (data) {
+          return Center(
+            child: ElevatedButton(
+              onPressed: data.isNotEmpty
                   ? () {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ScoringView()),
+                          builder: (context) => const ScoringView(),
+                        ),
                       );
                     }
                   : null,
-          child: const Text('ゲームスタート！'),
-        ),
+              child: const Text('ゲームスタート！'),
+            ),
+          );
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    'エラーが発生しました\n${error.toString()}',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // ignore: unused_result
+                    ref.refresh(playerProvider);
+                  },
+                  child: const Text('リトライ'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -2,83 +2,120 @@ import 'package:family_game_score/model/session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SessionNotifier extends AsyncNotifier<Session> {
-  late Database _database;
-
+class SessionNotifier extends AsyncNotifier<Session?> {
   @override
-  Future<Session> build() async {
-    state = const AsyncLoading();
-
+  Future<Session?> build() async {
     try {
-      await openDB();
       final session = await readSession();
-      state = AsyncData(session);
+
       return session;
     } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      return Session(id: 0, round: 0, begTime: DateTime.now().toString());
+      rethrow;
     }
   }
 
-  Future<void> openDB() async {
-    _database = await openDatabase(
+  Future<Database> openDB() async {
+    return await openDatabase(
       'family_game_score.db',
       version: 1,
     );
   }
 
-  Future<Session> readSession() async {
-    state = const AsyncLoading();
+  Future<void> createSession() async {
+    Database? database;
 
     try {
-      final List<Map<String, dynamic>> currentSession = await _database
-          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
+      database = await openDB();
 
-      if (currentSession.isEmpty) {
-        // 現在進行中のSessionがないので新規作成
+      if (state.value == null) {
         final List<Map<String, dynamic>> maxIdResponse =
-            await _database.rawQuery('SELECT MAX(id) as maxId FROM Session');
+            await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
         final int newID = maxIdResponse.first['maxId'] == null
             ? 1
             : maxIdResponse.first['maxId'] + 1;
         final newSession =
             Session(id: newID, round: 1, begTime: DateTime.now().toString());
-        await _database.rawInsert(
+
+        await database.rawInsert(
             'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
             [newSession.id, newSession.round, newSession.begTime]);
         state = AsyncData(newSession);
-        return newSession;
-      } else {
-        // 現在進行中のSessionがあるのでそれを返す
-        final savedSession = Session.fromJson(currentSession.first);
-        state = AsyncData(savedSession);
-        return savedSession;
       }
     } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      return Session(id: 0, round: 0, begTime: DateTime.now().toString());
+      rethrow;
+    } finally {
+      database?.close();
+    }
+  }
+
+  Future<Session?> readSession() async {
+    Database? database;
+
+    try {
+      database = await openDB();
+
+      final List<Map<String, dynamic>> session = await database
+          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
+
+      if (session.isEmpty) {
+        return null;
+      } else {
+        return Session.fromJson(session.first);
+      }
+    } catch (e) {
+      rethrow;
+    } finally {
+      database?.close();
     }
   }
 
   Future<void> updateSession() async {
-    state = const AsyncLoading();
+    Database? database;
 
     try {
-      await _database.rawUpdate(
+      database = await openDB();
+
+      await database.rawUpdate(
           'UPDATE Session SET round = ?, endTime = ? WHERE id = ?',
           [state.value!.round, state.value!.endTime, state.value!.id]);
-      state = AsyncData(state.value!);
     } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+      rethrow;
+    } finally {
+      database?.close();
     }
   }
 
   void updateRound() {
     state = AsyncData(state.value!.copyWith(round: state.value!.round + 1));
   }
+
+  void updateEndTime() {
+    state =
+        AsyncData(state.value!.copyWith(endTime: DateTime.now().toString()));
+  }
+
+  void disposeSession() {
+    state = AsyncData(null);
+  }
+
+  Future<bool> isExistSession() async {
+    Database? database;
+
+    try {
+      database = await openDB();
+
+      final List<Map<String, dynamic>> currentSession = await database
+          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
+
+      return currentSession.isNotEmpty;
+    } catch (e) {
+      rethrow;
+    } finally {
+      database?.close();
+    }
+  }
 }
 
-final sessionNotifierProvider =
-    AsyncNotifierProvider<SessionNotifier, Session>(() {
+final sessionProvider = AsyncNotifierProvider<SessionNotifier, Session?>(() {
   return SessionNotifier();
 });

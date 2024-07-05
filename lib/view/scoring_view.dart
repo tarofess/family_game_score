@@ -10,18 +10,21 @@ class ScoringView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerProvider = ref.watch(playerNotifierProvider);
-    final sessionProvider = ref.watch(sessionNotifierProvider);
+    final players = ref.watch(playerProvider);
+    final session = ref.watch(sessionProvider);
+    final results = ref.watch(resultProvider);
 
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              '${sessionProvider.value != null ? sessionProvider.value!.round.toString() : '1'}回戦'),
+              '${session.value != null ? session.value!.round.toString() : '1'}回戦'),
           leading: IconButton(
             icon: const Icon(Icons.check_circle_outline),
-            onPressed: () {
-              showFinishGameDialog(context, ref);
-            },
+            onPressed: session.value != null
+                ? () {
+                    showFinishGameDialog(context, ref);
+                  }
+                : null,
           ),
           actions: [
             IconButton(
@@ -36,54 +39,95 @@ class ScoringView extends ConsumerWidget {
             children: [
               const Text('現在の順位はこちら↓'),
               Expanded(
-                child: sessionProvider.when(
-                  data: (data) => playerProvider.when(
-                      data: (data) => data.isNotEmpty
-                          ? ReorderableListView.builder(
-                              itemCount: data.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  key: Key(data[index].id.toString()),
-                                  title: Text(data[index].name),
-                                  trailing: ReorderableDragStartListener(
-                                    index: index,
-                                    child: const Icon(Icons.drag_handle),
+                  child: results.when(
+                      data: (data) => players.when(
+                          data: (data) => data.isNotEmpty
+                              ? ReorderableListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (context, index) {
+                                    return ListTile(
+                                      key: Key(data[index].id.toString()),
+                                      title: Text(data[index].name),
+                                      trailing: ReorderableDragStartListener(
+                                        index: index,
+                                        child: const Icon(Icons.drag_handle),
+                                      ),
+                                    );
+                                  },
+                                  onReorder: (oldIndex, newIndex) {
+                                    if (oldIndex < newIndex) {
+                                      newIndex -= 1;
+                                    }
+                                    ref
+                                        .read(playerProvider.notifier)
+                                        .reorderPlayer(oldIndex, newIndex);
+                                  },
+                                )
+                              : const Text('データがありません'),
+                          error: (error, stackTrace) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      'エラーが発生しました\n${error.toString()}',
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ),
-                                );
-                              },
-                              onReorder: (oldIndex, newIndex) {
-                                if (oldIndex < newIndex) {
-                                  newIndex -= 1;
-                                }
-                                ref
-                                    .read(playerNotifierProvider.notifier)
-                                    .reorderPlayer(oldIndex, newIndex);
-                              },
-                            )
-                          : const Text('データがありません'),
-                      error: (error, stackTrace) => Text('Error: $error'),
-                      loading: () => const CircularProgressIndicator()),
-                  loading: () => const CircularProgressIndicator(),
-                  error: (error, stackTrace) => Text('Error: $error'),
-                ),
-              ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // ignore: unused_result
+                                      ref.refresh(playerProvider);
+                                    },
+                                    child: const Text('リトライ'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          loading: () => const CircularProgressIndicator()),
+                      error: (error, stackTrace) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(
+                                  'エラーが発生しました\n${error.toString()}',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  // ignore: unused_result
+                                  ref.refresh(resultProvider);
+                                },
+                                child: const Text('リトライ'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loading: () => const CircularProgressIndicator())),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // RankingViewに遷移
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => RankingView()),
-            );
-          },
+          onPressed: session.value != null
+              ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RankingView()),
+                  );
+                }
+              : null,
           child: const Icon(Icons.description),
         ));
   }
 
   void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
-    final session = ref.read(sessionNotifierProvider);
+    final session = ref.read(sessionProvider);
 
     showDialog(
       context: context,
@@ -100,11 +144,17 @@ class ScoringView extends ConsumerWidget {
               child: const Text('いいえ'),
             ),
             TextButton(
-              onPressed: () {
-                ref.read(resultNotifierProvider.notifier).updateResult();
-                ref.read(sessionNotifierProvider.notifier).updateRound();
-                ref.read(sessionNotifierProvider.notifier).updateSession();
-                Navigator.of(context).pop();
+              onPressed: () async {
+                try {
+                  await ref.read(sessionProvider.notifier).createSession();
+                  await ref.read(resultProvider.notifier).updateResult();
+                  ref.read(sessionProvider.notifier).updateRound();
+                  await ref.read(sessionProvider.notifier).updateSession();
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  Navigator.of(context).pop();
+                  showErrorDialog(context, e);
+                }
               },
               child: const Text('はい'),
             ),
@@ -129,12 +179,46 @@ class ScoringView extends ConsumerWidget {
               child: const Text('いいえ'),
             ),
             TextButton(
-              onPressed: () {
-                ref.read(resultNotifierProvider.notifier).updateResult();
-                ref.read(sessionNotifierProvider.notifier).updateSession();
-                // RankingViewに遷移
+              onPressed: () async {
+                try {
+                  ref.read(sessionProvider.notifier).updateEndTime();
+                  await ref.read(sessionProvider.notifier).updateSession();
+                  ref.read(sessionProvider.notifier).disposeSession();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const RankingView(),
+                      ),
+                      (Route<dynamic> route) => false,
+                    );
+                  }
+                } catch (e) {
+                  Navigator.of(context).pop();
+                  showErrorDialog(context, e);
+                }
               },
               child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showErrorDialog(BuildContext context, dynamic error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('エラー'),
+          content: Text('エラーが発生しました\n${error.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('閉じる'),
             ),
           ],
         );

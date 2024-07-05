@@ -3,25 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
-  late Database _database;
-
   @override
   Future<List<Player>> build() async {
-    state = const AsyncLoading();
-
     try {
-      await openDB();
       final players = await getAllPlayersFromDB();
       state = AsyncData(players);
+
       return players;
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-      return [];
+      rethrow;
     }
   }
 
-  Future<void> openDB() async {
-    _database = await openDatabase(
+  Future<Database> openDB() async {
+    return await openDatabase(
       'family_game_score.db',
       version: 1,
       onCreate: (Database db, int version) async {
@@ -39,37 +35,50 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<void> createPlayer(String inputText) async {
+    Database? database;
+
     state = const AsyncLoading();
 
     try {
-      await _database.transaction((txn) async {
-        int id = await txn
-            .rawInsert('INSERT INTO Player(name) VALUES(?)', [inputText]);
-        final player = Player(id: id, name: inputText);
-        state = AsyncData([...state.value ?? [], player]);
-      });
+      database = await openDB();
+
+      int id = await database
+          .rawInsert('INSERT INTO Player(name) VALUES(?)', [inputText]);
+      final player = Player(id: id, name: inputText);
+      state = AsyncData([...state.value ?? [], player]);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
+    } finally {
+      database?.close();
     }
   }
 
   Future<void> readPlayer() async {
+    Database? database;
     state = const AsyncLoading();
 
     try {
+      database = await openDB();
+
       final players = await getAllPlayersFromDB();
       state = AsyncData(players);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
+    } finally {
+      database?.close();
     }
   }
 
   Future<void> updatePlayer(Player player) async {
+    Database? database;
     state = const AsyncLoading();
 
     try {
-      await _database.rawUpdate(
+      database = await openDB();
+
+      await database.rawUpdate(
           'UPDATE Player SET name = ? WHERE id = ?', [player.name, player.id]);
+
       if (state.value != null) {
         state = AsyncData(
             state.value!.map((p) => p.id == player.id ? player : p).toList());
@@ -78,13 +87,20 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
+    } finally {
+      database?.close();
     }
   }
 
   Future<void> deletePlayer(Player player) async {
+    Database? database;
     state = const AsyncLoading();
+
     try {
-      await _database.rawDelete('DELETE FROM Player WHERE id = ?', [player.id]);
+      database = await openDB();
+
+      await database.rawDelete('DELETE FROM Player WHERE id = ?', [player.id]);
+
       if (state.value != null) {
         state =
             AsyncData(state.value!.where((p) => p.id != player.id).toList());
@@ -93,6 +109,8 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
+    } finally {
+      database?.close();
     }
   }
 
@@ -104,14 +122,24 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<List<Player>> getAllPlayersFromDB() async {
-    final List<Map<String, dynamic>> response =
-        await _database.rawQuery('SELECT * FROM Player');
-    final players = response.map((map) => Player.fromJson(map)).toList();
-    return players;
+    Database? database;
+
+    try {
+      database = await openDB();
+
+      final List<Map<String, dynamic>> response =
+          await database.rawQuery('SELECT * FROM Player');
+      final players = response.map((map) => Player.fromJson(map)).toList();
+
+      return players;
+    } catch (e) {
+      rethrow;
+    } finally {
+      database?.close();
+    }
   }
 }
 
-final playerNotifierProvider =
-    AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
+final playerProvider = AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
   return PlayerNotifier();
 });

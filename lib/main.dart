@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:family_game_score/view/setting_view.dart';
 
 void main() {
-  const app = MaterialApp(home: MyApp());
-  const scope = ProviderScope(child: app);
-  runApp(scope);
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -15,7 +13,8 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
+    return MaterialApp(
+        home: DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
@@ -36,6 +35,6 @@ class MyApp extends ConsumerWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
