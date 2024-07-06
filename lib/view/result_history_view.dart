@@ -19,7 +19,7 @@ class ResultHistoryView extends ConsumerWidget {
                 groupSeparatorBuilder: (String value) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    value,
+                    '日時: $value',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),

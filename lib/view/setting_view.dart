@@ -55,7 +55,16 @@ class SettingView extends ConsumerWidget {
                                   }
                                 },
                                 child: ListTile(
-                                  title: Text(data[index].name),
+                                  title: Text(
+                                    data[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  leading: const Icon(
+                                    Icons.person,
+                                    color: Colors.blue,
+                                  ),
                                 ),
                               );
                             },

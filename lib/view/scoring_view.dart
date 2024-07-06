@@ -47,7 +47,12 @@ class ScoringView extends ConsumerWidget {
                                   itemBuilder: (context, index) {
                                     return ListTile(
                                       key: Key(data[index].id.toString()),
-                                      title: Text(data[index].name),
+                                      title: Text(
+                                        data[index].name,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
                                       trailing: ReorderableDragStartListener(
                                         index: index,
                                         child: const Icon(Icons.drag_handle),

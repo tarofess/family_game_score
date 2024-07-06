@@ -16,8 +16,7 @@ class RankingView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title:
-            session.value == null ? const Text('ランキング') : const Text('現在の順位'),
+        title: session.value == null ? const Text('結果発表') : const Text('現在の順位'),
         actions: [
           if (session.value == null)
             IconButton(

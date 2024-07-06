@@ -29,6 +29,11 @@ class HomeView extends ConsumerWidget {
                           );
                         }
                       : null,
+                  style: ElevatedButton.styleFrom(
+                    side: const BorderSide(
+                        color: Color.fromARGB(255, 174, 206, 255)),
+                    minimumSize: const Size(200, 50),
+                  ),
                   child: sessionData == null
                       ? const Text('ゲームスタート！')
                       : const Text('ゲーム再開！'),
