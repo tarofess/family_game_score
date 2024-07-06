@@ -44,27 +44,35 @@ class SettingView extends ConsumerWidget {
                                   padding: const EdgeInsets.only(left: 16.0),
                                   child: const Icon(Icons.edit),
                                 ),
-                                onDismissed: (direction) {
+                                confirmDismiss: (direction) async {
                                   if (direction ==
                                       DismissDirection.endToStart) {
-                                    showEditPlayerDialog(
-                                        context, ref, data[index]);
+                                    return showEditPlayerDialog(
+                                            context, ref, data[index]) ==
+                                        true;
                                   } else if (direction ==
                                       DismissDirection.startToEnd) {
-                                    showDeleteDialog(context, ref, data[index]);
+                                    return showDeleteDialog(
+                                            context, ref, data[index]) ==
+                                        true;
                                   }
+                                  return false;
                                 },
-                                child: ListTile(
-                                  title: Text(
-                                    data[index].name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  leading: const Icon(
-                                    Icons.person,
-                                    color: Colors.blue,
-                                  ),
+                                child: Builder(
+                                  builder: (context) {
+                                    return ListTile(
+                                      title: Text(
+                                        data[index].name,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      leading: const Icon(
+                                        Icons.person,
+                                        color: Colors.blue,
+                                      ),
+                                    );
+                                  },
                                 ),
                               );
                             },
@@ -212,8 +220,7 @@ class SettingView extends ConsumerWidget {
     );
   }
 
-  Future<void> showDeleteDialog(
-      BuildContext context, WidgetRef ref, Player player) {
+  Future showDeleteDialog(BuildContext context, WidgetRef ref, Player player) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
