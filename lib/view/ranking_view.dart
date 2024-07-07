@@ -89,6 +89,7 @@ class RankingView extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
+                // ignore: unused_result
                 ref.refresh(resultProvider);
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(

@@ -16,10 +16,10 @@ class HomeView extends ConsumerWidget {
       body: session.when(
         data: (sessionData) {
           return players.when(
-            data: (data) {
+            data: (playersData) {
               return Center(
                 child: ElevatedButton(
-                  onPressed: data.isNotEmpty
+                  onPressed: playersData.length >= 2
                       ? () {
                           Navigator.pushReplacement(
                             context,

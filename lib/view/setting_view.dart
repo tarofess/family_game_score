@@ -24,7 +24,9 @@ class SettingView extends ConsumerWidget {
                       )
                     : players.when(data: (data) {
                         if (data.isEmpty) {
-                          return const Text('プレイヤーが登録されていません');
+                          return const Text(
+                              'プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
+                              textAlign: TextAlign.center);
                         } else {
                           return ListView.builder(
                             itemCount: data.length,

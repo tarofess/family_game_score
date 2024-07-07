@@ -53,6 +53,12 @@ class ScoringView extends ConsumerWidget {
                                           fontSize: 18,
                                         ),
                                       ),
+                                      leading: Text(
+                                        '${index + 1}位',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      ),
                                       trailing: ReorderableDragStartListener(
                                         index: index,
                                         child: const Icon(Icons.drag_handle),
