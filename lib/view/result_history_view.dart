@@ -2,6 +2,7 @@ import 'package:family_game_score/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultHistoryView extends ConsumerWidget {
   const ResultHistoryView({super.key});
@@ -19,7 +20,7 @@ class ResultHistoryView extends ConsumerWidget {
                 groupSeparatorBuilder: (String value) => Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    '日時: $value',
+                    value,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
@@ -34,26 +35,29 @@ class ResultHistoryView extends ConsumerWidget {
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 10.0),
-                              leading: Text('${element.result.rank}位',
+                              leading: Text(
+                                  '${element.result.rank}${AppLocalizations.of(context)!.rank}',
                                   style: const TextStyle(fontSize: 14)),
                               title: Text(element.player.name),
-                              trailing: Text('${element.result.score}ポイント',
+                              trailing: Text(
+                                  '${element.result.score}${AppLocalizations.of(context)!.point}',
                                   style: const TextStyle(fontSize: 14)),
                             ),
                           )
-                        : const Card(
+                        : Card(
                             elevation: 8.0,
-                            margin: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(
                                 horizontal: 10.0, vertical: 6.0),
                             child: ListTile(
-                              contentPadding: EdgeInsets.symmetric(
+                              contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 10.0),
-                              title: Text('プレイヤーは削除されました'),
+                              title: Text(AppLocalizations.of(context)!
+                                  .playerHasBeenDeleted),
                             ),
                           ),
                 order: GroupedListOrder.ASC, // optional
               )
-            : const Center(child: Text('まだ対戦履歴がありません')),
+            : Center(child: Text(AppLocalizations.of(context)!.noMatchHistory)),
         error: (error, stackTrace) {
           return Center(
             child: Column(
@@ -61,7 +65,7 @@ class ResultHistoryView extends ConsumerWidget {
               children: [
                 Center(
                   child: Text(
-                    'エラーが発生しました\n${error.toString()}',
+                    '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -70,7 +74,7 @@ class ResultHistoryView extends ConsumerWidget {
                     // ignore: unused_result
                     ref.refresh(resultHistoryProvider);
                   },
-                  child: const Text('リトライ'),
+                  child: Text(AppLocalizations.of(context)!.retry),
                 ),
               ],
             ),

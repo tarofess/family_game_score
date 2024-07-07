@@ -4,6 +4,7 @@ import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/ranking_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ScoringView extends ConsumerWidget {
   const ScoringView({super.key});
@@ -17,7 +18,7 @@ class ScoringView extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              '${session.value != null ? session.value!.round.toString() : '1'}回戦'),
+              '${session.value != null ? session.value!.round.toString() : '1'}${AppLocalizations.of(context)!.round}'),
           leading: IconButton(
             icon: const Icon(Icons.check_circle_outline),
             onPressed: session.value != null
@@ -37,7 +38,7 @@ class ScoringView extends ConsumerWidget {
         body: Center(
           child: Column(
             children: [
-              const Text('現在の順位はこちら↓'),
+              Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings),
               Expanded(
                   child: results.when(
                       data: (data) => players.when(
@@ -54,7 +55,7 @@ class ScoringView extends ConsumerWidget {
                                         ),
                                       ),
                                       leading: Text(
-                                        '${index + 1}位',
+                                        '${index + 1}${AppLocalizations.of(context)!.rank}',
                                         style: const TextStyle(
                                           fontSize: 16,
                                         ),
@@ -74,7 +75,7 @@ class ScoringView extends ConsumerWidget {
                                         .reorderPlayer(oldIndex, newIndex);
                                   },
                                 )
-                              : const Text('データがありません'),
+                              : Text(AppLocalizations.of(context)!.noData),
                           error: (error, stackTrace) {
                             return Center(
                               child: Column(
@@ -82,7 +83,7 @@ class ScoringView extends ConsumerWidget {
                                 children: [
                                   Center(
                                     child: Text(
-                                      'エラーが発生しました\n${error.toString()}',
+                                      '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -91,7 +92,8 @@ class ScoringView extends ConsumerWidget {
                                       // ignore: unused_result
                                       ref.refresh(playerProvider);
                                     },
-                                    child: const Text('リトライ'),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.retry),
                                   ),
                                 ],
                               ),
@@ -105,7 +107,7 @@ class ScoringView extends ConsumerWidget {
                             children: [
                               Center(
                                 child: Text(
-                                  'エラーが発生しました\n${error.toString()}',
+                                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -114,7 +116,8 @@ class ScoringView extends ConsumerWidget {
                                   // ignore: unused_result
                                   ref.refresh(resultProvider);
                                 },
-                                child: const Text('リトライ'),
+                                child:
+                                    Text(AppLocalizations.of(context)!.retry),
                               ),
                             ],
                           ),
@@ -129,7 +132,8 @@ class ScoringView extends ConsumerWidget {
               ? () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RankingView()),
+                    MaterialPageRoute(
+                        builder: (context) => const RankingView()),
                   );
                 }
               : null,
@@ -145,15 +149,15 @@ class ScoringView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('確認'),
+          title: Text(AppLocalizations.of(context)!.confirmation),
           content: Text(
-              '${session.value != null ? (session.value!.round + 1).toString() : '2'}回戦に進みますか？'),
+              '${AppLocalizations.of(context)!.moveToNextRoundDialogMessageEn}${session.value != null ? (session.value!.round + 1).toString() : '2'}${AppLocalizations.of(context)!.moveToNextRoundDialogMessageRoundEn}${AppLocalizations.of(context)!.moveToNextRoundDialogMessageJa}'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('いいえ'),
+              child: Text(AppLocalizations.of(context)!.no),
             ),
             TextButton(
               onPressed: () async {
@@ -167,13 +171,16 @@ class ScoringView extends ConsumerWidget {
                     await ref.read(resultProvider.notifier).updateResult();
                   }
 
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
+                  // ignore: use_build_context_synchronously
                   showErrorDialog(context, e);
                 }
               },
-              child: const Text('はい'),
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
           ],
         );
@@ -186,14 +193,15 @@ class ScoringView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('確認'),
-          content: const Text('ゲームを終了しますか？\nゲームが終了すると順位が確定します'),
+          title: Text(AppLocalizations.of(context)!.confirmation),
+          content: Text(
+              AppLocalizations.of(context)!.finishDialogMessageInScoringView),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('いいえ'),
+              child: Text(AppLocalizations.of(context)!.no),
             ),
             TextButton(
               onPressed: () async {
@@ -211,11 +219,13 @@ class ScoringView extends ConsumerWidget {
                     );
                   }
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
+                  // ignore: use_build_context_synchronously
                   showErrorDialog(context, e);
                 }
               },
-              child: const Text('はい'),
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
           ],
         );
@@ -228,14 +238,15 @@ class ScoringView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('エラー'),
-          content: Text('エラーが発生しました\n${error.toString()}'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
+          content: Text(
+              '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('閉じる'),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );

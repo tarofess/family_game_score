@@ -97,6 +97,6 @@ class SessionRepository {
     final hour = dateTime.hour.toString().padLeft(2, '0');
     final minute = dateTime.minute.toString().padLeft(2, '0');
 
-    return '$year年$month月$day日 $hour時$minute分';
+    return '$year-$month-$day $hour:$minute';
   }
 }

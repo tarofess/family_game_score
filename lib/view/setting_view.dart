@@ -3,6 +3,7 @@ import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingView extends ConsumerWidget {
   const SettingView({super.key});
@@ -16,16 +17,16 @@ class SettingView extends ConsumerWidget {
         body: Center(
             child: session.when(
                 data: (data) => data != null
-                    ? const Center(
+                    ? Center(
                         child: Text(
-                          '現在ゲームが進行中のため\nプレイヤーの編集ができません',
+                          AppLocalizations.of(context)!.unableToEditPlayer,
                           textAlign: TextAlign.center,
                         ),
                       )
                     : players.when(data: (data) {
                         if (data.isEmpty) {
-                          return const Text(
-                              'プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
+                          return Text(
+                              AppLocalizations.of(context)!.playerNotRegistered,
                               textAlign: TextAlign.center);
                         } else {
                           return ListView.builder(
@@ -87,7 +88,7 @@ class SettingView extends ConsumerWidget {
                             children: [
                               Center(
                                 child: Text(
-                                  'エラーが発生しました\n${error.toString()}',
+                                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -96,7 +97,8 @@ class SettingView extends ConsumerWidget {
                                   // ignore: unused_result
                                   ref.refresh(playerProvider);
                                 },
-                                child: const Text('リトライ'),
+                                child:
+                                    Text(AppLocalizations.of(context)!.retry),
                               ),
                             ],
                           ),
@@ -111,7 +113,7 @@ class SettingView extends ConsumerWidget {
                       children: [
                         Center(
                           child: Text(
-                            'エラーが発生しました\n${error.toString()}',
+                            '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -120,7 +122,7 @@ class SettingView extends ConsumerWidget {
                             // ignore: unused_result
                             ref.refresh(playerProvider);
                           },
-                          child: const Text('リトライ'),
+                          child: Text(AppLocalizations.of(context)!.retry),
                         ),
                       ],
                     ),
@@ -145,13 +147,13 @@ class SettingView extends ConsumerWidget {
       builder: (BuildContext context) {
         String inputText = '';
         return AlertDialog(
-          title: const Text('名前を入力してください'),
+          title: Text(AppLocalizations.of(context)!.enterYourName),
           content: TextField(
             onChanged: (value) {
               inputText = value;
             },
-            decoration: const InputDecoration(
-              hintText: 'プレイヤー名',
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.playerName,
             ),
           ),
           actions: [
@@ -159,15 +161,17 @@ class SettingView extends ConsumerWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('キャンセル'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () async {
                 try {
                   await ref.read(playerProvider.notifier).addPlayer(inputText);
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   showErrorDialog(context, e);
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
               child: const Text('OK'),
@@ -185,7 +189,7 @@ class SettingView extends ConsumerWidget {
       builder: (BuildContext context) {
         String inputText = player.name;
         return AlertDialog(
-          title: const Text('プレイヤー名を編集してください'),
+          title: Text(AppLocalizations.of(context)!.editPlayerName),
           content: TextField(
             onChanged: (value) {
               inputText = value;
@@ -199,7 +203,7 @@ class SettingView extends ConsumerWidget {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('キャンセル'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () async {
@@ -208,8 +212,10 @@ class SettingView extends ConsumerWidget {
                       .read(playerProvider.notifier)
                       .updatePlayer(player.copyWith(name: inputText));
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   showErrorDialog(context, e);
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
               child: const Text('OK'),
@@ -225,14 +231,15 @@ class SettingView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('確認'),
-          content: Text('${player.name}を削除しますか？'),
+          title: Text(AppLocalizations.of(context)!.confirmation),
+          content: Text(
+              '${AppLocalizations.of(context)!.deleteConfirmationEn}${player.name}${AppLocalizations.of(context)!.deleteConfirmationJa}'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('いいえ'),
+              child: Text(AppLocalizations.of(context)!.no),
             ),
             TextButton(
               onPressed: () async {
@@ -240,11 +247,13 @@ class SettingView extends ConsumerWidget {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
                   await ref.read(playerProvider.notifier).getPlayer();
                 } catch (e) {
+                  // ignore: use_build_context_synchronously
                   showErrorDialog(context, e);
                 }
+                // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
-              child: const Text('はい'),
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
           ],
         );
@@ -257,14 +266,15 @@ class SettingView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('エラー'),
-          content: Text('エラーが発生しました\n${error.toString()}'),
+          title: Text(AppLocalizations.of(context)!.errorTitle),
+          content: Text(
+              '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('閉じる'),
+              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );

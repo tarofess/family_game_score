@@ -4,6 +4,7 @@ import 'package:family_game_score/provider/result_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RankingView extends ConsumerWidget {
   const RankingView({super.key});
@@ -16,7 +17,9 @@ class RankingView extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: session.value == null ? const Text('結果発表') : const Text('現在の順位'),
+        title: session.value == null
+            ? Text(AppLocalizations.of(context)!.announcementOfResults)
+            : Text(AppLocalizations.of(context)!.currentRanking),
         actions: [
           if (session.value == null)
             IconButton(
@@ -39,13 +42,15 @@ class RankingView extends ConsumerWidget {
               child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10.0),
-                  leading: Text('${result.rank}位',
+                  leading: Text(
+                      '${result.rank}${AppLocalizations.of(context)!.rank}',
                       style: const TextStyle(fontSize: 14)),
                   title: Text(players.value!
                       .where((player) => player.id == result.playerId)
                       .first
                       .name),
-                  trailing: Text('${result.score}ポイント',
+                  trailing: Text(
+                      '${result.score}${AppLocalizations.of(context)!.point}',
                       style: const TextStyle(fontSize: 14))),
             );
           },
@@ -61,7 +66,7 @@ class RankingView extends ConsumerWidget {
             children: [
               Center(
                 child: Text(
-                  'エラーが発生しました\n${error.toString()}',
+                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -70,7 +75,7 @@ class RankingView extends ConsumerWidget {
                   // ignore: unused_result
                   ref.refresh(resultProvider);
                 },
-                child: const Text('リトライ'),
+                child: Text(AppLocalizations.of(context)!.retry),
               ),
             ],
           ),
@@ -84,8 +89,10 @@ class RankingView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('お疲れ様でした！'),
-          content: const Text('ホーム画面に戻ります'),
+          title: Text(
+              AppLocalizations.of(context)!.finishDialogTitleInRankingView),
+          content: Text(
+              AppLocalizations.of(context)!.finishDialogMessageInRankingView),
           actions: [
             TextButton(
               onPressed: () {
@@ -97,7 +104,7 @@ class RankingView extends ConsumerWidget {
                   MaterialPageRoute(builder: (context) => const MyApp()),
                 );
               },
-              child: const Text('はい'),
+              child: Text(AppLocalizations.of(context)!.yes),
             ),
           ],
         );
