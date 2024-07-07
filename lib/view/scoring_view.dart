@@ -133,6 +133,7 @@ class ScoringView extends ConsumerWidget {
 
   void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
     final session = ref.read(sessionProvider);
+    final results = ref.read(resultProvider);
 
     showDialog(
       context: context,
@@ -151,10 +152,15 @@ class ScoringView extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 try {
-                  await ref.read(sessionProvider.notifier).createSession();
-                  await ref.read(resultProvider.notifier).updateResult();
-                  ref.read(sessionProvider.notifier).updateRound();
-                  await ref.read(sessionProvider.notifier).updateSession();
+                  await ref.read(sessionProvider.notifier).addSession();
+                  await ref.read(sessionProvider.notifier).updateRound();
+
+                  if (results.value?.isEmpty ?? true) {
+                    await ref.read(resultProvider.notifier).addResult();
+                  } else {
+                    await ref.read(resultProvider.notifier).updateResult();
+                  }
+
                   Navigator.of(context).pop();
                 } catch (e) {
                   Navigator.of(context).pop();
@@ -186,8 +192,7 @@ class ScoringView extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 try {
-                  ref.read(sessionProvider.notifier).updateEndTime();
-                  await ref.read(sessionProvider.notifier).updateSession();
+                  await ref.read(sessionProvider.notifier).updateEndTime();
                   ref.read(sessionProvider.notifier).disposeSession();
                   ref.read(playerProvider.notifier).resetOrder();
 

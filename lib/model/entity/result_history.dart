@@ -1,6 +1,6 @@
-import 'package:family_game_score/model/player.dart';
-import 'package:family_game_score/model/result.dart';
-import 'package:family_game_score/model/session.dart';
+import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/entity/result.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'result_history.freezed.dart';

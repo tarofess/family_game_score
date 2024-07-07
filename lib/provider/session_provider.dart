@@ -1,128 +1,74 @@
-import 'package:family_game_score/model/session.dart';
+import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/model/repository/session_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
 
 class SessionNotifier extends AsyncNotifier<Session?> {
   @override
   Future<Session?> build() async {
     try {
-      final session = await readSession();
-
+      final sessionRepository = SessionRepository();
+      final session = await sessionRepository.getSession();
+      state = AsyncData(session);
       return session;
     } catch (e) {
+      state = AsyncError(e, StackTrace.current);
       rethrow;
     }
   }
 
-  Future<Database> openDB() async {
-    return await openDatabase(
-      'family_game_score.db',
-      version: 1,
-    );
-  }
-
-  Future<void> createSession() async {
-    Database? database;
+  Future<void> addSession() async {
+    state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
       if (state.value == null) {
-        final List<Map<String, dynamic>> maxIdResponse =
-            await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
-        final int newID = maxIdResponse.first['maxId'] == null
-            ? 1
-            : maxIdResponse.first['maxId'] + 1;
-        final newSession = Session(
-            id: newID, round: 1, begTime: formatDateTime(DateTime.now()));
-
-        await database.rawInsert(
-            'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
-            [newSession.id, newSession.round, newSession.begTime]);
+        final sessionRepository = SessionRepository();
+        final newSession = await sessionRepository.addSession();
         state = AsyncData(newSession);
       }
     } catch (e) {
-      rethrow;
-    } finally {
-      database?.close();
+      state = AsyncError(e, StackTrace.current);
     }
   }
 
-  Future<Session?> readSession() async {
-    Database? database;
+  Future<void> getSession() async {
+    state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      final List<Map<String, dynamic>> session = await database
-          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
-
-      if (session.isEmpty) {
-        return null;
-      } else {
-        return Session.fromJson(session.first);
-      }
+      final sessionRepository = SessionRepository();
+      final session = await sessionRepository.getSession();
+      state = AsyncData(session);
     } catch (e) {
-      rethrow;
-    } finally {
-      database?.close();
+      state = AsyncError(e, StackTrace.current);
     }
   }
 
-  Future<void> updateSession() async {
-    Database? database;
+  Future<void> updateRound() async {
+    state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      await database.rawUpdate(
-          'UPDATE Session SET round = ?, endTime = ? WHERE id = ?',
-          [state.value!.round, state.value!.endTime, state.value!.id]);
+      final sessionRepository = SessionRepository();
+      final updatedSession = await sessionRepository.updateRound(state.value!);
+      state = AsyncData(updatedSession);
     } catch (e) {
-      rethrow;
-    } finally {
-      database?.close();
+      state = AsyncError(e, StackTrace.current);
     }
   }
 
-  void updateRound() {
-    state = AsyncData(state.value!.copyWith(round: state.value!.round + 1));
-  }
+  Future<void> updateEndTime() async {
+    state = const AsyncLoading();
 
-  void updateEndTime() {
-    state = AsyncData(
-        state.value!.copyWith(endTime: formatDateTime(DateTime.now())));
+    try {
+      final sessionRepository = SessionRepository();
+      final updatedSession =
+          await sessionRepository.updateEndTime(state.value!);
+      state = AsyncData(updatedSession);
+    } catch (e) {
+      state = AsyncError(e, StackTrace.current);
+    }
   }
 
   void disposeSession() {
-    state = AsyncData(null);
-  }
-
-  Future<bool> isExistSession() async {
-    Database? database;
-
-    try {
-      database = await openDB();
-
-      final List<Map<String, dynamic>> currentSession = await database
-          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
-
-      return currentSession.isNotEmpty;
-    } catch (e) {
-      rethrow;
-    } finally {
-      database?.close();
-    }
-  }
-
-  String formatDateTime(DateTime dateTime) {
-    final year = dateTime.year.toString();
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-
-    return '$year年$month月$day日 $hour時$minute分';
+    state = const AsyncData(null);
   }
 }
 

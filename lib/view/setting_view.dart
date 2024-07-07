@@ -1,4 +1,4 @@
-import 'package:family_game_score/model/player.dart';
+import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter/material.dart';
@@ -162,9 +162,7 @@ class SettingView extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 try {
-                  await ref
-                      .read(playerProvider.notifier)
-                      .createPlayer(inputText);
+                  await ref.read(playerProvider.notifier).addPlayer(inputText);
                 } catch (e) {
                   showErrorDialog(context, e);
                 }
@@ -238,7 +236,7 @@ class SettingView extends ConsumerWidget {
               onPressed: () async {
                 try {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
-                  await ref.read(playerProvider.notifier).readPlayer();
+                  await ref.read(playerProvider.notifier).getPlayer();
                 } catch (e) {
                   showErrorDialog(context, e);
                 }

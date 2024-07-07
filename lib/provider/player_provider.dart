@@ -1,14 +1,14 @@
-import 'package:family_game_score/model/player.dart';
+import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/repository/player_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
   @override
   Future<List<Player>> build() async {
     try {
-      final players = await getAllPlayersFromDB();
+      final playerRepository = PlayerRepository();
+      final players = await playerRepository.getPlayer();
       state = AsyncData(players);
-
       return players;
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
@@ -16,68 +16,36 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     }
   }
 
-  Future<Database> openDB() async {
-    return await openDatabase(
-      'family_game_score.db',
-      version: 1,
-      onCreate: (Database db, int version) async {
-        await db.execute(
-          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status INTEGER)',
-        );
-        await db.execute(
-          'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT)',
-        );
-        await db.execute(
-          'CREATE TABLE Result(id INTEGER PRIMARY KEY AUTOINCREMENT, playerId INTEGER, sessionId INTEGER, score INTEGER, rank INTEGER)',
-        );
-      },
-    );
-  }
-
-  Future<void> createPlayer(String inputText) async {
-    Database? database;
-
+  Future<void> addPlayer(String inputText) async {
     state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      int id = await database.rawInsert(
-          'INSERT INTO Player(name, status) VALUES(?, 0)', [inputText]);
-      final player = Player(id: id, name: inputText, status: 0);
-      state = AsyncData([...state.value ?? [], player]);
+      final playerRepository = PlayerRepository();
+      final newPlayer = await playerRepository.addPlayer(inputText);
+      state = AsyncData([...state.value ?? [], newPlayer]);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-    } finally {
-      database?.close();
     }
   }
 
-  Future<void> readPlayer() async {
-    Database? database;
+  Future<void> getPlayer() async {
     state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      final players = await getAllPlayersFromDB();
+      final playerRepository = PlayerRepository();
+      final players = await playerRepository.getPlayer();
       state = AsyncData(players);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-    } finally {
-      database?.close();
     }
   }
 
   Future<void> updatePlayer(Player player) async {
-    Database? database;
     state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      await database.rawUpdate(
-          'UPDATE Player SET name = ? WHERE id = ?', [player.name, player.id]);
+      final playerRepository = PlayerRepository();
+      playerRepository.updatePlayer(player);
 
       if (state.value != null) {
         state = AsyncData(
@@ -87,20 +55,15 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-    } finally {
-      database?.close();
     }
   }
 
   Future<void> deletePlayer(Player player) async {
-    Database? database;
     state = const AsyncLoading();
 
     try {
-      database = await openDB();
-
-      await database
-          .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [player.id]);
+      final playerRepository = PlayerRepository();
+      playerRepository.deletePlayer(player);
 
       if (state.value != null) {
         state = AsyncData(
@@ -110,8 +73,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       }
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
-    } finally {
-      database?.close();
     }
   }
 
@@ -126,24 +87,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     final List<Player> players = state.value ?? [];
     players.sort((a, b) => a.id.compareTo(b.id));
     state = AsyncData(players);
-  }
-
-  Future<List<Player>> getAllPlayersFromDB() async {
-    Database? database;
-
-    try {
-      database = await openDB();
-
-      final List<Map<String, dynamic>> response =
-          await database.rawQuery('SELECT * FROM Player WHERE status = 0');
-      final players = response.map((map) => Player.fromJson(map)).toList();
-
-      return players;
-    } catch (e) {
-      rethrow;
-    } finally {
-      database?.close();
-    }
   }
 }
 

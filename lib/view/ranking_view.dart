@@ -22,7 +22,7 @@ class RankingView extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.check),
               onPressed: () {
-                showFinishDialog(context);
+                showFinishDialog(context, ref);
               },
             ),
         ],
@@ -79,7 +79,7 @@ class RankingView extends ConsumerWidget {
     );
   }
 
-  void showFinishDialog(BuildContext context) {
+  void showFinishDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -89,6 +89,7 @@ class RankingView extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () {
+                ref.refresh(resultProvider);
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,
