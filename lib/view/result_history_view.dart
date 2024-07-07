@@ -25,20 +25,32 @@ class ResultHistoryView extends ConsumerWidget {
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
-                itemBuilder: (context, dynamic element) => Card(
-                  elevation: 8.0,
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 10.0, vertical: 6.0),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 10.0),
-                    leading: Text('${element.result.rank}位',
-                        style: const TextStyle(fontSize: 14)),
-                    title: Text(element.player.name),
-                    trailing: Text('${element.result.score}ポイント',
-                        style: const TextStyle(fontSize: 14)),
-                  ),
-                ),
+                itemBuilder: (context, dynamic element) =>
+                    element.player.status == 0
+                        ? Card(
+                            elevation: 8.0,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 6.0),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10.0),
+                              leading: Text('${element.result.rank}位',
+                                  style: const TextStyle(fontSize: 14)),
+                              title: Text(element.player.name),
+                              trailing: Text('${element.result.score}ポイント',
+                                  style: const TextStyle(fontSize: 14)),
+                            ),
+                          )
+                        : const Card(
+                            elevation: 8.0,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 6.0),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10.0),
+                              title: Text('プレイヤーは削除されました'),
+                            ),
+                          ),
                 order: GroupedListOrder.ASC, // optional
               )
             : const Center(child: Text('まだ対戦履歴がありません')),

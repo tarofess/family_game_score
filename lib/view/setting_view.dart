@@ -238,6 +238,7 @@ class SettingView extends ConsumerWidget {
               onPressed: () async {
                 try {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
+                  await ref.read(playerProvider.notifier).readPlayer();
                 } catch (e) {
                   showErrorDialog(context, e);
                 }

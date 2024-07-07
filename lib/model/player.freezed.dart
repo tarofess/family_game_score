@@ -22,6 +22,7 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
 mixin _$Player {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  int get status => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -33,7 +34,7 @@ abstract class $PlayerCopyWith<$Res> {
   factory $PlayerCopyWith(Player value, $Res Function(Player) then) =
       _$PlayerCopyWithImpl<$Res, Player>;
   @useResult
-  $Res call({int id, String name});
+  $Res call({int id, String name, int status});
 }
 
 /// @nodoc
@@ -51,6 +52,7 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? status = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -61,6 +63,10 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -72,7 +78,7 @@ abstract class _$$PlayerImplCopyWith<$Res> implements $PlayerCopyWith<$Res> {
       __$$PlayerImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name});
+  $Res call({int id, String name, int status});
 }
 
 /// @nodoc
@@ -88,6 +94,7 @@ class __$$PlayerImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? status = null,
   }) {
     return _then(_$PlayerImpl(
       id: null == id
@@ -98,6 +105,10 @@ class __$$PlayerImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -105,7 +116,8 @@ class __$$PlayerImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PlayerImpl implements _Player {
-  const _$PlayerImpl({required this.id, required this.name});
+  const _$PlayerImpl(
+      {required this.id, required this.name, required this.status});
 
   factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlayerImplFromJson(json);
@@ -114,10 +126,12 @@ class _$PlayerImpl implements _Player {
   final int id;
   @override
   final String name;
+  @override
+  final int status;
 
   @override
   String toString() {
-    return 'Player(id: $id, name: $name)';
+    return 'Player(id: $id, name: $name, status: $status)';
   }
 
   @override
@@ -126,12 +140,13 @@ class _$PlayerImpl implements _Player {
         (other.runtimeType == runtimeType &&
             other is _$PlayerImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(runtimeType, id, name, status);
 
   @JsonKey(ignore: true)
   @override
@@ -148,8 +163,10 @@ class _$PlayerImpl implements _Player {
 }
 
 abstract class _Player implements Player {
-  const factory _Player({required final int id, required final String name}) =
-      _$PlayerImpl;
+  const factory _Player(
+      {required final int id,
+      required final String name,
+      required final int status}) = _$PlayerImpl;
 
   factory _Player.fromJson(Map<String, dynamic> json) = _$PlayerImpl.fromJson;
 
@@ -157,6 +174,8 @@ abstract class _Player implements Player {
   int get id;
   @override
   String get name;
+  @override
+  int get status;
   @override
   @JsonKey(ignore: true)
   _$$PlayerImplCopyWith<_$PlayerImpl> get copyWith =>

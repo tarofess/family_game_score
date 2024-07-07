@@ -22,7 +22,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
-          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',
+          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status INTEGER)',
         );
         await db.execute(
           'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT)',
@@ -42,9 +42,9 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     try {
       database = await openDB();
 
-      int id = await database
-          .rawInsert('INSERT INTO Player(name) VALUES(?)', [inputText]);
-      final player = Player(id: id, name: inputText);
+      int id = await database.rawInsert(
+          'INSERT INTO Player(name, status) VALUES(?, 0)', [inputText]);
+      final player = Player(id: id, name: inputText, status: 0);
       state = AsyncData([...state.value ?? [], player]);
     } catch (e) {
       state = AsyncError(e, StackTrace.current);
@@ -99,11 +99,12 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     try {
       database = await openDB();
 
-      await database.rawDelete('DELETE FROM Player WHERE id = ?', [player.id]);
+      await database
+          .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [player.id]);
 
       if (state.value != null) {
-        state =
-            AsyncData(state.value!.where((p) => p.id != player.id).toList());
+        state = AsyncData(
+            state.value!.map((p) => p.id == player.id ? player : p).toList());
       } else {
         state = const AsyncData([]);
       }
@@ -134,7 +135,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       database = await openDB();
 
       final List<Map<String, dynamic>> response =
-          await database.rawQuery('SELECT * FROM Player');
+          await database.rawQuery('SELECT * FROM Player WHERE status = 0');
       final players = response.map((map) => Player.fromJson(map)).toList();
 
       return players;

@@ -31,6 +31,7 @@ class ResultHistoryNotifier
             Result.rank,
             Player.id as playerId,
             Player.name as playerName,
+            Player.status as playerStatus,
             Session.id as sessionId,
             Session.round,
             Session.begTime,
