@@ -1,6 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
+import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,103 +30,24 @@ class SettingView extends ConsumerWidget {
                               AppLocalizations.of(context)!.playerNotRegistered,
                               textAlign: TextAlign.center);
                         } else {
-                          return ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Dismissible(
-                                key: Key(data[index].name),
-                                direction: DismissDirection.horizontal,
-                                background: Container(
-                                  color: Colors.red,
-                                  alignment: Alignment.centerRight,
-                                  padding: const EdgeInsets.only(right: 16.0),
-                                  child: const Icon(Icons.delete),
-                                ),
-                                secondaryBackground: Container(
-                                  color: Colors.green,
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.only(left: 16.0),
-                                  child: const Icon(Icons.edit),
-                                ),
-                                confirmDismiss: (direction) async {
-                                  if (direction ==
-                                      DismissDirection.endToStart) {
-                                    return showEditPlayerDialog(
-                                            context, ref, data[index]) ==
-                                        true;
-                                  } else if (direction ==
-                                      DismissDirection.startToEnd) {
-                                    return showDeleteDialog(
-                                            context, ref, data[index]) ==
-                                        true;
-                                  }
-                                  return false;
-                                },
-                                child: Builder(
-                                  builder: (context) {
-                                    return ListTile(
-                                      title: Text(
-                                        data[index].name,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      leading: const Icon(
-                                        Icons.person,
-                                        color: Colors.blue,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                          );
+                          return buildPlayerList(data, ref);
                         }
                       }, error: (error, stackTrace) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Text(
-                                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // ignore: unused_result
-                                  ref.refresh(playerProvider);
-                                },
-                                child:
-                                    Text(AppLocalizations.of(context)!.retry),
-                              ),
-                            ],
-                          ),
+                        return CommonErrorWidget.showDataFetchErrorMessage(
+                          context,
+                          ref,
+                          playerProvider,
+                          error,
                         );
                       }, loading: () {
                         return const Center(child: CircularProgressIndicator());
                       }),
                 error: (error, stackTrace) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Text(
-                            '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // ignore: unused_result
-                            ref.refresh(playerProvider);
-                          },
-                          child: Text(AppLocalizations.of(context)!.retry),
-                        ),
-                      ],
-                    ),
+                  return CommonErrorWidget.showDataFetchErrorMessage(
+                    context,
+                    ref,
+                    playerProvider,
+                    error,
                   );
                 },
                 loading: () {
@@ -139,6 +61,54 @@ class SettingView extends ConsumerWidget {
                 },
           child: const Icon(Icons.add),
         ));
+  }
+
+  Widget buildPlayerList(List<Player> data, WidgetRef ref) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Dismissible(
+          key: Key(data[index].name),
+          direction: DismissDirection.horizontal,
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 16.0),
+            child: const Icon(Icons.delete),
+          ),
+          secondaryBackground: Container(
+            color: Colors.green,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 16.0),
+            child: const Icon(Icons.edit),
+          ),
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              return showEditPlayerDialog(context, ref, data[index]) == true;
+            } else if (direction == DismissDirection.startToEnd) {
+              return showDeleteDialog(context, ref, data[index]) == true;
+            }
+            return false;
+          },
+          child: Builder(
+            builder: (context) {
+              return ListTile(
+                title: Text(
+                  data[index].name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+                leading: const Icon(
+                  Icons.person,
+                  color: Colors.blue,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 
   Future showAddPlayerDialog(BuildContext context, WidgetRef ref) {
@@ -169,7 +139,7 @@ class SettingView extends ConsumerWidget {
                   await ref.read(playerProvider.notifier).addPlayer(inputText);
                 } catch (e) {
                   // ignore: use_build_context_synchronously
-                  showErrorDialog(context, e);
+                  CommonErrorWidget.showErrorDialog(context, e);
                 }
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
@@ -213,7 +183,7 @@ class SettingView extends ConsumerWidget {
                       .updatePlayer(player.copyWith(name: inputText));
                 } catch (e) {
                   // ignore: use_build_context_synchronously
-                  showErrorDialog(context, e);
+                  CommonErrorWidget.showErrorDialog(context, e);
                 }
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
@@ -248,33 +218,12 @@ class SettingView extends ConsumerWidget {
                   await ref.read(playerProvider.notifier).getPlayer();
                 } catch (e) {
                   // ignore: use_build_context_synchronously
-                  showErrorDialog(context, e);
+                  CommonErrorWidget.showErrorDialog(context, e);
                 }
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
               },
               child: Text(AppLocalizations.of(context)!.yes),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void showErrorDialog(BuildContext context, dynamic error) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.errorTitle),
-          content: Text(
-              '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );

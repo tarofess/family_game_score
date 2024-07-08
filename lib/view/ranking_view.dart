@@ -1,7 +1,10 @@
 import 'package:family_game_score/main.dart';
+import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/result_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
+import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -31,56 +34,41 @@ class RankingView extends ConsumerWidget {
         ],
       ),
       body: results.when(data: (data) {
-        return ListView.builder(
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final result = data[index];
-            return Card(
-              elevation: 8.0,
-              margin:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-              child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
-                  leading: Text(
-                      '${result.rank}${AppLocalizations.of(context)!.rank}',
-                      style: const TextStyle(fontSize: 14)),
-                  title: Text(players.value!
-                      .where((player) => player.id == result.playerId)
-                      .first
-                      .name),
-                  trailing: Text(
-                      '${result.score}${AppLocalizations.of(context)!.point}',
-                      style: const TextStyle(fontSize: 14))),
-            );
-          },
-        );
+        return buildRankingList(data, players);
       }, loading: () {
         return const Center(
           child: CircularProgressIndicator(),
         );
       }, error: (error, stackTrace) {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Text(
-                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // ignore: unused_result
-                  ref.refresh(resultProvider);
-                },
-                child: Text(AppLocalizations.of(context)!.retry),
-              ),
-            ],
-          ),
-        );
+        return CommonErrorWidget.showDataFetchErrorMessage(
+            context, ref, resultProvider, error);
       }),
+    );
+  }
+
+  Widget buildRankingList(List<Result> data, AsyncValue<List<Player>> players) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        final result = data[index];
+        return Card(
+          elevation: 8.0,
+          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+          child: ListTile(
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              leading: Text(
+                  '${result.rank}${AppLocalizations.of(context)!.rank}',
+                  style: const TextStyle(fontSize: 14)),
+              title: Text(players.value!
+                  .where((player) => player.id == result.playerId)
+                  .first
+                  .name),
+              trailing: Text(
+                  '${result.score}${AppLocalizations.of(context)!.point}',
+                  style: const TextStyle(fontSize: 14))),
+        );
+      },
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/scoring_view.dart';
+import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -46,26 +47,8 @@ class HomeView extends ConsumerWidget {
               );
             },
             error: (error, stackTrace) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Text(
-                        '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // ignore: unused_result
-                        ref.refresh(playerProvider);
-                      },
-                      child: Text(AppLocalizations.of(context)!.retry),
-                    ),
-                  ],
-                ),
-              );
+              return CommonErrorWidget.showDataFetchErrorMessage(
+                  context, ref, playerProvider, error);
             },
           );
         },
@@ -75,26 +58,8 @@ class HomeView extends ConsumerWidget {
           );
         },
         error: (error, stackTrace) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text(
-                    '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // ignore: unused_result
-                    ref.refresh(sessionProvider);
-                  },
-                  child: Text(AppLocalizations.of(context)!.retry),
-                ),
-              ],
-            ),
-          );
+          return CommonErrorWidget.showDataFetchErrorMessage(
+              context, ref, sessionProvider, error);
         },
       ),
     );

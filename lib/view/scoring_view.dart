@@ -1,7 +1,9 @@
+import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/result_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/ranking_view.dart';
+import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -42,86 +44,17 @@ class ScoringView extends ConsumerWidget {
               Expanded(
                   child: results.when(
                       data: (data) => players.when(
-                          data: (data) => data.isNotEmpty
-                              ? ReorderableListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (context, index) {
-                                    return ListTile(
-                                      key: Key(data[index].id.toString()),
-                                      title: Text(
-                                        data[index].name,
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      leading: Text(
-                                        '${index + 1}${AppLocalizations.of(context)!.rank}',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      trailing: ReorderableDragStartListener(
-                                        index: index,
-                                        child: const Icon(Icons.drag_handle),
-                                      ),
-                                    );
-                                  },
-                                  onReorder: (oldIndex, newIndex) {
-                                    if (oldIndex < newIndex) {
-                                      newIndex -= 1;
-                                    }
-                                    ref
-                                        .read(playerProvider.notifier)
-                                        .reorderPlayer(oldIndex, newIndex);
-                                  },
-                                )
-                              : Text(AppLocalizations.of(context)!.noData),
+                          data: (data) => data.isEmpty
+                              ? Text(AppLocalizations.of(context)!.noData)
+                              : buildScoringList(data, ref),
                           error: (error, stackTrace) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // ignore: unused_result
-                                      ref.refresh(playerProvider);
-                                    },
-                                    child: Text(
-                                        AppLocalizations.of(context)!.retry),
-                                  ),
-                                ],
-                              ),
-                            );
+                            return CommonErrorWidget.showDataFetchErrorMessage(
+                                context, ref, playerProvider, error);
                           },
                           loading: () => const CircularProgressIndicator()),
                       error: (error, stackTrace) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Text(
-                                  '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  // ignore: unused_result
-                                  ref.refresh(resultProvider);
-                                },
-                                child:
-                                    Text(AppLocalizations.of(context)!.retry),
-                              ),
-                            ],
-                          ),
-                        );
+                        return CommonErrorWidget.showDataFetchErrorMessage(
+                            context, ref, resultProvider, error);
                       },
                       loading: () => const CircularProgressIndicator())),
             ],
@@ -139,6 +72,39 @@ class ScoringView extends ConsumerWidget {
               : null,
           child: const Icon(Icons.description),
         ));
+  }
+
+  Widget buildScoringList(List<Player> data, WidgetRef ref) {
+    return ReorderableListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          key: Key(data[index].id.toString()),
+          title: Text(
+            data[index].name,
+            style: const TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          leading: Text(
+            '${index + 1}${AppLocalizations.of(context)!.rank}',
+            style: const TextStyle(
+              fontSize: 16,
+            ),
+          ),
+          trailing: ReorderableDragStartListener(
+            index: index,
+            child: const Icon(Icons.drag_handle),
+          ),
+        );
+      },
+      onReorder: (oldIndex, newIndex) {
+        if (oldIndex < newIndex) {
+          newIndex -= 1;
+        }
+        ref.read(playerProvider.notifier).reorderPlayer(oldIndex, newIndex);
+      },
+    );
   }
 
   void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
@@ -177,7 +143,7 @@ class ScoringView extends ConsumerWidget {
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   // ignore: use_build_context_synchronously
-                  showErrorDialog(context, e);
+                  CommonErrorWidget.showErrorDialog(context, e);
                 }
               },
               child: Text(AppLocalizations.of(context)!.yes),
@@ -222,31 +188,10 @@ class ScoringView extends ConsumerWidget {
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                   // ignore: use_build_context_synchronously
-                  showErrorDialog(context, e);
+                  CommonErrorWidget.showErrorDialog(context, e);
                 }
               },
               child: Text(AppLocalizations.of(context)!.yes),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void showErrorDialog(BuildContext context, dynamic error) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.errorTitle),
-          content: Text(
-              '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.close),
             ),
           ],
         );
