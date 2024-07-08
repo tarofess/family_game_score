@@ -20,10 +20,10 @@ class ScoringView extends ConsumerWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              '${session.value != null ? session.value!.round.toString() : '1'}${AppLocalizations.of(context)!.round}'),
+              '${session.value == null ? '1' : session.value!.round.toString()}${AppLocalizations.of(context)!.round}'),
           leading: IconButton(
             icon: const Icon(Icons.check_circle_outline),
-            onPressed: session.value != null
+            onPressed: results.hasValue && session.value != null
                 ? () {
                     showFinishGameDialog(context, ref);
                   }
@@ -31,9 +31,11 @@ class ScoringView extends ConsumerWidget {
           ),
           actions: [
             IconButton(
-                onPressed: () {
-                  showMoveToNextRoundDialog(context, ref);
-                },
+                onPressed: results.hasValue
+                    ? () {
+                        showMoveToNextRoundDialog(context, ref);
+                      }
+                    : null,
                 icon: const Icon(Icons.arrow_forward)),
           ],
         ),
@@ -43,10 +45,9 @@ class ScoringView extends ConsumerWidget {
               Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings),
               Expanded(
                   child: results.when(
-                      data: (data) => players.when(
-                          data: (data) => data.isEmpty
-                              ? Text(AppLocalizations.of(context)!.noData)
-                              : buildScoringList(data, ref),
+                      data: (resultsData) => players.when(
+                          data: (playersData) =>
+                              buildScoringList(playersData, ref),
                           error: (error, stackTrace) {
                             return CommonErrorWidget.showDataFetchErrorMessage(
                                 context, ref, playerProvider, error);

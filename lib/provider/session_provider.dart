@@ -19,52 +19,41 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> addSession() async {
     state = const AsyncLoading();
 
-    try {
-      if (state.value == null) {
+    if (state.value == null) {
+      state = await AsyncValue.guard(() async {
         final sessionRepository = SessionRepository();
         final newSession = await sessionRepository.addSession();
-        state = AsyncData(newSession);
-      }
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
+        return newSession;
+      });
     }
   }
 
   Future<void> getSession() async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final sessionRepository = SessionRepository();
       final session = await sessionRepository.getSession();
-      state = AsyncData(session);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return session;
+    });
   }
 
   Future<void> updateRound() async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final sessionRepository = SessionRepository();
       final updatedSession = await sessionRepository.updateRound(state.value!);
-      state = AsyncData(updatedSession);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return updatedSession;
+    });
   }
 
   Future<void> updateEndTime() async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final sessionRepository = SessionRepository();
       final updatedSession =
           await sessionRepository.updateEndTime(state.value!);
-      state = AsyncData(updatedSession);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return updatedSession;
+    });
   }
 
   void disposeSession() {

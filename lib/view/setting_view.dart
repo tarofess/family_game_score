@@ -17,14 +17,8 @@ class SettingView extends ConsumerWidget {
     return Scaffold(
         body: Center(
             child: session.when(
-                data: (data) => data != null
-                    ? Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.unableToEditPlayer,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : players.when(data: (data) {
+                data: (data) => data == null
+                    ? players.when(data: (data) {
                         if (data.isEmpty) {
                           return Text(
                               AppLocalizations.of(context)!.playerNotRegistered,
@@ -41,12 +35,18 @@ class SettingView extends ConsumerWidget {
                         );
                       }, loading: () {
                         return const Center(child: CircularProgressIndicator());
-                      }),
+                      })
+                    : Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.unableToEditPlayer,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                 error: (error, stackTrace) {
                   return CommonErrorWidget.showDataFetchErrorMessage(
                     context,
                     ref,
-                    playerProvider,
+                    sessionProvider,
                     error,
                   );
                 },
@@ -54,11 +54,12 @@ class SettingView extends ConsumerWidget {
                   return const Center(child: CircularProgressIndicator());
                 })),
         floatingActionButton: FloatingActionButton(
-          onPressed: players.hasError || session.value != null
-              ? null
-              : () {
-                  showAddPlayerDialog(context, ref);
-                },
+          onPressed:
+              players.hasValue && session.hasValue && session.value == null
+                  ? () {
+                      showAddPlayerDialog(context, ref);
+                    }
+                  : null,
           child: const Icon(Icons.add),
         ));
   }

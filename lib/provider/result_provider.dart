@@ -26,37 +26,31 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   }
 
   Future<void> addResult() async {
-    state = const AsyncLoading();
-
     final session = ref.read(sessionProvider);
     final players = ref.read(playerProvider);
 
-    try {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
       final resultRepository = ResultRepository();
       await resultRepository.addResult(players.value!, session.value!);
       await resultRepository.updateRank(session.value!);
       final results = await resultRepository.getResult(session.value!);
-      state = AsyncData(results);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return results;
+    });
   }
 
   Future<void> updateResult() async {
-    state = const AsyncLoading();
-
     final session = ref.read(sessionProvider);
     final players = ref.read(playerProvider);
 
-    try {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
       final resultRepository = ResultRepository();
       await resultRepository.updateResult(players.value!, session.value!);
       await resultRepository.updateRank(session.value!);
       final results = await resultRepository.getResult(session.value!);
-      state = AsyncData(results);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return results;
+    });
   }
 }
 

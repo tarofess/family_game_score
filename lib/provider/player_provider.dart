@@ -18,62 +18,48 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
   Future<void> addPlayer(String inputText) async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final playerRepository = PlayerRepository();
       final newPlayer = await playerRepository.addPlayer(inputText);
-      state = AsyncData([...state.value ?? [], newPlayer]);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return [...state.value ?? [], newPlayer];
+    });
   }
 
   Future<void> getPlayer() async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final playerRepository = PlayerRepository();
       final players = await playerRepository.getPlayer();
-      state = AsyncData(players);
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+      return players;
+    });
   }
 
   Future<void> updatePlayer(Player player) async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final playerRepository = PlayerRepository();
-      playerRepository.updatePlayer(player);
+      await playerRepository.updatePlayer(player);
 
       if (state.value != null) {
-        state = AsyncData(
-            state.value!.map((p) => p.id == player.id ? player : p).toList());
+        return state.value!.map((p) => p.id == player.id ? player : p).toList();
       } else {
-        state = const AsyncData([]);
+        return [];
       }
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+    });
   }
 
   Future<void> deletePlayer(Player player) async {
     state = const AsyncLoading();
-
-    try {
+    state = await AsyncValue.guard(() async {
       final playerRepository = PlayerRepository();
-      playerRepository.deletePlayer(player);
+      await playerRepository.deletePlayer(player);
 
       if (state.value != null) {
-        state = AsyncData(
-            state.value!.map((p) => p.id == player.id ? player : p).toList());
+        return state.value!.map((p) => p.id == player.id ? player : p).toList();
       } else {
-        state = const AsyncData([]);
+        return [];
       }
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-    }
+    });
   }
 
   void reorderPlayer(int oldIndex, int newIndex) {
