@@ -6,15 +6,10 @@ class SessionRepository {
 
   SessionRepository(this.database);
 
-  Future<Session> addSession() async {
+  Future<Session> addSession(int id) async {
     try {
-      final List<Map<String, dynamic>> maxIdResponse =
-          await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
-      final int newID = maxIdResponse.first['maxId'] == null
-          ? 1
-          : maxIdResponse.first['maxId'] + 1;
       final newSession =
-          Session(id: newID, round: 1, begTime: formatDateTime(DateTime.now()));
+          Session(id: id, round: 1, begTime: formatDateTime(DateTime.now()));
 
       await database.rawInsert(
           'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
@@ -36,6 +31,14 @@ class SessionRepository {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<int> getMaxID() async {
+    final List<Map<String, dynamic>> maxIdResponse =
+        await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
+    return maxIdResponse.first['maxId'] == null
+        ? 1
+        : maxIdResponse.first['maxId'] + 1;
   }
 
   Future<Session> updateRound(Session session) async {

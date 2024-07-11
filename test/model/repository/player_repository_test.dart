@@ -16,7 +16,7 @@ void main() {
   });
 
   group('Testing PlayerRepository', () {
-    test('Create Player', () async {
+    test('Add Player', () async {
       when(mockDatabase.rawInsert(any, any)).thenAnswer((_) async => 1);
 
       final repository = PlayerRepository(mockDatabase);
@@ -26,7 +26,7 @@ void main() {
       expect(newPlayer.status, 0);
     });
 
-    test('Read Player', () async {
+    test('Get Player', () async {
       when(mockDatabase.rawQuery(any, any)).thenAnswer((_) async => [
             {'id': 1, 'name': 'Taro', 'status': 0},
             {'id': 2, 'name': 'Jiro', 'status': 0},

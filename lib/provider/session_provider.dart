@@ -25,7 +25,8 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
     if (state.value == null) {
       state = await AsyncValue.guard(() async {
-        final newSession = await sessionRepository.addSession();
+        final maxID = await sessionRepository.getMaxID();
+        final newSession = await sessionRepository.addSession(maxID);
         return newSession;
       });
     }
