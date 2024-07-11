@@ -1,12 +1,16 @@
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/session_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SessionNotifier extends AsyncNotifier<Session?> {
+  late SessionRepository sessionRepository;
+
   @override
   Future<Session?> build() async {
     try {
-      final sessionRepository = SessionRepository();
+      final database = await DatabaseHelper.instance.database;
+      sessionRepository = SessionRepository(database);
       final session = await sessionRepository.getSession();
       state = AsyncData(session);
       return session;
@@ -21,7 +25,6 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
     if (state.value == null) {
       state = await AsyncValue.guard(() async {
-        final sessionRepository = SessionRepository();
         final newSession = await sessionRepository.addSession();
         return newSession;
       });
@@ -31,7 +34,6 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> getSession() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final sessionRepository = SessionRepository();
       final session = await sessionRepository.getSession();
       return session;
     });
@@ -40,7 +42,6 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> updateRound() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final sessionRepository = SessionRepository();
       final updatedSession = await sessionRepository.updateRound(state.value!);
       return updatedSession;
     });
@@ -49,7 +50,6 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> updateEndTime() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final sessionRepository = SessionRepository();
       final updatedSession =
           await sessionRepository.updateEndTime(state.value!);
       return updatedSession;

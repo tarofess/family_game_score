@@ -1,12 +1,16 @@
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/player_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
+  late PlayerRepository playerRepository;
+
   @override
   Future<List<Player>> build() async {
     try {
-      final playerRepository = PlayerRepository();
+      final database = await DatabaseHelper.instance.database;
+      playerRepository = PlayerRepository(database);
       final players = await playerRepository.getPlayer();
       state = AsyncData(players);
       return players;
@@ -19,7 +23,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   Future<void> addPlayer(String inputText) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final playerRepository = PlayerRepository();
       final newPlayer = await playerRepository.addPlayer(inputText);
       return [...state.value ?? [], newPlayer];
     });
@@ -28,7 +31,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   Future<void> getPlayer() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final playerRepository = PlayerRepository();
       final players = await playerRepository.getPlayer();
       return players;
     });
@@ -37,7 +39,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   Future<void> updatePlayer(Player player) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final playerRepository = PlayerRepository();
       await playerRepository.updatePlayer(player);
 
       if (state.value != null) {
@@ -51,7 +52,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   Future<void> deletePlayer(Player player) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final playerRepository = PlayerRepository();
       await playerRepository.deletePlayer(player);
 
       if (state.value != null) {

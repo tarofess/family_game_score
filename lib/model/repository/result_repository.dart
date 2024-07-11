@@ -4,20 +4,14 @@ import 'package:family_game_score/model/entity/session.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ResultRepository {
-  Future<Database> openDB() async {
-    return await openDatabase(
-      'family_game_score.db',
-      version: 1,
-    );
-  }
+  Database database;
+
+  ResultRepository(this.database);
 
   Future<void> addResult(List<Player> players, Session session) async {
-    Database? database;
     int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
     try {
-      database = await openDB();
-
       for (final player in players) {
         await database.rawInsert(
             'INSERT INTO Result(playerId, sessionId, score, rank) VALUES(?, ?, ?, 1)',
@@ -27,17 +21,11 @@ class ResultRepository {
       }
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<List<Result>> getResult(Session session) async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final List<Map<String, dynamic>> results = await database.rawQuery(
           'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
           [session.id]);
@@ -45,18 +33,13 @@ class ResultRepository {
       return results.map((e) => Result.fromJson(e)).toList();
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<void> updateResult(List<Player> players, Session session) async {
-    Database? database;
     int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
     try {
-      database = await openDB();
-
       for (final player in players) {
         final response = await database.rawQuery(
             'SELECT * FROM Result WHERE playerId = ? AND sessionId = ?',
@@ -70,19 +53,13 @@ class ResultRepository {
       }
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<void> updateRank(Session session) async {
-    Database? database;
-
     int rank = 1;
 
     try {
-      database = await openDB();
-
       final resultsForRank = await database.rawQuery(
           'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
           [session.id]);

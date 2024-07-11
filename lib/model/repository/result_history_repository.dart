@@ -2,19 +2,12 @@ import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ResultHistoryRepository {
-  Future<Database> openDB() async {
-    return await openDatabase(
-      'family_game_score.db',
-      version: 1,
-    );
-  }
+  Database database;
+
+  ResultHistoryRepository(this.database);
 
   Future<List<ResultHistory>> getResultHistory() async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final response = await database.rawQuery('''
           SELECT 
             Result.id as resultId,
@@ -39,8 +32,6 @@ class ResultHistoryRepository {
       return results;
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 }

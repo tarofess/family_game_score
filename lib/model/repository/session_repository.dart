@@ -2,19 +2,12 @@ import 'package:family_game_score/model/entity/session.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SessionRepository {
-  Future<Database> openDB() async {
-    return await openDatabase(
-      'family_game_score.db',
-      version: 1,
-    );
-  }
+  Database database;
+
+  SessionRepository(this.database);
 
   Future<Session> addSession() async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final List<Map<String, dynamic>> maxIdResponse =
           await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
       final int newID = maxIdResponse.first['maxId'] == null
@@ -30,17 +23,11 @@ class SessionRepository {
       return newSession;
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<Session?> getSession() async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final List<Map<String, dynamic>> response = await database
           .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
       final session = response.map((map) => Session.fromJson(map)).toList();
@@ -48,17 +35,11 @@ class SessionRepository {
       return session.isEmpty ? null : session.first;
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<Session> updateRound(Session session) async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final updatedSession = session.copyWith(round: session.round + 1);
       await database.rawUpdate('UPDATE Session SET round = ? WHERE id = ?',
           [updatedSession.round, updatedSession.id]);
@@ -66,17 +47,11 @@ class SessionRepository {
       return updatedSession;
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
   Future<Session> updateEndTime(Session session) async {
-    Database? database;
-
     try {
-      database = await openDB();
-
       final updatedSession =
           session.copyWith(endTime: formatDateTime(DateTime.now()));
       await database.rawUpdate('UPDATE Session SET endTime = ? WHERE id = ?',
@@ -85,8 +60,6 @@ class SessionRepository {
       return updatedSession;
     } catch (e) {
       rethrow;
-    } finally {
-      database?.close();
     }
   }
 
