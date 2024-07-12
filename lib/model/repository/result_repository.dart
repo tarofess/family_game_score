@@ -60,21 +60,18 @@ class ResultRepository {
     int rank = 1;
 
     try {
-      final resultsForRank = await database.rawQuery(
-          'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
-          [session.id]);
+      final resultsForRank = await getResult(session);
 
       for (int index = 0; index < resultsForRank.length; index++) {
         if (index >= 1 &&
-            resultsForRank[index]['score'] ==
-                resultsForRank[index - 1]['score']) {
+            resultsForRank[index].score == resultsForRank[index - 1].score) {
           // 同じスコアの場合は同じ順位にする
           await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
-              [rank, resultsForRank[index]['id']]);
+              [rank, resultsForRank[index].id]);
         } else {
           rank = index + 1;
           await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
-              [rank, resultsForRank[index]['id']]);
+              [rank, resultsForRank[index].id]);
         }
       }
     } catch (e) {
