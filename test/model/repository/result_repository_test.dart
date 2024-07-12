@@ -21,7 +21,6 @@ void main() {
   group('Testing ResultRepository', () {
     test('Add Result', () async {
       when(mockDatabase.rawInsert(any, any)).thenAnswer((_) async => 1);
-
       const players = [
         Player(id: 1, name: 'Taro', status: 0),
         Player(id: 2, name: 'Jiro', status: 0)
