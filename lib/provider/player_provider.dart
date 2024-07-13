@@ -2,14 +2,17 @@ import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/player_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
   late PlayerRepository playerRepository;
+  Database database;
+
+  PlayerNotifier(this.database);
 
   @override
   Future<List<Player>> build() async {
     try {
-      final database = await DatabaseHelper.instance.database;
       playerRepository = PlayerRepository(database);
       final players = await playerRepository.getPlayer();
       state = AsyncData(players);
@@ -77,5 +80,5 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 }
 
 final playerProvider = AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
-  return PlayerNotifier();
+  return PlayerNotifier(DatabaseHelper.instance.database);
 });

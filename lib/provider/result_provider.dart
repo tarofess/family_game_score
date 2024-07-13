@@ -4,14 +4,17 @@ import 'package:family_game_score/model/repository/result_repository.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ResultNotifier extends AsyncNotifier<List<Result>> {
   late ResultRepository resultRepository;
+  Database database;
+
+  ResultNotifier(this.database);
 
   @override
   Future<List<Result>> build() async {
     try {
-      final database = await DatabaseHelper.instance.database;
       resultRepository = ResultRepository(database);
       final session = ref.read(sessionProvider);
 
@@ -57,5 +60,5 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
 }
 
 final resultProvider = AsyncNotifierProvider<ResultNotifier, List<Result>>(() {
-  return ResultNotifier();
+  return ResultNotifier(DatabaseHelper.instance.database);
 });

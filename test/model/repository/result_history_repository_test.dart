@@ -1,6 +1,3 @@
-import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/model/entity/result.dart';
-import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/model/repository/result_history_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';

@@ -8,9 +8,16 @@ class DatabaseHelper {
 
   DatabaseHelper._internal();
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await openDB();
+  Future<void> initDatabase() async {
+    if (_database == null) {
+      _database = await openDB();
+    }
+  }
+
+  Database get database {
+    if (_database == null) {
+      throw StateError("Database not initialized. Call initDatabase() first.");
+    }
     return _database!;
   }
 

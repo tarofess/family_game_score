@@ -1,3 +1,4 @@
+import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/view/home_view.dart';
 import 'package:family_game_score/view/result_history_view.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:family_game_score/view/setting_view.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.initDatabase();
   runApp(const ProviderScope(child: MyApp()));
 }
 
