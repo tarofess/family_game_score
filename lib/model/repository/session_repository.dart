@@ -8,7 +8,7 @@ class SessionRepository {
 
   Future<Session> addSession(int id) async {
     final newSession =
-        Session(id: id, round: 1, begTime: formatDateTime(DateTime.now()));
+        Session(id: id, round: 1, begTime: DateTime.now().toString());
 
     await database.rawInsert(
         'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
@@ -42,21 +42,10 @@ class SessionRepository {
   }
 
   Future<Session> updateEndTime(Session session) async {
-    final updatedSession =
-        session.copyWith(endTime: formatDateTime(DateTime.now()));
+    final updatedSession = session.copyWith(endTime: DateTime.now().toString());
     await database.rawUpdate('UPDATE Session SET endTime = ? WHERE id = ?',
         [updatedSession.endTime, updatedSession.id]);
 
     return updatedSession;
-  }
-
-  String formatDateTime(DateTime dateTime) {
-    final year = dateTime.year.toString();
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-
-    return '$year-$month-$day $hour:$minute';
   }
 }

@@ -4,7 +4,6 @@ import 'package:family_game_score/model/entity/session.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'result_history.freezed.dart';
-// part 'result_history.g.dart';
 
 @freezed
 class ResultHistory with _$ResultHistory {

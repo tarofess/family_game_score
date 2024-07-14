@@ -1,4 +1,5 @@
 import 'package:family_game_score/model/entity/result_history.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,10 +50,11 @@ class ResultHistoryView extends ConsumerWidget {
     return GroupedListView<dynamic, String>(
       elements: data,
       groupBy: (element) => element.session.begTime,
+      groupComparator: (value1, value2) => value2.compareTo(value1),
       groupSeparatorBuilder: (String value) => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  $value',
+          '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  ${value.getFormatBegTime()}',
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -84,7 +86,6 @@ class ResultHistoryView extends ConsumerWidget {
                 title: Text(AppLocalizations.of(context)!.playerHasBeenDeleted),
               ),
             ),
-      order: GroupedListOrder.ASC, // optional
     );
   }
 }
