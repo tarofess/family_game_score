@@ -22,7 +22,7 @@ class ScoringView extends ConsumerWidget {
           title: Text(
               '${session.value == null ? '1' : session.value!.round.toString()}${AppLocalizations.of(context)!.round}'),
           leading: IconButton(
-            icon: const Icon(Icons.check_circle_outline),
+            icon: const Icon(Icons.exit_to_app),
             onPressed: results.hasValue && session.value != null
                 ? () {
                     showFinishGameDialog(context, ref);
@@ -36,7 +36,7 @@ class ScoringView extends ConsumerWidget {
                         showMoveToNextRoundDialog(context, ref);
                       }
                     : null,
-                icon: const Icon(Icons.arrow_forward)),
+                icon: const Icon(Icons.check_circle_outline)),
           ],
         ),
         body: Center(

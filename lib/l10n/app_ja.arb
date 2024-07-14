@@ -1,5 +1,6 @@
 {
   "@@locale": "ja",
+  "appTitle": "ファミリーゲームスコア",
   "gameStart": "ゲームスタート！",
   "gameRestart": "ゲーム再開！",
   "errorTitle": "エラー",
@@ -11,6 +12,7 @@
   "rank": "位",
   "point": "ポイント",
   "noMatchHistory": "まだ対戦履歴がありません",
+  "resultHistoryHeaderLeading": "日時",
   "playerHasBeenDeleted": "プレイヤーは削除されました",
   "enterYourName": "名前を入力してください",
   "playerName": "プレイヤー名",

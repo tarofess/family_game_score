@@ -16,7 +16,7 @@ class ResultHistoryView extends ConsumerWidget {
       body: resultHistory.when(
         data: (data) => data.isEmpty
             ? Center(child: Text(AppLocalizations.of(context)!.noMatchHistory))
-            : buildResultHistoryList(data),
+            : buildResultHistoryList(context, data),
         error: (error, stackTrace) {
           return Center(
             child: Column(
@@ -44,14 +44,15 @@ class ResultHistoryView extends ConsumerWidget {
     );
   }
 
-  Widget buildResultHistoryList(List<ResultHistory> data) {
+  Widget buildResultHistoryList(
+      BuildContext context, List<ResultHistory> data) {
     return GroupedListView<dynamic, String>(
       elements: data,
       groupBy: (element) => element.session.begTime,
       groupSeparatorBuilder: (String value) => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          value,
+          '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  $value',
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),

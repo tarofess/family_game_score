@@ -43,7 +43,7 @@ class MyTabView extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Family Game Score'),
+          title: Text(AppLocalizations.of(context)!.appTitle),
           bottom: TabBar(
             tabs: [
               Tab(text: AppLocalizations.of(context)!.home),
