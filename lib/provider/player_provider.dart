@@ -58,7 +58,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
       await playerRepository.deletePlayer(player);
 
       if (state.value != null) {
-        return state.value!.map((p) => p.id == player.id ? player : p).toList();
+        return state.value!.where((p) => p.id != player.id).toList();
       } else {
         return [];
       }

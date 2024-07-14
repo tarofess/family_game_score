@@ -33,24 +33,26 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
     }
   }
 
-  Future<void> addResult(List<Player> players, Session session) async {
+  Future<void> addOrUpdateResult(List<Player> players, Session session) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await resultRepository.addResult(players, session);
-      await resultRepository.updateRank(session);
-      final results = await resultRepository.getResult(session);
-      return results;
+      if (state.value?.isEmpty ?? true) {
+        await addResult(players, session);
+      } else {
+        await updateResult(players, session);
+      }
+      return await resultRepository.getResult(session);
     });
   }
 
+  Future<void> addResult(List<Player> players, Session session) async {
+    await resultRepository.addResult(players, session);
+    await resultRepository.updateRank(session);
+  }
+
   Future<void> updateResult(List<Player> players, Session session) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await resultRepository.updateResult(players, session);
-      await resultRepository.updateRank(session);
-      final results = await resultRepository.getResult(session);
-      return results;
-    });
+    await resultRepository.updateResult(players, session);
+    await resultRepository.updateRank(session);
   }
 }
 

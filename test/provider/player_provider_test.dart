@@ -134,8 +134,8 @@ void main() {
       expect(
         container.read(playerProvider),
         isA<AsyncData<List<Player>>>()
-            .having((d) => d.value.length, 'player count', 3)
-            .having((d) => d.value[0].name, 'player name', 'Taro'),
+            .having((d) => d.value.length, 'player count', 2)
+            .having((d) => d.value[0].name, 'player name', 'Jiro'),
       );
     });
 

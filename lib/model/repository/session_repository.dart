@@ -7,30 +7,22 @@ class SessionRepository {
   SessionRepository(this.database);
 
   Future<Session> addSession(int id) async {
-    try {
-      final newSession =
-          Session(id: id, round: 1, begTime: formatDateTime(DateTime.now()));
+    final newSession =
+        Session(id: id, round: 1, begTime: formatDateTime(DateTime.now()));
 
-      await database.rawInsert(
-          'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
-          [newSession.id, newSession.round, newSession.begTime]);
+    await database.rawInsert(
+        'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
+        [newSession.id, newSession.round, newSession.begTime]);
 
-      return newSession;
-    } catch (e) {
-      rethrow;
-    }
+    return newSession;
   }
 
   Future<Session?> getSession() async {
-    try {
-      final List<Map<String, dynamic>> response = await database
-          .rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
-      final session = response.map((map) => Session.fromJson(map)).toList();
+    final List<Map<String, dynamic>> response =
+        await database.rawQuery('SELECT * FROM Session WHERE endTime IS NULL');
+    final session = response.map((map) => Session.fromJson(map)).toList();
 
-      return session.isEmpty ? null : session.first;
-    } catch (e) {
-      rethrow;
-    }
+    return session.isEmpty ? null : session.first;
   }
 
   Future<int> getMaxID() async {
@@ -42,28 +34,20 @@ class SessionRepository {
   }
 
   Future<Session> updateRound(Session session) async {
-    try {
-      final updatedSession = session.copyWith(round: session.round + 1);
-      await database.rawUpdate('UPDATE Session SET round = ? WHERE id = ?',
-          [updatedSession.round, updatedSession.id]);
+    final updatedSession = session.copyWith(round: session.round + 1);
+    await database.rawUpdate('UPDATE Session SET round = ? WHERE id = ?',
+        [updatedSession.round, updatedSession.id]);
 
-      return updatedSession;
-    } catch (e) {
-      rethrow;
-    }
+    return updatedSession;
   }
 
   Future<Session> updateEndTime(Session session) async {
-    try {
-      final updatedSession =
-          session.copyWith(endTime: formatDateTime(DateTime.now()));
-      await database.rawUpdate('UPDATE Session SET endTime = ? WHERE id = ?',
-          [updatedSession.endTime, updatedSession.id]);
+    final updatedSession =
+        session.copyWith(endTime: formatDateTime(DateTime.now()));
+    await database.rawUpdate('UPDATE Session SET endTime = ? WHERE id = ?',
+        [updatedSession.endTime, updatedSession.id]);
 
-      return updatedSession;
-    } catch (e) {
-      rethrow;
-    }
+    return updatedSession;
   }
 
   String formatDateTime(DateTime dateTime) {

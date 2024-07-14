@@ -85,9 +85,9 @@ class SettingView extends ConsumerWidget {
           ),
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
-              return showEditPlayerDialog(context, ref, data[index]) == true;
+              return await showEditPlayerDialog(context, ref, data[index]);
             } else if (direction == DismissDirection.startToEnd) {
-              return showDeleteDialog(context, ref, data[index]) == true;
+              return await showDeleteDialog(context, ref, data[index]);
             }
             return false;
           },
@@ -216,7 +216,6 @@ class SettingView extends ConsumerWidget {
               onPressed: () async {
                 try {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
-                  await ref.read(playerProvider.notifier).getPlayer();
                 } catch (e) {
                   // ignore: use_build_context_synchronously
                   CommonErrorWidget.showErrorDialog(context, e);

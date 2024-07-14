@@ -111,7 +111,6 @@ class ScoringView extends ConsumerWidget {
   void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
     final players = ref.read(playerProvider);
     final session = ref.read(sessionProvider);
-    final results = ref.read(resultProvider);
 
     showDialog(
       context: context,
@@ -133,16 +132,9 @@ class ScoringView extends ConsumerWidget {
                   await ref.read(sessionProvider.notifier).addSession();
                   await ref.read(sessionProvider.notifier).updateRound();
                   final newSession = ref.read(sessionProvider);
-
-                  if (results.value?.isEmpty ?? true) {
-                    await ref
-                        .read(resultProvider.notifier)
-                        .addResult(players.value!, newSession.value!);
-                  } else {
-                    await ref
-                        .read(resultProvider.notifier)
-                        .updateResult(players.value!, newSession.value!);
-                  }
+                  await ref
+                      .read(resultProvider.notifier)
+                      .addOrUpdateResult(players.value!, newSession.value!);
 
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
