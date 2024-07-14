@@ -1,7 +1,8 @@
+import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/result_repository.dart';
-import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,28 +33,22 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
     }
   }
 
-  Future<void> addResult() async {
-    final session = ref.read(sessionProvider);
-    final players = ref.read(playerProvider);
-
+  Future<void> addResult(List<Player> players, Session session) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await resultRepository.addResult(players.value!, session.value!);
-      await resultRepository.updateRank(session.value!);
-      final results = await resultRepository.getResult(session.value!);
+      await resultRepository.addResult(players, session);
+      await resultRepository.updateRank(session);
+      final results = await resultRepository.getResult(session);
       return results;
     });
   }
 
-  Future<void> updateResult() async {
-    final session = ref.read(sessionProvider);
-    final players = ref.read(playerProvider);
-
+  Future<void> updateResult(List<Player> players, Session session) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await resultRepository.updateResult(players.value!, session.value!);
-      await resultRepository.updateRank(session.value!);
-      final results = await resultRepository.getResult(session.value!);
+      await resultRepository.updateResult(players, session);
+      await resultRepository.updateRank(session);
+      final results = await resultRepository.getResult(session);
       return results;
     });
   }
