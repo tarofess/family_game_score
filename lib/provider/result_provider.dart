@@ -4,7 +4,7 @@ import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/result_repository.dart';
 import 'package:family_game_score/provider/session_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ResultNotifier extends AsyncNotifier<List<Result>> {

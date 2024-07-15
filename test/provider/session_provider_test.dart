@@ -1,7 +1,7 @@
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/model/repository/session_repository.dart';
 import 'package:family_game_score/provider/session_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
