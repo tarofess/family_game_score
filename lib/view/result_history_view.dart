@@ -51,11 +51,13 @@ class ResultHistoryView extends ConsumerWidget {
   }
 
   Widget buildResultHistoryList(
-      BuildContext context, List<ResultHistory> data) {
+      BuildContext context, List<ResultHistory> resultHistory) {
     return GroupedListView<dynamic, String>(
-      elements: data,
+      elements: resultHistory,
       groupBy: (element) => element.session.begTime,
       groupComparator: (value1, value2) => value2.compareTo(value1),
+      itemComparator: (item1, item2) =>
+          item1.result.rank.compareTo(item2.result.rank),
       groupSeparatorBuilder: (String value) => Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
