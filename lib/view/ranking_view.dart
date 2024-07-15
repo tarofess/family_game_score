@@ -66,7 +66,11 @@ class RankingView extends HookConsumerWidget {
             return CommonErrorWidget.showDataFetchErrorMessage(
                 context, ref, resultProvider, error);
           }),
-          buildSakuraAnimation(session, petals),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: buildSakuraAnimation(session, petals),
+            ),
+          ),
         ],
       ),
     );
