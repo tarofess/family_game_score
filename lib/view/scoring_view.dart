@@ -19,6 +19,7 @@ class ScoringView extends ConsumerWidget {
 
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
               '${session.value == null ? '1' : session.value!.round.toString()}${AppLocalizations.of(context)!.round}'),
           leading: IconButton(

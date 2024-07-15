@@ -41,6 +41,7 @@ class RankingView extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: session.value == null
             ? Text(AppLocalizations.of(context)!.announcementOfResults)
             : Text(AppLocalizations.of(context)!.currentRanking),

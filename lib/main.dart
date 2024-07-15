@@ -43,7 +43,10 @@ class MyTabView extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.appTitle),
+          centerTitle: true,
+          title: Text(
+            AppLocalizations.of(context)!.appTitle,
+          ),
           bottom: TabBar(
             tabs: [
               Tab(text: AppLocalizations.of(context)!.home),
