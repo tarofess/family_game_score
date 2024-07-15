@@ -5,7 +5,7 @@ import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/ranking_view.dart';
 import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ScoringView extends ConsumerWidget {
@@ -42,7 +42,9 @@ class ScoringView extends ConsumerWidget {
         body: Center(
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings),
+              Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.normal)),
               Expanded(
                   child: results.when(
                       data: (resultsData) => players.when(
@@ -71,6 +73,7 @@ class ScoringView extends ConsumerWidget {
                   );
                 }
               : null,
+          backgroundColor: session.value != null ? null : Colors.grey[300],
           child: const Icon(Icons.description),
         ));
   }

@@ -1,9 +1,12 @@
+import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/view/widget/common_error_widget.dart';
+import 'package:family_game_score/view/widget/gradient_circle_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeView extends ConsumerWidget {
@@ -20,26 +23,8 @@ class HomeView extends ConsumerWidget {
           return players.when(
             data: (playersData) {
               return Center(
-                child: ElevatedButton(
-                    onPressed: playersData.length >= 2
-                        ? () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const ScoringView(),
-                              ),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      side: const BorderSide(
-                          color: Color.fromARGB(255, 174, 206, 255)),
-                      minimumSize: const Size(200, 50),
-                    ),
-                    child: sessionData == null
-                        ? Text(AppLocalizations.of(context)!.gameStart)
-                        : Text(AppLocalizations.of(context)!.gameRestart)),
-              );
+                  child: buildCenterCircleButton(
+                      context, ref, sessionData, playersData));
             },
             loading: () {
               return const Center(
@@ -61,6 +46,57 @@ class HomeView extends ConsumerWidget {
           return CommonErrorWidget.showDataFetchErrorMessage(
               context, ref, sessionProvider, error);
         },
+      ),
+    );
+  }
+
+  Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
+      Session? sessionData, List<Player> playersData) {
+    return GradientCircleButton(
+      onPressed: playersData.length >= 2
+          ? () {
+              Navigator.of(context).pushReplacement(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const ScoringView(),
+                  transitionDuration: const Duration(milliseconds: 1000),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    var begin = const Offset(0.0, 1.0);
+                    var end = Offset.zero;
+                    var curve = Curves.fastLinearToSlowEaseIn;
+
+                    var tween = Tween(begin: begin, end: end)
+                        .chain(CurveTween(curve: curve));
+                    var offsetAnimation = animation.drive(tween);
+
+                    return SlideTransition(
+                      position: offsetAnimation,
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            }
+          : null,
+      text: sessionData == null
+          ? AppLocalizations.of(context)!.gameStart
+          : AppLocalizations.of(context)!.gameRestart,
+      size: 200.0,
+      gradientColors: playersData.length >= 2
+          ? const [
+              Color.fromARGB(255, 255, 194, 102),
+              Color.fromARGB(255, 255, 101, 90)
+            ]
+          : const [
+              Color.fromARGB(255, 218, 217, 215),
+              Color.fromARGB(255, 72, 71, 71)
+            ],
+      textStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Gill Sans',
       ),
     );
   }

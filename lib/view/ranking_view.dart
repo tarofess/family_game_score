@@ -5,11 +5,13 @@ import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/result_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_error_widget.dart';
+import 'package:family_game_score/view/widget/sakura_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class RankingView extends ConsumerWidget {
+class RankingView extends HookConsumerWidget {
   const RankingView({super.key});
 
   @override
@@ -17,6 +19,24 @@ class RankingView extends ConsumerWidget {
     final results = ref.watch(resultProvider);
     final players = ref.read(playerProvider);
     final session = ref.read(sessionProvider);
+
+    final animationController = useAnimationController(
+      duration: const Duration(seconds: 10),
+    )..repeat();
+
+    final petals = useState(List.generate(35, (index) => SakuraPetal()));
+
+    useEffect(() {
+      void listener() {
+        petals.value = petals.value.map((petal) {
+          petal.update();
+          return petal;
+        }).toList();
+      }
+
+      animationController.addListener(listener);
+      return () => animationController.removeListener(listener);
+    }, [animationController]);
 
     return Scaffold(
       appBar: AppBar(
@@ -33,16 +53,26 @@ class RankingView extends ConsumerWidget {
             ),
         ],
       ),
-      body: results.when(data: (data) {
-        return buildRankingList(data, players);
-      }, loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }, error: (error, stackTrace) {
-        return CommonErrorWidget.showDataFetchErrorMessage(
-            context, ref, resultProvider, error);
-      }),
+      body: Stack(
+        children: [
+          results.when(data: (data) {
+            return buildRankingList(data, players);
+          }, loading: () {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }, error: (error, stackTrace) {
+            return CommonErrorWidget.showDataFetchErrorMessage(
+                context, ref, resultProvider, error);
+          }),
+          session.value == null
+              ? CustomPaint(
+                  painter: SakuraPainter(petals.value),
+                  child: Container(),
+                )
+              : const SizedBox()
+        ],
+      ),
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_error_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingView extends ConsumerWidget {
@@ -20,9 +20,7 @@ class SettingView extends ConsumerWidget {
                 data: (data) => data == null
                     ? players.when(data: (data) {
                         if (data.isEmpty) {
-                          return Text(
-                              AppLocalizations.of(context)!.playerNotRegistered,
-                              textAlign: TextAlign.center);
+                          return buildPlayerNotRegisteredMessage(context);
                         } else {
                           return buildPlayerList(data, ref);
                         }
@@ -38,9 +36,9 @@ class SettingView extends ConsumerWidget {
                       })
                     : Center(
                         child: Text(
-                          AppLocalizations.of(context)!.unableToEditPlayer,
-                          textAlign: TextAlign.center,
-                        ),
+                            AppLocalizations.of(context)!.unableToEditPlayer,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 18)),
                       ),
                 error: (error, stackTrace) {
                   return CommonErrorWidget.showDataFetchErrorMessage(
@@ -60,8 +58,23 @@ class SettingView extends ConsumerWidget {
                       showAddPlayerDialog(context, ref);
                     }
                   : null,
+          backgroundColor:
+              players.hasValue && session.hasValue && session.value == null
+                  ? null
+                  : Colors.grey[300],
           child: const Icon(Icons.add),
         ));
+  }
+
+  Widget buildPlayerNotRegisteredMessage(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        AppLocalizations.of(context)!.playerNotRegistered,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontSize: 18),
+      ),
+    );
   }
 
   Widget buildPlayerList(List<Player> data, WidgetRef ref) {
@@ -202,9 +215,10 @@ class SettingView extends ConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.confirmation),
-          content: Text(
-              '${AppLocalizations.of(context)!.deleteConfirmationEn}${player.name}${AppLocalizations.of(context)!.deleteConfirmationJa}'),
+          title: Text(
+              '${AppLocalizations.of(context)!.deleteConfirmationTitleEn}${player.name}${AppLocalizations.of(context)!.deleteConfirmationTitleJa}'),
+          content:
+              Text(AppLocalizations.of(context)!.deleteConfirmationMessage),
           actions: [
             TextButton(
               onPressed: () {

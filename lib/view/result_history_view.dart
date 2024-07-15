@@ -2,7 +2,7 @@ import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -16,7 +16,12 @@ class ResultHistoryView extends ConsumerWidget {
     return Scaffold(
       body: resultHistory.when(
         data: (data) => data.isEmpty
-            ? Center(child: Text(AppLocalizations.of(context)!.noMatchHistory))
+            ? Center(
+                child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(AppLocalizations.of(context)!.noMatchHistory,
+                    style: const TextStyle(fontSize: 18)),
+              ))
             : buildResultHistoryList(context, data),
         error: (error, stackTrace) {
           return Center(
@@ -53,10 +58,31 @@ class ResultHistoryView extends ConsumerWidget {
       groupComparator: (value1, value2) => value2.compareTo(value1),
       groupSeparatorBuilder: (String value) => Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(
-          '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  ${value.getFormatBegTime()}',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color.fromARGB(255, 124, 213, 255),
+                Color.fromARGB(255, 54, 154, 255),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  ${value.getFormatBegTime()}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Gill Sans',
+              ),
+            ),
+          ),
         ),
       ),
       itemBuilder: (context, dynamic element) => element.player.status == 0

@@ -30,7 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_riverpod:
+  hooks_riverpod:
+  flutter_hooks:
   freezed:
   freezed_annotation:
   json_serializable:
