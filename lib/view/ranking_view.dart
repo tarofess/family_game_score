@@ -1,6 +1,7 @@
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/provider/player_provider.dart';
 import 'package:family_game_score/provider/result_provider.dart';
 import 'package:family_game_score/provider/session_provider.dart';
@@ -65,12 +66,7 @@ class RankingView extends HookConsumerWidget {
             return CommonErrorWidget.showDataFetchErrorMessage(
                 context, ref, resultProvider, error);
           }),
-          session.value == null
-              ? CustomPaint(
-                  painter: SakuraPainter(petals.value),
-                  child: Container(),
-                )
-              : const SizedBox()
+          buildSakuraAnimation(session, petals),
         ],
       ),
     );
@@ -100,6 +96,16 @@ class RankingView extends HookConsumerWidget {
         );
       },
     );
+  }
+
+  Widget buildSakuraAnimation(
+      AsyncValue<Session?> session, ValueNotifier<List<SakuraPetal>> petals) {
+    return session.value == null
+        ? CustomPaint(
+            painter: SakuraPainter(petals.value),
+            child: Container(),
+          )
+        : const SizedBox();
   }
 
   void showFinishDialog(BuildContext context, WidgetRef ref) {

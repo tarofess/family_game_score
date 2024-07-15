@@ -34,12 +34,7 @@ class SettingView extends ConsumerWidget {
                       }, loading: () {
                         return const Center(child: CircularProgressIndicator());
                       })
-                    : Center(
-                        child: Text(
-                            AppLocalizations.of(context)!.unableToEditPlayer,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 18)),
-                      ),
+                    : buildUnableToEditPlayerText(context),
                 error: (error, stackTrace) {
                   return CommonErrorWidget.showDataFetchErrorMessage(
                     context,
@@ -72,7 +67,7 @@ class SettingView extends ConsumerWidget {
       child: Text(
         AppLocalizations.of(context)!.playerNotRegistered,
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 18),
+        style: const TextStyle(fontSize: 16),
       ),
     );
   }
@@ -122,6 +117,13 @@ class SettingView extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget buildUnableToEditPlayerText(BuildContext context) {
+    return Center(
+      child: Text(AppLocalizations.of(context)!.unableToEditPlayer,
+          textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
     );
   }
 

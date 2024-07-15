@@ -59,7 +59,7 @@ class HomeView extends ConsumerWidget {
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
                       const ScoringView(),
-                  transitionDuration: const Duration(milliseconds: 1000),
+                  transitionDuration: const Duration(milliseconds: 800),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     var begin = const Offset(0.0, 1.0);
@@ -89,8 +89,8 @@ class HomeView extends ConsumerWidget {
               Color.fromARGB(255, 255, 101, 90)
             ]
           : const [
-              Color.fromARGB(255, 218, 217, 215),
-              Color.fromARGB(255, 72, 71, 71)
+              Color.fromARGB(255, 223, 223, 223),
+              Color.fromARGB(255, 109, 109, 109)
             ],
       textStyle: const TextStyle(
         color: Colors.white,

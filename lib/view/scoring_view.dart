@@ -42,9 +42,7 @@ class ScoringView extends ConsumerWidget {
         body: Center(
           child: Column(
             children: [
-              Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.normal)),
+              buildHereAreTheCurrentRankingsText(context),
               Expanded(
                   child: results.when(
                       data: (resultsData) => players.when(
@@ -76,6 +74,11 @@ class ScoringView extends ConsumerWidget {
           backgroundColor: session.value != null ? null : Colors.grey[300],
           child: const Icon(Icons.description),
         ));
+  }
+
+  Widget buildHereAreTheCurrentRankingsText(BuildContext context) {
+    return Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal));
   }
 
   Widget buildScoringList(List<Player> data, WidgetRef ref) {
