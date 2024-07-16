@@ -30,6 +30,7 @@ class MyApp extends ConsumerWidget {
         Locale('en', ''),
       ],
       home: MyTabView(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
