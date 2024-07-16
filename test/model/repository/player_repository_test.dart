@@ -10,93 +10,114 @@ import 'player_repository_test.mocks.dart';
 @GenerateMocks([Database])
 void main() {
   late MockDatabase mockDatabase;
+  late PlayerRepository playerRepository;
 
   setUp(() {
     mockDatabase = MockDatabase();
+    playerRepository = PlayerRepository(mockDatabase);
   });
 
-  group('Testing PlayerRepository', () {
-    test('Add Player', () async {
-      when(mockDatabase.rawInsert(any, any)).thenAnswer((_) async => 1);
-      final repository = PlayerRepository(mockDatabase);
-      final newPlayer = await repository.addPlayer('Taro');
+  group('PlayerRepository', () {
+    group('addPlayer', () {
+      test('should add a new player successfully', () async {
+        when(mockDatabase.rawInsert(any, any)).thenAnswer((_) async => 1);
 
-      expect(newPlayer.id, 1);
-      expect(newPlayer.name, 'Taro');
-      expect(newPlayer.status, 0);
+        final result = await playerRepository.addPlayer('John Doe');
+
+        expect(result, isA<Player>());
+        expect(result.id, 1);
+        expect(result.name, 'John Doe');
+        expect(result.status, 0);
+
+        verify(mockDatabase.rawInsert(
+            'INSERT INTO Player(name, status) VALUES(?, 0)', ['John Doe']));
+      });
+
+      test('should throw an exception when insertion fails', () async {
+        when(mockDatabase.rawInsert(any, any))
+            .thenThrow(Exception('Insertion failed'));
+
+        expect(() => playerRepository.addPlayer('John Doe'),
+            throwsA(isA<Exception>()));
+      });
     });
 
-    test('Get Player', () async {
-      when(mockDatabase.rawQuery(any, any)).thenAnswer((_) async => [
-            {'id': 1, 'name': 'Taro', 'status': 0},
-            {'id': 2, 'name': 'Jiro', 'status': 0},
-            {'id': 3, 'name': 'Saburo', 'status': 0}
-          ]);
-      final repository = PlayerRepository(mockDatabase);
-      final players = await repository.getPlayer();
+    group('getPlayer', () {
+      test('should return a list of active players', () async {
+        when(mockDatabase.rawQuery(any)).thenAnswer((_) async => [
+              {'id': 1, 'name': 'John Doe', 'status': 0},
+              {'id': 2, 'name': 'Jane Doe', 'status': 0},
+            ]);
 
-      expect(players.length, 3);
-      expect(players[0].name, 'Taro');
-      expect(players[1].name, 'Jiro');
-      expect(players[2].name, 'Saburo');
+        final result = await playerRepository.getPlayer();
+
+        expect(result, isA<List<Player>>());
+        expect(result.length, 2);
+        expect(result[0].id, 1);
+        expect(result[0].name, 'John Doe');
+        expect(result[0].status, 0);
+        expect(result[1].id, 2);
+        expect(result[1].name, 'Jane Doe');
+        expect(result[1].status, 0);
+
+        verify(mockDatabase.rawQuery('SELECT * FROM Player WHERE status = 0'));
+      });
+
+      test('should return an empty list when no active players', () async {
+        when(mockDatabase.rawQuery(any)).thenAnswer((_) async => []);
+
+        final result = await playerRepository.getPlayer();
+
+        expect(result, isEmpty);
+      });
+
+      test('should throw an exception when query fails', () async {
+        when(mockDatabase.rawQuery(any)).thenThrow(Exception('Query failed'));
+
+        expect(() => playerRepository.getPlayer(), throwsA(isA<Exception>()));
+      });
     });
 
-    test('Update Player', () async {
-      when(mockDatabase.rawUpdate(any, any)).thenAnswer((_) async => 1);
-      const player = Player(id: 4, name: 'Shiro', status: 0);
-      final repository = PlayerRepository(mockDatabase);
-      await repository.updatePlayer(player);
+    group('updatePlayer', () {
+      test('should update player successfully', () async {
+        when(mockDatabase.rawUpdate(any, any)).thenAnswer((_) async => 1);
 
-      verify(mockDatabase.rawUpdate('UPDATE Player SET name = ? WHERE id = ?',
-          [player.name, player.id])).called(1);
+        const player = Player(id: 1, name: 'Updated John', status: 0);
+        await playerRepository.updatePlayer(player);
+
+        verify(mockDatabase.rawUpdate(
+            'UPDATE Player SET name = ? WHERE id = ?', ['Updated John', 1]));
+      });
+
+      test('should throw an exception when update fails', () async {
+        when(mockDatabase.rawUpdate(any, any))
+            .thenThrow(Exception('Update failed'));
+
+        const player = Player(id: 1, name: 'Updated John', status: 0);
+        expect(() => playerRepository.updatePlayer(player),
+            throwsA(isA<Exception>()));
+      });
     });
 
-    test('Delete Player', () async {
-      when(mockDatabase.rawUpdate(any, any)).thenAnswer((_) async => 1);
-      const player = Player(id: 5, name: 'Goro', status: 0);
-      final repository = PlayerRepository(mockDatabase);
-      await repository.deletePlayer(player);
+    group('deletePlayer', () {
+      test('should mark player as deleted successfully', () async {
+        when(mockDatabase.rawUpdate(any, any)).thenAnswer((_) async => 1);
 
-      verify(mockDatabase.rawUpdate(
-          'UPDATE Player SET status = -1 WHERE id = ?', [player.id])).called(1);
-    });
-  });
+        const player = Player(id: 1, name: 'John Doe', status: 0);
+        await playerRepository.deletePlayer(player);
 
-  group('Testing PlayerRepository - Exception', () {
-    test('Add Player - Throws Exception', () async {
-      when(mockDatabase.rawInsert(any, any))
-          .thenThrow(Exception('Failed to insert'));
-      final repository = PlayerRepository(mockDatabase);
+        verify(mockDatabase
+            .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [1]));
+      });
 
-      expect(() => repository.addPlayer('Taro'), throwsException);
-    });
+      test('should throw an exception when delete fails', () async {
+        when(mockDatabase.rawUpdate(any, any))
+            .thenThrow(Exception('Delete failed'));
 
-    test('Get Player - Throws Exception', () async {
-      when(mockDatabase.rawQuery(any, any))
-          .thenThrow(Exception('Failed to fetch'));
-      final repository = PlayerRepository(mockDatabase);
-
-      expect(() async => await repository.getPlayer(), throwsException);
-    });
-
-    test('Update Player - Throws Exception', () async {
-      when(mockDatabase.rawUpdate(any, any))
-          .thenThrow(Exception('Failed to update'));
-      const player = Player(id: 4, name: 'Shiro', status: 0);
-      final repository = PlayerRepository(mockDatabase);
-
-      expect(
-          () async => await repository.updatePlayer(player), throwsException);
-    });
-
-    test('Delete Player - Throws Exception', () async {
-      when(mockDatabase.rawUpdate(any, any))
-          .thenThrow(Exception('Failed to delete'));
-      const player = Player(id: 5, name: 'Goro', status: 0);
-      final repository = PlayerRepository(mockDatabase);
-
-      expect(
-          () async => await repository.deletePlayer(player), throwsException);
+        const player = Player(id: 1, name: 'John Doe', status: 0);
+        expect(() => playerRepository.deletePlayer(player),
+            throwsA(isA<Exception>()));
+      });
     });
   });
 }
