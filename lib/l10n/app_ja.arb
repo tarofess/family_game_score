@@ -38,5 +38,6 @@
   "noData": "データがありません",
   "announcementOfResults": "結果発表",
   "finishDialogTitleInRankingView": "お疲れ様でした！",
-  "finishDialogMessageInRankingView": "ホーム画面に戻ります"
+  "finishDialogMessageInRankingView": "ホーム画面に戻ります",
+  "homeSnackbarMessage": "プレイヤーが2名以上登録されていません\n設定画面でプレイヤーを追加してください"
 }

@@ -39,5 +39,6 @@
   "noData": "No data available",
   "announcementOfResults": "Announcement of the Results",
   "finishDialogTitleInRankingView": "Good job!",
-  "finishDialogMessageInRankingView": "Return to Home screen"
+  "finishDialogMessageInRankingView": "Return to Home screen",
+  "homeSnackbarMessage": "Two or more players are not registered\nPlease add a player in the settings page"
 }

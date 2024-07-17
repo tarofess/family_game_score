@@ -53,9 +53,9 @@ class HomeView extends ConsumerWidget {
   Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
       Session? sessionData, List<Player> playersData) {
     return GradientCircleButton(
-      onPressed: playersData.length >= 2
-          ? () {
-              Navigator.of(context).pushReplacement(
+      onPressed: () async {
+        playersData.length >= 2
+            ? Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
                       const ScoringView(),
@@ -76,9 +76,17 @@ class HomeView extends ConsumerWidget {
                     );
                   },
                 ),
+              )
+            : ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.homeSnackbarMessage,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  // backgroundColor: Colors.red,
+                ),
               );
-            }
-          : null,
+      },
       text: sessionData == null
           ? AppLocalizations.of(context)!.gameStart
           : AppLocalizations.of(context)!.gameRestart,
