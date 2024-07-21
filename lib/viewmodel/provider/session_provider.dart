@@ -25,14 +25,15 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<void> addSession() async {
     state = const AsyncLoading();
-
-    if (state.value == null) {
-      state = await AsyncValue.guard(() async {
+    state = await AsyncValue.guard(() async {
+      if (state.value == null) {
         final maxID = await sessionRepository.getMaxID();
         final newSession = await sessionRepository.addSession(maxID);
         return newSession;
-      });
-    }
+      } else {
+        return state.value;
+      }
+    });
   }
 
   Future<void> getSession() async {

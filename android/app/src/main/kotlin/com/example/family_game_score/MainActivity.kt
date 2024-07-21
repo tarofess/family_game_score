@@ -1,4 +1,4 @@
-package com.example.family_game_score
+package com.tarofess.family_game_score
 
 import io.flutter.embedding.android.FlutterActivity
 

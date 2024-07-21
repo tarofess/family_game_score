@@ -5,7 +5,7 @@ import 'package:mockito/annotations.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:family_game_score/model/entity/result_history.dart';
-import 'package:family_game_score/provider/result_history_provider.dart';
+import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 
 import 'result_history_provider_test.mocks.dart';
 

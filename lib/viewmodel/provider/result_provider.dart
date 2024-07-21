@@ -3,7 +3,8 @@ import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/model/repository/result_repository.dart';
-import 'package:family_game_score/provider/session_provider.dart';
+import 'package:family_game_score/viewmodel/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,15 +34,18 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
     }
   }
 
-  Future<void> addOrUpdateResult(List<Player> players, Session session) async {
+  Future<void> addOrUpdateResult() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      final players = ref.read(playerProvider);
+      final session = ref.read(sessionProvider);
+
       if (state.value?.isEmpty ?? true) {
-        await addResult(players, session);
+        await addResult(players.value!, session.value!);
       } else {
-        await updateResult(players, session);
+        await updateResult(players.value!, session.value!);
       }
-      return await resultRepository.getResult(session);
+      return await resultRepository.getResult(session.value!);
     });
   }
 

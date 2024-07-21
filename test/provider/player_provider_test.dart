@@ -1,6 +1,6 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/repository/player_repository.dart';
-import 'package:family_game_score/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';

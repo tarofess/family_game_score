@@ -1,7 +1,9 @@
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/provider/player_provider.dart';
-import 'package:family_game_score/provider/session_provider.dart';
-import 'package:family_game_score/view/widget/common_error_widget.dart';
+import 'package:family_game_score/view/widget/common_dialog.dart';
+import 'package:family_game_score/viewmodel/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/session_provider.dart';
+import 'package:family_game_score/view/widget/common_async_widget.dart';
+import 'package:family_game_score/viewmodel/setting_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,54 +13,46 @@ class SettingView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final players = ref.watch(playerProvider);
-    final session = ref.watch(sessionProvider);
+    final vm = ref.watch(settingViewModelProvider);
 
     return Scaffold(
         body: Center(
-            child: session.when(
+            child: vm.session.when(
                 data: (data) => data == null
-                    ? players.when(data: (data) {
-                        if (data.isEmpty) {
-                          return buildPlayerNotRegisteredMessage(context);
-                        } else {
-                          return buildPlayerList(data, ref);
-                        }
-                      }, error: (error, stackTrace) {
-                        return CommonErrorWidget.showDataFetchErrorMessage(
-                          context,
-                          ref,
-                          playerProvider,
-                          error,
-                        );
-                      }, loading: () {
-                        return const Center(child: CircularProgressIndicator());
-                      })
+                    ? buildPlayers(context, ref, vm)
                     : buildUnableToEditPlayerText(context),
-                error: (error, stackTrace) {
-                  return CommonErrorWidget.showDataFetchErrorMessage(
-                    context,
-                    ref,
-                    sessionProvider,
-                    error,
-                  );
-                },
-                loading: () {
-                  return const Center(child: CircularProgressIndicator());
-                })),
+                loading: () => CommonAsyncWidgets.showLoading(),
+                error: (error, stackTrace) =>
+                    CommonAsyncWidgets.showDataFetchErrorMessage(
+                        context, ref, sessionProvider, error))),
         floatingActionButton: FloatingActionButton(
-          onPressed:
-              players.hasValue && session.hasValue && session.value == null
-                  ? () {
-                      showAddPlayerDialog(context, ref);
-                    }
-                  : null,
-          backgroundColor:
-              players.hasValue && session.hasValue && session.value == null
-                  ? null
-                  : Colors.grey[300],
+          onPressed: vm.getFloatingActionButtonCallback(context, ref),
+          backgroundColor: vm.getFloatingActionButtonColor(),
           child: const Icon(Icons.add),
         ));
+  }
+
+  Widget buildPlayers(
+      BuildContext context, WidgetRef ref, SettingViewModel vm) {
+    return vm.players.when(
+        data: (data) {
+          if (data.isEmpty) {
+            return buildPlayerNotRegisteredMessage(context);
+          } else {
+            return buildPlayerList(data, ref);
+          }
+        },
+        loading: () => CommonAsyncWidgets.showLoading(),
+        error: (error, stackTrace) =>
+            CommonAsyncWidgets.showDataFetchErrorMessage(
+                context, ref, playerProvider, error));
+  }
+
+  Widget buildUnableToEditPlayerText(BuildContext context) {
+    return Center(
+      child: Text(AppLocalizations.of(context)!.unableToEditPlayer,
+          textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+    );
   }
 
   Widget buildPlayerNotRegisteredMessage(BuildContext context) {
@@ -120,54 +114,6 @@ class SettingView extends ConsumerWidget {
     );
   }
 
-  Widget buildUnableToEditPlayerText(BuildContext context) {
-    return Center(
-      child: Text(AppLocalizations.of(context)!.unableToEditPlayer,
-          textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
-    );
-  }
-
-  Future showAddPlayerDialog(BuildContext context, WidgetRef ref) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String inputText = '';
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.enterYourName),
-          content: TextField(
-            onChanged: (value) {
-              inputText = value;
-            },
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.playerName,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(playerProvider.notifier).addPlayer(inputText);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonErrorWidget.showErrorDialog(context, e);
-                }
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future showEditPlayerDialog(
       BuildContext context, WidgetRef ref, Player player) {
     return showDialog(
@@ -199,7 +145,7 @@ class SettingView extends ConsumerWidget {
                       .updatePlayer(player.copyWith(name: inputText));
                 } catch (e) {
                   // ignore: use_build_context_synchronously
-                  CommonErrorWidget.showErrorDialog(context, e);
+                  CommonDialog.showErrorDialog(context, e);
                 }
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);
@@ -234,7 +180,7 @@ class SettingView extends ConsumerWidget {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
                 } catch (e) {
                   // ignore: use_build_context_synchronously
-                  CommonErrorWidget.showErrorDialog(context, e);
+                  CommonDialog.showErrorDialog(context, e);
                 }
                 // ignore: use_build_context_synchronously
                 Navigator.pop(context);

@@ -9,9 +9,7 @@ class DatabaseHelper {
   DatabaseHelper._internal();
 
   Future<void> initDatabase() async {
-    if (_database == null) {
-      _database = await openDB();
-    }
+    _database ??= await openDB();
   }
 
   Database get database {
