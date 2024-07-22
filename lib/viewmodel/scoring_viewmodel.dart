@@ -50,7 +50,7 @@ class ScoringViewModel {
   }
 
   Color? getFloatingActionButtonColor() {
-    return session.value != null ? null : Colors.grey[300];
+    return session.value == null ? Colors.grey[300] : null;
   }
 }
 
