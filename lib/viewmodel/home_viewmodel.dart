@@ -6,7 +6,6 @@ import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeViewModel {
@@ -29,9 +28,7 @@ class HomeViewModel {
   bool canStartGame(List<Player> players) => players.length >= 2;
 
   String getButtonText(Session? sessionData, BuildContext context) {
-    return sessionData == null
-        ? AppLocalizations.of(context)!.gameStart
-        : AppLocalizations.of(context)!.gameRestart;
+    return sessionData == null ? 'ゲームスタート！' : 'ゲーム再開！';
   }
 
   List<Color> getGradientColors(List<Player> players) {

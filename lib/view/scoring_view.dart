@@ -5,7 +5,6 @@ import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/scoring_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ScoringView extends ConsumerWidget {
   const ScoringView({super.key});
@@ -72,8 +71,8 @@ class ScoringView extends ConsumerWidget {
   }
 
   Widget buildHereAreTheCurrentRankingsText(BuildContext context) {
-    return Text(AppLocalizations.of(context)!.hereAreTheCurrentRankings,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal));
+    return const Text('現在の順位はこちら↓',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal));
   }
 
   Widget buildScoringList(List<Player> data, WidgetRef ref) {
@@ -99,7 +98,7 @@ class ScoringView extends ConsumerWidget {
         ),
       ),
       leading: Text(
-        '${index + 1}${AppLocalizations.of(context)!.rank}',
+        '${index + 1}位',
         style: const TextStyle(
           fontSize: 16,
         ),

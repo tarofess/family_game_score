@@ -7,7 +7,6 @@ import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/setting_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingView extends ConsumerWidget {
   const SettingView({super.key});
@@ -50,19 +49,19 @@ class SettingView extends ConsumerWidget {
   }
 
   Widget buildUnableToEditPlayerText(BuildContext context) {
-    return Center(
-      child: Text(AppLocalizations.of(context)!.unableToEditPlayer,
-          textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+    return const Center(
+      child: Text('現在ゲームが進行中のため\nプレイヤーの編集ができません',
+          textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
     );
   }
 
   Widget buildPlayerNotRegisteredMessage(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
+    return const Padding(
+      padding: EdgeInsets.all(16.0),
       child: Text(
-        AppLocalizations.of(context)!.playerNotRegistered,
+        'プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
         textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 16),
       ),
     );
   }

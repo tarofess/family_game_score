@@ -1,7 +1,6 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultCard extends StatelessWidget {
   final Player player;
@@ -17,11 +16,10 @@ class ResultCard extends StatelessWidget {
       child: ListTile(
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-          leading: Text('${result.rank}${AppLocalizations.of(context)!.rank}',
-              style: const TextStyle(fontSize: 14)),
+          leading:
+              Text('${result.rank}位', style: const TextStyle(fontSize: 14)),
           title: Text(player.name),
-          trailing: Text(
-              '${result.score}${AppLocalizations.of(context)!.point}',
+          trailing: Text('${result.score}ポイント',
               style: const TextStyle(fontSize: 14))),
     );
   }

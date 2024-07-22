@@ -7,7 +7,6 @@ import 'package:family_game_score/viewmodel/result_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ResultHistoryView extends ConsumerWidget {
   const ResultHistoryView({super.key});
@@ -30,11 +29,10 @@ class ResultHistoryView extends ConsumerWidget {
   }
 
   Widget buildNoMatchHistoryMessage(BuildContext context) {
-    return Center(
+    return const Center(
         child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(AppLocalizations.of(context)!.noMatchHistory,
-          style: const TextStyle(fontSize: 18)),
+      padding: EdgeInsets.all(16.0),
+      child: Text('まだ対戦履歴がありません', style: TextStyle(fontSize: 18)),
     ));
   }
 
@@ -72,7 +70,7 @@ class ResultHistoryView extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            '${AppLocalizations.of(context)!.resultHistoryHeaderLeading}  ${value.getFormatBegTime()}',
+            '日時  ${value.getFormatBegTime()}',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.white,
@@ -87,14 +85,12 @@ class ResultHistoryView extends ConsumerWidget {
   }
 
   Widget buildPlayerHasBeenDeletedCard(BuildContext context) {
-    return Card(
-      elevation: 8.0,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        title: Text(AppLocalizations.of(context)!.playerHasBeenDeleted),
-      ),
-    );
+    return const Card(
+        elevation: 8.0,
+        margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        child: ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            title: Text('プレイヤーは削除されました')));
   }
 }

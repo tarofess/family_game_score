@@ -9,7 +9,6 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ScoringViewModel {
   final Ref ref;
@@ -24,7 +23,7 @@ class ScoringViewModel {
 
   Widget getAppBarTitle(BuildContext context) {
     return Text(
-        '${session.value == null ? '1' : session.value!.round.toString()}${AppLocalizations.of(context)!.round}');
+        '${session.value == null ? '1' : session.value!.round.toString()}回戦');
   }
 
   VoidCallback? getExitButtonCallback(BuildContext context, WidgetRef ref) {

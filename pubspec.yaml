@@ -37,8 +37,6 @@ dependencies:
   json_serializable:
   sqflite:
   grouped_list:
-  flutter_localizations:
-    sdk: flutter
   intl:
   flutter_launcher_icons:
 

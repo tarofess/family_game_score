@@ -10,7 +10,6 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DialogService {
   final NavigationService navigationService;
@@ -23,13 +22,13 @@ class DialogService {
       builder: (BuildContext context) {
         String inputText = '';
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.enterYourName),
+          title: const Text('名前を入力してください'),
           content: TextField(
             onChanged: (value) {
               inputText = value;
             },
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.playerName,
+            decoration: const InputDecoration(
+              hintText: 'プレイヤー名',
             ),
           ),
           actions: [
@@ -37,7 +36,7 @@ class DialogService {
               onPressed: () {
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('キャンセル'),
             ),
             TextButton(
               onPressed: () async {
@@ -65,7 +64,7 @@ class DialogService {
       builder: (BuildContext context) {
         String inputText = player.name;
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.editPlayerName),
+          title: const Text('プレイヤー名を編集してください'),
           content: TextField(
             onChanged: (value) {
               inputText = value;
@@ -79,7 +78,7 @@ class DialogService {
               onPressed: () {
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.cancel),
+              child: const Text('キャンセル'),
             ),
             TextButton(
               onPressed: () async {
@@ -110,16 +109,14 @@ class DialogService {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-              '${AppLocalizations.of(context)!.deleteConfirmationTitleEn}${player.name}${AppLocalizations.of(context)!.deleteConfirmationTitleJa}'),
-          content:
-              Text(AppLocalizations.of(context)!.deleteConfirmationMessage),
+          title: Text('${player.name}を削除します'),
+          content: const Text('削除すると元に戻せませんが本当に削除しますか？'),
           actions: [
             TextButton(
               onPressed: () {
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.no),
+              child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () async {
@@ -134,7 +131,7 @@ class DialogService {
                 // ignore: use_build_context_synchronously
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.yes),
+              child: const Text('はい'),
             ),
           ],
         );
@@ -148,15 +145,15 @@ class DialogService {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.confirmation),
+          title: const Text('確認'),
           content: Text(
-              '${AppLocalizations.of(context)!.moveToNextRoundDialogMessageEn}${session.value != null ? (session.value!.round + 1).toString() : '2'}${AppLocalizations.of(context)!.moveToNextRoundDialogMessageRoundEn}${AppLocalizations.of(context)!.moveToNextRoundDialogMessageJa}'),
+              '${session.value != null ? (session.value!.round + 1).toString() : '2'}回戦に進みますか？'),
           actions: [
             TextButton(
               onPressed: () {
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.no),
+              child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () async {
@@ -174,7 +171,7 @@ class DialogService {
                   CommonDialog.showErrorDialog(context, e, NavigationService());
                 }
               },
-              child: Text(AppLocalizations.of(context)!.yes),
+              child: const Text('はい'),
             ),
           ],
         );
@@ -187,15 +184,14 @@ class DialogService {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.confirmation),
-          content: Text(
-              AppLocalizations.of(context)!.finishDialogMessageInScoringView),
+          title: const Text('確認'),
+          content: const Text('ゲームを終了しますか？\nゲームが終了すると順位が確定します'),
           actions: [
             TextButton(
               onPressed: () {
                 navigationService.pop(context);
               },
-              child: Text(AppLocalizations.of(context)!.no),
+              child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () async {
@@ -215,7 +211,7 @@ class DialogService {
                   CommonDialog.showErrorDialog(context, e, NavigationService());
                 }
               },
-              child: Text(AppLocalizations.of(context)!.yes),
+              child: const Text('はい'),
             ),
           ],
         );
@@ -228,10 +224,8 @@ class DialogService {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-              AppLocalizations.of(context)!.finishDialogTitleInRankingView),
-          content: Text(
-              AppLocalizations.of(context)!.finishDialogMessageInRankingView),
+          title: const Text('お疲れ様でした！'),
+          content: const Text('ホーム画面に戻ります'),
           actions: [
             TextButton(
               onPressed: () {
@@ -243,7 +237,7 @@ class DialogService {
                 navigationService.pop(context);
                 navigationService.pushReplacement(context, const MyApp());
               },
-              child: Text(AppLocalizations.of(context)!.yes),
+              child: const Text('はい'),
             ),
           ],
         );

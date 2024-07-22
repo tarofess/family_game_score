@@ -8,7 +8,6 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RankingViewModel {
   final Ref ref;
@@ -21,9 +20,7 @@ class RankingViewModel {
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
   Widget getAppBarTitle(BuildContext context) {
-    return session.value == null
-        ? Text(AppLocalizations.of(context)!.announcementOfResults)
-        : Text(AppLocalizations.of(context)!.currentRanking);
+    return session.value == null ? const Text('結果発表') : const Text('現在の順位');
   }
 
   Widget getIconButton(BuildContext context, WidgetRef ref) {
