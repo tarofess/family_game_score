@@ -20,9 +20,7 @@ class RankingView extends HookConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         title: vm.getAppBarTitle(context),
-        actions: [
-          vm.getIconButton(context, ref),
-        ],
+        actions: [vm.getIconButton(context, ref)],
       ),
       body: Stack(
         children: [
@@ -34,11 +32,7 @@ class RankingView extends HookConsumerWidget {
               error: (error, stackTrace) =>
                   CommonAsyncWidgets.showDataFetchErrorMessage(
                       context, ref, resultProvider, error)),
-          const Positioned.fill(
-            child: IgnorePointer(
-              child: SakuraAnimation(),
-            ),
-          ),
+          const Positioned.fill(child: IgnorePointer(child: SakuraAnimation())),
         ],
       ),
     );

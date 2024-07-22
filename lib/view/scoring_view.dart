@@ -91,18 +91,8 @@ class ScoringView extends ConsumerWidget {
   Widget buildListTile(BuildContext context, List<Player> data, int index) {
     return ListTile(
       key: Key(data[index].id.toString()),
-      title: Text(
-        data[index].name,
-        style: const TextStyle(
-          fontSize: 18,
-        ),
-      ),
-      leading: Text(
-        '${index + 1}位',
-        style: const TextStyle(
-          fontSize: 16,
-        ),
-      ),
+      title: Text(data[index].name, style: const TextStyle(fontSize: 18)),
+      leading: Text('${index + 1}位', style: const TextStyle(fontSize: 16)),
       trailing: ReorderableDragStartListener(
         index: index,
         child: const Icon(Icons.drag_handle),

@@ -26,10 +26,9 @@ class SettingView extends ConsumerWidget {
                     CommonAsyncWidgets.showDataFetchErrorMessage(
                         context, ref, sessionProvider, error))),
         floatingActionButton: FloatingActionButton(
-          onPressed: vm.getFloatingActionButtonCallback(context, ref),
-          backgroundColor: vm.getFloatingActionButtonColor(),
-          child: const Icon(Icons.add),
-        ));
+            onPressed: vm.getFloatingActionButtonCallback(context, ref),
+            backgroundColor: vm.getFloatingActionButtonColor(),
+            child: const Icon(Icons.add)));
   }
 
   Widget buildPlayers(
@@ -50,20 +49,15 @@ class SettingView extends ConsumerWidget {
 
   Widget buildUnableToEditPlayerText(BuildContext context) {
     return const Center(
-      child: Text('現在ゲームが進行中のため\nプレイヤーの編集ができません',
-          textAlign: TextAlign.center, style: TextStyle(fontSize: 16)),
-    );
+        child: Text('現在ゲームが進行中のため\nプレイヤーの編集ができません',
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 16)));
   }
 
   Widget buildPlayerNotRegisteredMessage(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Text(
-        'プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 16),
-      ),
-    );
+        padding: EdgeInsets.all(16.0),
+        child: Text('プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 16)));
   }
 
   Widget buildPlayerList(
@@ -101,17 +95,9 @@ class SettingView extends ConsumerWidget {
           child: Builder(
             builder: (context) {
               return ListTile(
-                title: Text(
-                  data[index].name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-                leading: const Icon(
-                  Icons.person,
-                  color: Colors.blue,
-                ),
-              );
+                  title: Text(data[index].name,
+                      style: const TextStyle(fontSize: 18)),
+                  leading: const Icon(Icons.person, color: Colors.blue));
             },
           ),
         );

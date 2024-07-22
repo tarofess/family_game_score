@@ -9,8 +9,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SettingViewModel {
   final Ref ref;
+  final DialogService dialogService;
 
-  SettingViewModel(this.ref);
+  SettingViewModel(this.ref, this.dialogService);
 
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
@@ -18,7 +19,6 @@ class SettingViewModel {
   VoidCallback? getFloatingActionButtonCallback(
       BuildContext context, WidgetRef ref) {
     if (players.hasValue && session.hasValue && session.value == null) {
-      final dialogService = DialogService(NavigationService());
       return () => dialogService.showAddPlayerDialog(context, ref);
     }
     return null;
@@ -31,4 +31,5 @@ class SettingViewModel {
   }
 }
 
-final settingViewModelProvider = Provider((ref) => SettingViewModel(ref));
+final settingViewModelProvider = Provider(
+    (ref) => SettingViewModel(ref, DialogService(NavigationService())));

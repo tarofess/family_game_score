@@ -31,25 +31,23 @@ class ResultHistoryView extends ConsumerWidget {
   Widget buildNoMatchHistoryMessage(BuildContext context) {
     return const Center(
         child: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Text('まだ対戦履歴がありません', style: TextStyle(fontSize: 18)),
-    ));
+            padding: EdgeInsets.all(16.0),
+            child: Text('まだ対戦履歴がありません', style: TextStyle(fontSize: 18))));
   }
 
   Widget buildResultHistoryList(
       BuildContext context, List<ResultHistory> resultHistory) {
     return GroupedListView<dynamic, String>(
-      elements: resultHistory,
-      groupBy: (element) => element.session.begTime,
-      groupComparator: (value1, value2) => value2.compareTo(value1),
-      itemComparator: (item1, item2) =>
-          item1.result.rank.compareTo(item2.result.rank),
-      groupSeparatorBuilder: (String value) =>
-          buildGroupedListSeparator(context, value),
-      itemBuilder: (context, dynamic element) => element.player.status == 0
-          ? ResultCard(player: element.player, result: element.result)
-          : buildPlayerHasBeenDeletedCard(context),
-    );
+        elements: resultHistory,
+        groupBy: (element) => element.session.begTime,
+        groupComparator: (value1, value2) => value2.compareTo(value1),
+        itemComparator: (item1, item2) =>
+            item1.result.rank.compareTo(item2.result.rank),
+        groupSeparatorBuilder: (String value) =>
+            buildGroupedListSeparator(context, value),
+        itemBuilder: (context, dynamic element) => element.player.status == 0
+            ? ResultCard(player: element.player, result: element.result)
+            : buildPlayerHasBeenDeletedCard(context));
   }
 
   Widget buildGroupedListSeparator(BuildContext context, String value) {
@@ -57,27 +55,25 @@ class ResultHistoryView extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [
-              Color.fromARGB(255, 124, 213, 255),
-              Color.fromARGB(255, 54, 154, 255),
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
+            gradient: const LinearGradient(
+              colors: [
+                Color.fromARGB(255, 124, 213, 255),
+                Color.fromARGB(255, 54, 154, 255),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(10)),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
             '日時  ${value.getFormatBegTime()}',
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Gill Sans',
-            ),
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Gill Sans'),
           ),
         ),
       ),

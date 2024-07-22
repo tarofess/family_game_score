@@ -8,10 +8,7 @@ class NavigationService {
   }
 
   void pushReplacement(BuildContext context, Widget view) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => view),
-    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => view));
   }
 
   void pop(BuildContext context) {
@@ -33,10 +30,7 @@ class NavigationService {
               Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
 
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
+          return SlideTransition(position: offsetAnimation, child: child);
         },
       ),
     );
@@ -44,10 +38,7 @@ class NavigationService {
 
   void pushAndRemoveUntil(BuildContext context, Widget view) {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => view,
-      ),
-      (Route<dynamic> route) => false,
-    );
+        MaterialPageRoute(builder: (context) => view),
+        (Route<dynamic> route) => false);
   }
 }

@@ -24,20 +24,16 @@ class DialogService {
         return AlertDialog(
           title: const Text('名前を入力してください'),
           content: TextField(
-            onChanged: (value) {
-              inputText = value;
-            },
-            decoration: const InputDecoration(
-              hintText: 'プレイヤー名',
-            ),
-          ),
+              onChanged: (value) {
+                inputText = value;
+              },
+              decoration: const InputDecoration(hintText: 'プレイヤー名')),
           actions: [
             TextButton(
-              onPressed: () {
-                navigationService.pop(context);
-              },
-              child: const Text('キャンセル'),
-            ),
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('キャンセル')),
             TextButton(
               onPressed: () async {
                 try {
@@ -66,20 +62,16 @@ class DialogService {
         return AlertDialog(
           title: const Text('プレイヤー名を編集してください'),
           content: TextField(
-            onChanged: (value) {
-              inputText = value;
-            },
-            decoration: InputDecoration(
-              hintText: player.name,
-            ),
-          ),
+              onChanged: (value) {
+                inputText = value;
+              },
+              decoration: InputDecoration(hintText: player.name)),
           actions: [
             TextButton(
-              onPressed: () {
-                navigationService.pop(context);
-              },
-              child: const Text('キャンセル'),
-            ),
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('キャンセル')),
             TextButton(
               onPressed: () async {
                 try {
@@ -113,11 +105,10 @@ class DialogService {
           content: const Text('削除すると元に戻せませんが本当に削除しますか？'),
           actions: [
             TextButton(
-              onPressed: () {
-                navigationService.pop(context);
-              },
-              child: const Text('いいえ'),
-            ),
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('いいえ')),
             TextButton(
               onPressed: () async {
                 try {
@@ -132,7 +123,7 @@ class DialogService {
                 navigationService.pop(context);
               },
               child: const Text('はい'),
-            ),
+            )
           ],
         );
       },
@@ -150,11 +141,10 @@ class DialogService {
               '${session.value != null ? (session.value!.round + 1).toString() : '2'}回戦に進みますか？'),
           actions: [
             TextButton(
-              onPressed: () {
-                navigationService.pop(context);
-              },
-              child: const Text('いいえ'),
-            ),
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('いいえ')),
             TextButton(
               onPressed: () async {
                 try {
@@ -188,11 +178,10 @@ class DialogService {
           content: const Text('ゲームを終了しますか？\nゲームが終了すると順位が確定します'),
           actions: [
             TextButton(
-              onPressed: () {
-                navigationService.pop(context);
-              },
-              child: const Text('いいえ'),
-            ),
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('いいえ')),
             TextButton(
               onPressed: () async {
                 try {
