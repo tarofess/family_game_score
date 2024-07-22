@@ -1,5 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/service/snackbar_service.dart';
 import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -9,54 +11,22 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeViewModel {
   final Ref ref;
+  final NavigationService navigationService;
+  final SnackbarService snackbarService;
 
-  HomeViewModel(this.ref);
+  HomeViewModel(this.ref, this.navigationService, this.snackbarService);
 
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
   void handleButtonPress(BuildContext context, List<Player> players) {
     canStartGame(players)
-        ? navigateToScoringView(context)
-        : showSnackBarMessage(context);
+        ? navigationService.pushReplacementWithAnimationFromBottom(
+            context, const ScoringView())
+        : snackbarService.showHomeViewSnackBar(context);
   }
 
   bool canStartGame(List<Player> players) => players.length >= 2;
-
-  void navigateToScoringView(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const ScoringView(),
-        transitionDuration: const Duration(milliseconds: 800),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = const Offset(0.0, 1.0);
-          var end = Offset.zero;
-          var curve = Curves.fastLinearToSlowEaseIn;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(tween);
-
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  }
-
-  void showSnackBarMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context)!.homeSnackbarMessage,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
 
   String getButtonText(Session? sessionData, BuildContext context) {
     return sessionData == null
@@ -77,4 +47,5 @@ class HomeViewModel {
   }
 }
 
-final homeViewModelProvider = Provider((ref) => HomeViewModel(ref));
+final homeViewModelProvider = Provider(
+    (ref) => HomeViewModel(ref, NavigationService(), SnackbarService()));

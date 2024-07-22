@@ -1,8 +1,10 @@
+import 'package:family_game_score/service/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommonDialog {
-  static void showErrorDialog(BuildContext context, dynamic error) {
+  static void showErrorDialog(BuildContext context, dynamic error,
+      NavigationService navigationService) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -13,7 +15,7 @@ class CommonDialog {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                navigationService.pop(context);
               },
               child: Text(AppLocalizations.of(context)!.close),
             ),

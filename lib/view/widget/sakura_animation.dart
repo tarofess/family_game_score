@@ -1,6 +1,43 @@
 import 'dart:math';
 
+import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+class SakuraAnimation extends HookConsumerWidget {
+  const SakuraAnimation({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final session = ref.read(sessionProvider);
+
+    final animationController = useAnimationController(
+      duration: const Duration(seconds: 10),
+    )..repeat();
+
+    final petals = useState(List.generate(35, (index) => SakuraPetal()));
+
+    useEffect(() {
+      void listener() {
+        petals.value = petals.value.map((petal) {
+          petal.update();
+          return petal;
+        }).toList();
+      }
+
+      animationController.addListener(listener);
+      return () => animationController.removeListener(listener);
+    }, [animationController]);
+
+    return session.value == null
+        ? CustomPaint(
+            painter: SakuraPainter(petals.value),
+            child: Container(),
+          )
+        : const SizedBox();
+  }
+}
 
 class SakuraPainter extends CustomPainter {
   final List<SakuraPetal> petals;

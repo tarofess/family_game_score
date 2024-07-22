@@ -1,7 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/view/widget/common_dialog.dart';
+import 'package:family_game_score/service/dialog_service.dart';
+import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
-import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/setting_viewmodel.dart';
@@ -40,7 +40,7 @@ class SettingView extends ConsumerWidget {
           if (data.isEmpty) {
             return buildPlayerNotRegisteredMessage(context);
           } else {
-            return buildPlayerList(data, ref);
+            return buildPlayerList(context, data, ref);
           }
         },
         loading: () => CommonAsyncWidgets.showLoading(),
@@ -67,7 +67,10 @@ class SettingView extends ConsumerWidget {
     );
   }
 
-  Widget buildPlayerList(List<Player> data, WidgetRef ref) {
+  Widget buildPlayerList(
+      BuildContext context, List<Player> data, WidgetRef ref) {
+    final dialogService = DialogService(NavigationService());
+
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (BuildContext context, int index) {
@@ -88,9 +91,11 @@ class SettingView extends ConsumerWidget {
           ),
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
-              return await showEditPlayerDialog(context, ref, data[index]);
+              return await dialogService.showEditPlayerDialog(
+                  context, ref, data[index]);
             } else if (direction == DismissDirection.startToEnd) {
-              return await showDeleteDialog(context, ref, data[index]);
+              return await dialogService.showDeletePlayerDialog(
+                  context, ref, data[index]);
             }
             return false;
           },
@@ -110,89 +115,6 @@ class SettingView extends ConsumerWidget {
               );
             },
           ),
-        );
-      },
-    );
-  }
-
-  Future showEditPlayerDialog(
-      BuildContext context, WidgetRef ref, Player player) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String inputText = player.name;
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.editPlayerName),
-          content: TextField(
-            onChanged: (value) {
-              inputText = value;
-            },
-            decoration: InputDecoration(
-              hintText: player.name,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(playerProvider.notifier)
-                      .updatePlayer(player.copyWith(name: inputText));
-                  // ignore: unused_result
-                  ref.refresh(resultHistoryProvider.future);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e);
-                }
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future showDeleteDialog(BuildContext context, WidgetRef ref, Player player) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-              '${AppLocalizations.of(context)!.deleteConfirmationTitleEn}${player.name}${AppLocalizations.of(context)!.deleteConfirmationTitleJa}'),
-          content:
-              Text(AppLocalizations.of(context)!.deleteConfirmationMessage),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.no),
-            ),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(playerProvider.notifier).deletePlayer(player);
-                  // ignore: unused_result
-                  ref.refresh(resultHistoryProvider.future);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e);
-                }
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context);
-              },
-              child: Text(AppLocalizations.of(context)!.yes),
-            ),
-          ],
         );
       },
     );
