@@ -4,8 +4,7 @@ import 'package:family_game_score/model/repository/result_history_repository.dar
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ResultHistoryNotifier
-    extends AutoDisposeAsyncNotifier<List<ResultHistory>> {
+class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
   late ResultHistoryRepository resultHistoryRepository;
   Database database;
 
@@ -25,6 +24,6 @@ class ResultHistoryNotifier
   }
 }
 
-final resultHistoryProvider = AsyncNotifierProvider.autoDispose<
-        ResultHistoryNotifier, List<ResultHistory>>(
-    () => ResultHistoryNotifier(DatabaseHelper.instance.database));
+final resultHistoryProvider =
+    AsyncNotifierProvider<ResultHistoryNotifier, List<ResultHistory>>(
+        () => ResultHistoryNotifier(DatabaseHelper.instance.database));

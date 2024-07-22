@@ -1,3 +1,6 @@
+import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/entity/result_history.dart';
+import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -6,8 +9,10 @@ class ResultHistoryViewModel {
 
   ResultHistoryViewModel(this.ref);
 
-  // get resultHistory => ref.watch(resultHistoryProvider);
+  AsyncValue<List<ResultHistory>> get resultHistory =>
+      ref.watch(resultHistoryProvider);
+  AsyncValue<List<Player>> get players => ref.watch(playerProvider);
 }
 
 final resultHistoryViewModelProvider =
-    AutoDisposeProvider((ref) => ResultHistoryViewModel(ref));
+    Provider((ref) => ResultHistoryViewModel(ref));

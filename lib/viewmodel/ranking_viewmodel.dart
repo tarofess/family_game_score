@@ -4,6 +4,7 @@ import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/view/widget/sakura_painter.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +59,10 @@ class RankingViewModel {
             TextButton(
               onPressed: () {
                 // ignore: unused_result
-                ref.refresh(resultProvider);
+                ref.refresh(resultProvider.future);
+                // ignore: unused_result
+                ref.refresh(resultHistoryProvider.future);
+
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,

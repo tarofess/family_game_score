@@ -3,6 +3,7 @@ import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/view/widget/result_card.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
+import 'package:family_game_score/viewmodel/result_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -13,36 +14,17 @@ class ResultHistoryView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final resultHistory = ref.watch(resultHistoryProvider);
+    final vm = ref.watch(resultHistoryViewModelProvider);
 
     return Scaffold(
-      body: resultHistory.when(
+      body: vm.resultHistory.when(
         data: (data) => data.isEmpty
             ? buildNoMatchHistoryMessage(context)
             : buildResultHistoryList(context, data),
-        error: (error, stackTrace) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text(
-                    '${AppLocalizations.of(context)!.errorMessage}\n${error.toString()}',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // ignore: unused_result
-                    ref.refresh(resultHistoryProvider);
-                  },
-                  child: Text(AppLocalizations.of(context)!.retry),
-                ),
-              ],
-            ),
-          );
-        },
         loading: () => CommonAsyncWidgets.showLoading(),
+        error: (error, stackTrace) =>
+            CommonAsyncWidgets.showDataFetchErrorMessage(
+                context, ref, resultHistoryProvider, error),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/view/widget/common_dialog.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/setting_viewmodel.dart';
@@ -143,6 +144,8 @@ class SettingView extends ConsumerWidget {
                   await ref
                       .read(playerProvider.notifier)
                       .updatePlayer(player.copyWith(name: inputText));
+                  // ignore: unused_result
+                  ref.refresh(resultHistoryProvider.future);
                 } catch (e) {
                   // ignore: use_build_context_synchronously
                   CommonDialog.showErrorDialog(context, e);
@@ -178,6 +181,8 @@ class SettingView extends ConsumerWidget {
               onPressed: () async {
                 try {
                   await ref.read(playerProvider.notifier).deletePlayer(player);
+                  // ignore: unused_result
+                  ref.refresh(resultHistoryProvider.future);
                 } catch (e) {
                   // ignore: use_build_context_synchronously
                   CommonDialog.showErrorDialog(context, e);
