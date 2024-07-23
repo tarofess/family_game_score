@@ -29,14 +29,14 @@ class GradientCircleButton extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         border: Border.all(
-          color: Color.fromARGB(255, 174, 206, 255),
+          color: const Color.fromARGB(255, 174, 206, 255),
           width: 2,
         ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          customBorder: CircleBorder(),
+          customBorder: const CircleBorder(),
           onTap: onPressed,
           child: Center(
             child: Text(
