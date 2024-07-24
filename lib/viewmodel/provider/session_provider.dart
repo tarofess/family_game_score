@@ -47,6 +47,9 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> updateRound() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      if (state.value == null) {
+        throw Exception('Session is null');
+      }
       final updatedSession = await sessionRepository.updateRound(state.value!);
       return updatedSession;
     });
@@ -55,6 +58,9 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   Future<void> updateEndTime() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      if (state.value == null) {
+        throw Exception('Session is null');
+      }
       final updatedSession =
           await sessionRepository.updateEndTime(state.value!);
       return updatedSession;

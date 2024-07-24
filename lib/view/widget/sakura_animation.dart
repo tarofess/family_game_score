@@ -10,7 +10,7 @@ class SakuraAnimation extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final session = ref.read(sessionProvider);
+    final session = ref.read(sessionProvider).valueOrNull;
 
     final animationController = useAnimationController(
       duration: const Duration(seconds: 10),
@@ -30,7 +30,7 @@ class SakuraAnimation extends HookConsumerWidget {
       return () => animationController.removeListener(listener);
     }, [animationController]);
 
-    return session.value == null
+    return session == null
         ? CustomPaint(
             painter: SakuraPainter(petals.value),
             child: Container(),

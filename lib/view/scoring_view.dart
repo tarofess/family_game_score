@@ -75,10 +75,10 @@ class ScoringView extends ConsumerWidget {
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal));
   }
 
-  Widget buildScoringList(List<Player> data, WidgetRef ref) {
+  Widget buildScoringList(List<Player> players, WidgetRef ref) {
     return ReorderableListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, index) => buildListTile(context, data, index),
+      itemCount: players.length,
+      itemBuilder: (context, index) => buildListTile(context, players, index),
       onReorder: (oldIndex, newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;
@@ -88,10 +88,10 @@ class ScoringView extends ConsumerWidget {
     );
   }
 
-  Widget buildListTile(BuildContext context, List<Player> data, int index) {
+  Widget buildListTile(BuildContext context, List<Player> players, int index) {
     return ListTile(
-      key: Key(data[index].id.toString()),
-      title: Text(data[index].name, style: const TextStyle(fontSize: 18)),
+      key: Key(players[index].id.toString()),
+      title: Text(players[index].name, style: const TextStyle(fontSize: 18)),
       leading: Text('${index + 1}位', style: const TextStyle(fontSize: 16)),
       trailing: ReorderableDragStartListener(
         index: index,

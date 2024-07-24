@@ -61,14 +61,14 @@ class SettingView extends ConsumerWidget {
   }
 
   Widget buildPlayerList(
-      BuildContext context, List<Player> data, WidgetRef ref) {
+      BuildContext context, List<Player> players, WidgetRef ref) {
     final dialogService = DialogService(NavigationService());
 
     return ListView.builder(
-      itemCount: data.length,
+      itemCount: players.length,
       itemBuilder: (BuildContext context, int index) {
         return Dismissible(
-          key: Key(data[index].name),
+          key: Key(players[index].name),
           direction: DismissDirection.horizontal,
           background: Container(
             color: Colors.red,
@@ -85,17 +85,17 @@ class SettingView extends ConsumerWidget {
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
               return await dialogService.showEditPlayerDialog(
-                  context, ref, data[index]);
+                  context, ref, players[index]);
             } else if (direction == DismissDirection.startToEnd) {
               return await dialogService.showDeletePlayerDialog(
-                  context, ref, data[index]);
+                  context, ref, players[index]);
             }
             return false;
           },
           child: Builder(
             builder: (context) {
               return ListTile(
-                  title: Text(data[index].name,
+                  title: Text(players[index].name,
                       style: const TextStyle(fontSize: 18)),
                   leading: const Icon(Icons.person, color: Colors.blue));
             },

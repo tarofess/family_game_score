@@ -17,7 +17,7 @@ class HomeView extends ConsumerWidget {
 
     return Scaffold(
       body: vm.session.when(
-        data: (data) => buildPlayers(context, ref, data, vm.players),
+        data: (data) => buildPlayers(context, ref, data, vm),
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
             CommonAsyncWidgets.showDataFetchErrorMessage(
@@ -26,12 +26,12 @@ class HomeView extends ConsumerWidget {
     );
   }
 
-  Widget buildPlayers(BuildContext context, WidgetRef ref, Session? session,
-      AsyncValue<List<Player>> players) {
-    return players.when(
+  Widget buildPlayers(
+      BuildContext context, WidgetRef ref, Session? session, HomeViewModel vm) {
+    return vm.players.when(
         data: (data) {
           return Center(
-              child: buildCenterCircleButton(context, ref, session, data));
+              child: buildCenterCircleButton(context, ref, session, data, vm));
         },
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
@@ -40,15 +40,14 @@ class HomeView extends ConsumerWidget {
   }
 
   Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
-      Session? session, List<Player> players) {
-    final vm = ref.read(homeViewModelProvider);
+      Session? session, List<Player> players, HomeViewModel vm) {
     return GradientCircleButton(
       onPressed: () async {
-        vm.handleButtonPress(context, players);
+        vm.handleButtonPress(context);
       },
-      text: vm.getButtonText(session, context),
+      text: vm.getButtonText(context),
       size: 200.0,
-      gradientColors: vm.getGradientColors(players),
+      gradientColors: vm.getGradientColors(),
       textStyle: const TextStyle(
         color: Colors.white,
         fontSize: 20,
