@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build-android:
+  build-and-release-android:
     runs-on: ubuntu-latest
     
     steps:
@@ -26,27 +26,20 @@ jobs:
     - name: Run tests
       run: flutter test
     
-    - name: Build APK
-      run: flutter build apk --debug
+    - name: Build AppBundle
+      run: flutter build appbundle
 
-  build-ios:
-    runs-on: macos-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    - uses: subosito/flutter-action@v2
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
       with:
-        flutter-version: '3.22.3'
-        channel: 'stable'
-    
-    - name: Get dependencies
-      run: flutter pub get
+        ruby-version: '3.0'
 
-    - name: Flutter analyze
-      run: flutter analyze
-    
-    - name: Run tests
-      run: flutter test
-    
-    - name: Build iOS
-      run: flutter build ios --release --no-codesign
+    - name: Install fastlane
+      run: gem install fastlane
+
+    - name: Deploy to Play Store
+      env:
+        PLAY_STORE_JSON_KEY: ${{ secrets.SERVICE_ACCOUNT_JSON }}
+      run: |
+        echo $SERVICE_ACCOUNT_JSON > play_store_key.json
+        fastlane supply --aab build/app/outputs/bundle/release/app-release.aab --json_key play_store_key.json --track production
