@@ -26,7 +26,7 @@ class RankingView extends HookConsumerWidget {
         children: [
           vm.results.when(
               data: (data) {
-                return buildRankingList(data, vm.players, context, ref);
+                return buildRankingList(data, vm, context, ref);
               },
               loading: () => CommonAsyncWidgets.showLoading(),
               error: (error, stackTrace) =>
@@ -38,15 +38,14 @@ class RankingView extends HookConsumerWidget {
     );
   }
 
-  Widget buildRankingList(List<Result> data, AsyncValue<List<Player>> players,
+  Widget buildRankingList(List<Result> results, RankingViewModel vm,
       BuildContext context, WidgetRef ref) {
-    return players.when(
-        data: (playersData) => ListView.builder(
-              itemCount: data.length,
+    return vm.players.when(
+        data: (data) => ListView.builder(
+              itemCount: results.length,
               itemBuilder: (context, index) {
-                final result = data[index];
-                final player =
-                    playersData.firstWhere((p) => p.id == result.playerId);
+                final result = results[index];
+                final player = data.firstWhere((p) => p.id == result.playerId);
                 return ResultCard(player: player, result: result);
               },
             ),

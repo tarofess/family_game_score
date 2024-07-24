@@ -18,21 +18,21 @@ class HomeViewModel {
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
-  void handleButtonPress(BuildContext context, List<Player> players) {
-    canStartGame(players)
+  void handleButtonPress(BuildContext context) {
+    canStartGame()
         ? navigationService.pushReplacementWithAnimationFromBottom(
             context, const ScoringView())
         : snackbarService.showHomeViewSnackBar(context);
   }
 
-  bool canStartGame(List<Player> players) => players.length >= 2;
+  bool canStartGame() => players.value!.length >= 2;
 
-  String getButtonText(Session? sessionData, BuildContext context) {
-    return sessionData == null ? 'ゲームスタート！' : 'ゲーム再開！';
+  String getButtonText(BuildContext context) {
+    return session.value == null ? 'ゲームスタート！' : 'ゲーム再開！';
   }
 
-  List<Color> getGradientColors(List<Player> players) {
-    return canStartGame(players)
+  List<Color> getGradientColors() {
+    return canStartGame()
         ? const [
             Color.fromARGB(255, 255, 194, 102),
             Color.fromARGB(255, 255, 101, 90)

@@ -35,8 +35,7 @@ class ScoringViewModel {
 
   VoidCallback? getCheckButtonCallback(BuildContext context, WidgetRef ref) {
     if (results.hasValue) {
-      return () =>
-          dialogService.showMoveToNextRoundDialog(context, ref, session);
+      return () => dialogService.showMoveToNextRoundDialog(context, ref);
     }
     return null;
   }

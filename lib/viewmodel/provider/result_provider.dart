@@ -18,13 +18,13 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   Future<List<Result>> build() async {
     try {
       resultRepository = ResultRepository(database);
-      final session = ref.read(sessionProvider);
+      final session = ref.read(sessionProvider).valueOrNull;
 
-      if (session.value == null) {
+      if (session == null) {
         state = const AsyncData([]);
         return [];
       } else {
-        final results = await resultRepository.getResult(session.value!);
+        final results = await resultRepository.getResult(session);
         state = AsyncData(results);
         return results;
       }
@@ -37,15 +37,19 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   Future<void> addOrUpdateResult() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final players = ref.read(playerProvider);
-      final session = ref.read(sessionProvider);
+      final players = ref.read(playerProvider).valueOrNull;
+      final session = ref.read(sessionProvider).valueOrNull;
+
+      if (players == null || session == null) {
+        throw Exception('Required value (Players or Session) is null');
+      }
 
       if (state.value?.isEmpty ?? true) {
-        await addResult(players.value!, session.value!);
+        await addResult(players, session);
       } else {
-        await updateResult(players.value!, session.value!);
+        await updateResult(players, session);
       }
-      return await resultRepository.getResult(session.value!);
+      return await resultRepository.getResult(session);
     });
   }
 

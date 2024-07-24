@@ -1,4 +1,3 @@
-import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/view/widget/result_card.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
@@ -19,7 +18,7 @@ class ResultHistoryView extends ConsumerWidget {
       body: vm.resultHistory.when(
         data: (data) => data.isEmpty
             ? buildNoMatchHistoryMessage(context)
-            : buildResultHistoryList(context, data),
+            : buildResultHistoryList(context, vm),
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
             CommonAsyncWidgets.showDataFetchErrorMessage(
@@ -36,9 +35,9 @@ class ResultHistoryView extends ConsumerWidget {
   }
 
   Widget buildResultHistoryList(
-      BuildContext context, List<ResultHistory> resultHistory) {
+      BuildContext context, ResultHistoryViewModel vm) {
     return GroupedListView<dynamic, String>(
-        elements: resultHistory,
+        elements: vm.resultHistory.value!,
         groupBy: (element) => element.session.begTime,
         groupComparator: (value1, value2) => value2.compareTo(value1),
         itemComparator: (item1, item2) =>

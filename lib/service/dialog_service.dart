@@ -130,8 +130,9 @@ class DialogService {
     );
   }
 
-  void showMoveToNextRoundDialog(
-      BuildContext context, WidgetRef ref, AsyncValue<Session?> session) {
+  void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
+    final session = ref.read(sessionProvider);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
