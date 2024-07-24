@@ -17,37 +17,36 @@ jobs:
         flutter-version: '3.22.3'
         channel: 'stable'
 
-name: Get dependencies
-run: flutter pub get
+    - name: Get dependencies
+      run: flutter pub get
 
-name: Flutter analyze
-run: flutter analyze
+    - name: Flutter analyze
+      run: flutter analyze
 
-name: Run tests
-run: flutter test
+    - name: Run tests
+      run: flutter test
 
-name: Build APK
-run: flutter build apk --debug
+    - name: Build APK
+      run: flutter build apk --debug
 
-build-ios:
-runs-on: macos-latest
+  build-ios:
+    runs-on: macos-latest
 
-steps:
+    steps:
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.3'
+        channel: 'stable'
 
-uses: actions/checkout@v4
-uses: subosito/flutter-action@v2
-with:
-  flutter-version: '3.22.3'
-  channel: 'stable'
+    - name: Get dependencies
+      run: flutter pub get
 
-name: Get dependencies
-run: flutter pub get
+    - name: Flutter analyze
+      run: flutter analyze
 
-name: Flutter analyze
-run: flutter analyze
+    - name: Run tests
+      run: flutter test
 
-name: Run tests
-run: flutter test
-
-name: Build iOS
-run: flutter build ios --release --no-codesign
+    - name: Build iOS
+      run: flutter build ios --release --no-codesign
