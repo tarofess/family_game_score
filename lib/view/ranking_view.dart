@@ -1,4 +1,3 @@
-import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/view/widget/result_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
