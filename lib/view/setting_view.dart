@@ -84,10 +84,10 @@ class SettingView extends ConsumerWidget {
           ),
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
-              return await dialogService.showEditPlayerDialog(
+              await dialogService.showEditPlayerDialog(
                   context, ref, players[index]);
             } else if (direction == DismissDirection.startToEnd) {
-              return await dialogService.showDeletePlayerDialog(
+              await dialogService.showDeletePlayerDialog(
                   context, ref, players[index]);
             }
             return false;

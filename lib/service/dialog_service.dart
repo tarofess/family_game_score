@@ -1,9 +1,7 @@
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/ranking_view.dart';
-import 'package:family_game_score/view/widget/common_dialog.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
@@ -13,200 +11,88 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DialogService {
   final NavigationService navigationService;
+  bool isFinished = false; // pushAndRemoveUntilの直後にpopが呼ばれないようにするためのフラグ
 
   DialogService(this.navigationService);
 
-  Future showAddPlayerDialog(BuildContext context, WidgetRef ref) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String inputText = '';
-        return AlertDialog(
-          title: const Text('名前を入力してください'),
-          content: TextField(
-              onChanged: (value) {
-                inputText = value;
-              },
-              decoration: const InputDecoration(hintText: 'プレイヤー名')),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(context);
-                },
-                child: const Text('キャンセル')),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(playerProvider.notifier).addPlayer(inputText);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e, NavigationService());
-                }
-                // ignore: use_build_context_synchronously
-                navigationService.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+  Future<void> showAddPlayerDialog(BuildContext context, WidgetRef ref) {
+    return showInputDialog(
+        context: context,
+        title: '名前を入力してください',
+        hintText: 'プレイヤー名',
+        action: (String inputText) async {
+          handleActionAndError(context, () async {
+            await ref.read(playerProvider.notifier).addPlayer(inputText);
+          });
+        });
   }
 
-  Future showEditPlayerDialog(
+  Future<void> showEditPlayerDialog(
       BuildContext context, WidgetRef ref, Player player) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        String inputText = player.name;
-        return AlertDialog(
-          title: const Text('プレイヤー名を編集してください'),
-          content: TextField(
-              onChanged: (value) {
-                inputText = value;
-              },
-              decoration: InputDecoration(hintText: player.name)),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(context);
-                },
-                child: const Text('キャンセル')),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(playerProvider.notifier)
-                      .updatePlayer(player.copyWith(name: inputText));
-                  // ignore: unused_result
-                  ref.refresh(resultHistoryProvider.future);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e, NavigationService());
-                }
-                // ignore: use_build_context_synchronously
-                navigationService.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+    return showInputDialog(
+        context: context,
+        title: 'プレイヤー名を編集してください',
+        hintText: player.name,
+        action: (String inputText) async {
+          handleActionAndError(context, () async {
+            await ref
+                .read(playerProvider.notifier)
+                .updatePlayer(player.copyWith(name: inputText));
+            ref.invalidate(resultHistoryProvider);
+          });
+        });
   }
 
-  Future showDeletePlayerDialog(
+  Future<void> showDeletePlayerDialog(
       BuildContext context, WidgetRef ref, Player player) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('${player.name}を削除します'),
-          content: const Text('削除すると元に戻せませんが本当に削除しますか？'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(context);
-                },
-                child: const Text('いいえ')),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(playerProvider.notifier).deletePlayer(player);
-                  // ignore: unused_result
-                  ref.refresh(resultHistoryProvider.future);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e, NavigationService());
-                }
-                // ignore: use_build_context_synchronously
-                navigationService.pop(context);
-              },
-              child: const Text('はい'),
-            )
-          ],
-        );
-      },
-    );
+    return showConfimationDialog(
+        context: context,
+        title: '${player.name}を削除します',
+        content: '削除すると元に戻せませんが本当に削除しますか？',
+        action: () async {
+          handleActionAndError(context, () async {
+            await ref.read(playerProvider.notifier).deletePlayer(player);
+            ref.invalidate(resultHistoryProvider);
+          });
+        });
   }
 
-  void showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
+  Future<void> showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
     final session = ref.read(sessionProvider);
+    final nextRound =
+        session.value != null ? (session.value!.round + 1).toString() : '2';
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('確認'),
-          content: Text(
-              '${session.value != null ? (session.value!.round + 1).toString() : '2'}回戦に進みますか？'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(context);
-                },
-                child: const Text('いいえ')),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(sessionProvider.notifier).addSession();
-                  await ref.read(sessionProvider.notifier).updateRound();
-                  await ref.read(resultProvider.notifier).addOrUpdateResult();
-
-                  // ignore: use_build_context_synchronously
-                  navigationService.pop(context);
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  navigationService.pop(context);
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e, NavigationService());
-                }
-              },
-              child: const Text('はい'),
-            ),
-          ],
-        );
-      },
-    );
+    return showConfimationDialog(
+        context: context,
+        title: '確認',
+        content: '$nextRound回戦に進みますか？',
+        action: () {
+          handleActionAndError(context, () async {
+            await ref.read(sessionProvider.notifier).addSession();
+            await ref.read(sessionProvider.notifier).updateRound();
+            await ref.read(resultProvider.notifier).addOrUpdateResult();
+          });
+        });
   }
 
-  void showFinishGameDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('確認'),
-          content: const Text('ゲームを終了しますか？\nゲームが終了すると順位が確定します'),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(context);
-                },
-                child: const Text('いいえ')),
-            TextButton(
-              onPressed: () async {
-                try {
-                  await ref.read(sessionProvider.notifier).updateEndTime();
-                  ref.read(sessionProvider.notifier).disposeSession();
-                  ref.read(playerProvider.notifier).resetOrder();
+  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) {
+    return showConfimationDialog(
+        context: context,
+        title: '確認',
+        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
+        action: () async {
+          handleActionAndError(context, () async {
+            await ref.read(sessionProvider.notifier).updateEndTime();
+            ref.read(sessionProvider.notifier).disposeSession();
+            ref.read(playerProvider.notifier).resetOrder();
 
-                  if (context.mounted) {
-                    navigationService.pushAndRemoveUntil(
-                        context, const RankingView());
-                  }
-                } catch (e) {
-                  // ignore: use_build_context_synchronously
-                  navigationService.pop(context);
-                  // ignore: use_build_context_synchronously
-                  CommonDialog.showErrorDialog(context, e, NavigationService());
-                }
-              },
-              child: const Text('はい'),
-            ),
-          ],
-        );
-      },
-    );
+            if (context.mounted) {
+              isFinished = true;
+              navigationService.pushAndRemoveUntil(
+                  context, const RankingView());
+            }
+          });
+        });
   }
 
   void showReturnToHomeDialog(BuildContext context, WidgetRef ref) {
@@ -219,11 +105,8 @@ class DialogService {
           actions: [
             TextButton(
               onPressed: () {
-                // ignore: unused_result
-                ref.refresh(resultProvider.future);
-                // ignore: unused_result
-                ref.refresh(resultHistoryProvider.future);
-
+                ref.invalidate(resultProvider);
+                ref.invalidate(resultHistoryProvider);
                 navigationService.pop(context);
                 navigationService.pushReplacement(context, const MyApp());
               },
@@ -233,5 +116,105 @@ class DialogService {
         );
       },
     );
+  }
+
+  Future<void> showErrorDialog(BuildContext context, dynamic error,
+      NavigationService navigationService) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('エラー'),
+          content: Text('エラーが発生しました\n${error.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigationService.pop(context);
+              },
+              child: const Text('閉じる'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showInputDialog(
+      {required BuildContext context,
+      required String title,
+      required String hintText,
+      required Function(String) action,
+      String confirmText = 'OK',
+      String cancelText = 'キャンセル',
+      String inputText = ''}) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: TextField(
+              onChanged: (value) {
+                inputText = value;
+              },
+              decoration: InputDecoration(hintText: hintText)),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: Text(cancelText)),
+            TextButton(
+              onPressed: () => action(inputText),
+              child: Text(confirmText),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showConfimationDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required Function() action,
+    String confirmText = '確認',
+    String cancelText = 'キャンセル',
+  }) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  navigationService.pop(context);
+                },
+                child: const Text('いいえ')),
+            TextButton(
+              onPressed: () async => await action(),
+              child: const Text('はい'),
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> handleActionAndError(
+      BuildContext context, Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (e) {
+      if (context.mounted) {
+        await showErrorDialog(context, e, NavigationService());
+      }
+    } finally {
+      if (context.mounted && !isFinished) {
+        navigationService.pop(context);
+      }
+    }
   }
 }

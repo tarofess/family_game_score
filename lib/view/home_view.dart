@@ -1,5 +1,4 @@
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -17,7 +16,7 @@ class HomeView extends ConsumerWidget {
 
     return Scaffold(
       body: vm.session.when(
-        data: (data) => buildPlayers(context, ref, data, vm),
+        data: (data) => buildPlayers(context, ref, vm),
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
             CommonAsyncWidgets.showDataFetchErrorMessage(
@@ -26,12 +25,10 @@ class HomeView extends ConsumerWidget {
     );
   }
 
-  Widget buildPlayers(
-      BuildContext context, WidgetRef ref, Session? session, HomeViewModel vm) {
+  Widget buildPlayers(BuildContext context, WidgetRef ref, HomeViewModel vm) {
     return vm.players.when(
         data: (data) {
-          return Center(
-              child: buildCenterCircleButton(context, ref, session, data, vm));
+          return Center(child: buildCenterCircleButton(context, ref, data, vm));
         },
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
@@ -40,7 +37,7 @@ class HomeView extends ConsumerWidget {
   }
 
   Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
-      Session? session, List<Player> players, HomeViewModel vm) {
+      List<Player> players, HomeViewModel vm) {
     return GradientCircleButton(
       onPressed: () async {
         vm.handleButtonPress(context);
