@@ -6,7 +6,6 @@
 import 'dart:async' as _i7;
 
 import 'package:family_game_score/model/entity/player.dart' as _i9;
-import 'package:family_game_score/model/entity/session.dart' as _i10;
 import 'package:family_game_score/service/dialog_service.dart' as _i6;
 import 'package:family_game_score/service/navigation_service.dart' as _i3;
 import 'package:flutter/material.dart' as _i4;
@@ -296,7 +295,22 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
       ) as _i3.NavigationService);
 
   @override
-  _i7.Future<dynamic> showAddPlayerDialog(
+  bool get isFinished => (super.noSuchMethod(
+        Invocation.getter(#isFinished),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  set isFinished(bool? _isFinished) => super.noSuchMethod(
+        Invocation.setter(
+          #isFinished,
+          _isFinished,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  _i7.Future<void> showAddPlayerDialog(
     _i4.BuildContext? context,
     _i8.WidgetRef? ref,
   ) =>
@@ -308,11 +322,12 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
             ref,
           ],
         ),
-        returnValue: _i7.Future<dynamic>.value(),
-      ) as _i7.Future<dynamic>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i7.Future<dynamic> showEditPlayerDialog(
+  _i7.Future<void> showEditPlayerDialog(
     _i4.BuildContext? context,
     _i8.WidgetRef? ref,
     _i9.Player? player,
@@ -326,11 +341,12 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
             player,
           ],
         ),
-        returnValue: _i7.Future<dynamic>.value(),
-      ) as _i7.Future<dynamic>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  _i7.Future<dynamic> showDeletePlayerDialog(
+  _i7.Future<void> showDeletePlayerDialog(
     _i4.BuildContext? context,
     _i8.WidgetRef? ref,
     _i9.Player? player,
@@ -344,33 +360,33 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
             player,
           ],
         ),
-        returnValue: _i7.Future<dynamic>.value(),
-      ) as _i7.Future<dynamic>);
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  void showMoveToNextRoundDialog(
+  _i7.Future<void> showMoveToNextRoundDialog(
     _i4.BuildContext? context,
     _i8.WidgetRef? ref,
-    _i2.AsyncValue<_i10.Session?>? session,
   ) =>
-      super.noSuchMethod(
+      (super.noSuchMethod(
         Invocation.method(
           #showMoveToNextRoundDialog,
           [
             context,
             ref,
-            session,
           ],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
-  void showFinishGameDialog(
+  _i7.Future<void> showFinishGameDialog(
     _i4.BuildContext? context,
     _i8.WidgetRef? ref,
   ) =>
-      super.noSuchMethod(
+      (super.noSuchMethod(
         Invocation.method(
           #showFinishGameDialog,
           [
@@ -378,8 +394,9 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
             ref,
           ],
         ),
-        returnValueForMissingStub: null,
-      );
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 
   @override
   void showReturnToHomeDialog(
@@ -396,6 +413,96 @@ class MockDialogService extends _i1.Mock implements _i6.DialogService {
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  _i7.Future<void> showErrorDialog(
+    _i4.BuildContext? context,
+    dynamic error,
+    _i3.NavigationService? navigationService,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showErrorDialog,
+          [
+            context,
+            error,
+            navigationService,
+          ],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> showInputDialog({
+    required _i4.BuildContext? context,
+    required String? title,
+    required String? hintText,
+    required dynamic Function(String)? action,
+    String? confirmText = r'OK',
+    String? cancelText = r'キャンセル',
+    String? inputText = r'',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showInputDialog,
+          [],
+          {
+            #context: context,
+            #title: title,
+            #hintText: hintText,
+            #action: action,
+            #confirmText: confirmText,
+            #cancelText: cancelText,
+            #inputText: inputText,
+          },
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> showConfimationDialog({
+    required _i4.BuildContext? context,
+    required String? title,
+    required String? content,
+    required dynamic Function()? action,
+    String? confirmText = r'確認',
+    String? cancelText = r'キャンセル',
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #showConfimationDialog,
+          [],
+          {
+            #context: context,
+            #title: title,
+            #content: content,
+            #action: action,
+            #confirmText: confirmText,
+            #cancelText: cancelText,
+          },
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> handleActionAndError(
+    _i4.BuildContext? context,
+    _i7.Future<void> Function()? action,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #handleActionAndError,
+          [
+            context,
+            action,
+          ],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 }
 
 /// A class which mocks [NavigationService].
