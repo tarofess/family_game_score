@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class NavigationService {
-  NavigationService();
-
   void push(BuildContext context, Widget view) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => view));
   }

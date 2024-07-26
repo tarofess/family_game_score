@@ -1,13 +1,15 @@
 import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/view/home_view.dart';
-import 'package:family_game_score/view/result_history_view.dart';
+import 'package:family_game_score/view/result_history_calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:family_game_score/view/setting_view.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper.instance.initDatabase();
+  await initializeDateFormatting('ja_JP');
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -45,7 +47,7 @@ class MyTabView extends StatelessWidget {
         body: const TabBarView(
           children: [
             HomeView(),
-            ResultHistoryView(),
+            ResultHistoryCalendarView(),
             SettingView(),
           ],
         ),

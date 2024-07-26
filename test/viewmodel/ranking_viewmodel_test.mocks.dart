@@ -343,21 +343,6 @@ class MockDialogService extends _i1.Mock implements _i7.DialogService {
       ) as _i3.NavigationService);
 
   @override
-  bool get isFinished => (super.noSuchMethod(
-        Invocation.getter(#isFinished),
-        returnValue: false,
-      ) as bool);
-
-  @override
-  set isFinished(bool? _isFinished) => super.noSuchMethod(
-        Invocation.setter(
-          #isFinished,
-          _isFinished,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   _i8.Future<void> showAddPlayerDialog(
     _i4.BuildContext? context,
     _i9.WidgetRef? ref,
@@ -486,7 +471,10 @@ class MockDialogService extends _i1.Mock implements _i7.DialogService {
     required _i4.BuildContext? context,
     required String? title,
     required String? hintText,
-    required dynamic Function(String)? action,
+    required dynamic Function(
+      String,
+      _i4.BuildContext,
+    )? action,
     String? confirmText = r'OK',
     String? cancelText = r'キャンセル',
     String? inputText = r'',
@@ -514,7 +502,7 @@ class MockDialogService extends _i1.Mock implements _i7.DialogService {
     required _i4.BuildContext? context,
     required String? title,
     required String? content,
-    required dynamic Function()? action,
+    required dynamic Function(_i4.BuildContext)? action,
     String? confirmText = r'確認',
     String? cancelText = r'キャンセル',
   }) =>
@@ -538,6 +526,7 @@ class MockDialogService extends _i1.Mock implements _i7.DialogService {
   @override
   _i8.Future<void> handleActionAndError(
     _i4.BuildContext? context,
+    _i4.BuildContext? dialogContext,
     _i8.Future<void> Function()? action,
   ) =>
       (super.noSuchMethod(
@@ -545,6 +534,7 @@ class MockDialogService extends _i1.Mock implements _i7.DialogService {
           #handleActionAndError,
           [
             context,
+            dialogContext,
             action,
           ],
         ),
