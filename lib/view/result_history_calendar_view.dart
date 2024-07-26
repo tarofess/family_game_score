@@ -1,7 +1,3 @@
-import 'dart:collection';
-
-import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/result_history_detail_view.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/result_history_calendar_viewmodel.dart';
@@ -21,15 +17,6 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
     var selectedDay = useState(DateTime.now());
     var focusedDay = useState(DateTime.now());
 
-    int getHashCode(DateTime key) {
-      return key.day * 1000000 + key.month * 10000 + key.year;
-    }
-
-    final events = LinkedHashMap<DateTime, List>(
-      equals: isSameDay,
-      hashCode: getHashCode,
-    )..addAll(vm.eventSessions);
-
     return Scaffold(
         body: vm.resultHistories.when(
             data: (data) => TableCalendar(
@@ -40,11 +27,10 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
                   formatButtonVisible: false,
                 ),
                 locale: 'ja_JP',
-                eventLoader: (day) => events[day] ?? [],
+                eventLoader: (day) => vm.events[day] ?? [],
                 onDaySelected: (tappedDay, focused) {
-                  print(events);
-                  handleOnDaySelected(
-                      tappedDay, focused, vm, context, selectedDay, focusedDay);
+                  vm.handleOnDaySelected(
+                      tappedDay, focused, context, selectedDay, focusedDay);
                 },
                 selectedDayPredicate: (day) {
                   return isSameDay(selectedDay.value, day);
@@ -53,33 +39,5 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
             error: (error, stackTrace) =>
                 CommonAsyncWidgets.showDataFetchErrorMessage(
                     context, ref, resultHistoryProvider, error)));
-  }
-
-  void handleOnDaySelected(
-    DateTime tappedDay,
-    DateTime focused,
-    ResultHistoryCalendarViewModel vm,
-    BuildContext context,
-    ValueNotifier<DateTime> selectedDay,
-    ValueNotifier<DateTime> focusedDay,
-  ) {
-    selectedDay.value = tappedDay;
-    focusedDay.value = focused;
-
-    if (vm.resultHistories.value != null) {
-      final filteredResultHistoryies =
-          vm.resultHistories.value!.where((element) {
-        final elementDate = DateTime.parse(element.session.begTime);
-        return isSameDay(elementDate, tappedDay);
-      }).toList();
-      if (filteredResultHistoryies.isNotEmpty) {
-        final navigationService = NavigationService();
-        navigationService.push(
-            context,
-            ResultHistoryDetailView(
-              filteredResultHistories: filteredResultHistoryies,
-            ));
-      }
-    }
   }
 }
