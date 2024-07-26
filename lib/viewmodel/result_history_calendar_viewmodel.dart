@@ -1,10 +1,20 @@
+import 'dart:collection';
+
 import 'package:family_game_score/model/entity/result_history.dart';
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/view/result_history_detail_view.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class ResultHistoryCalendarViewModel {
   Ref ref;
-  ResultHistoryCalendarViewModel(this.ref);
+  late LinkedHashMap<DateTime, List> events;
+
+  ResultHistoryCalendarViewModel(this.ref) {
+    initializeEvents();
+  }
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
@@ -18,6 +28,44 @@ class ResultHistoryCalendarViewModel {
       tempResult.putIfAbsent(date, () => <int>{}).add(resultHistory.session.id);
     }
     return tempResult.map((key, value) => MapEntry(key, value.toList()));
+  }
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+
+  void initializeEvents() {
+    events = LinkedHashMap<DateTime, List>(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    )..addAll(eventSessions);
+  }
+
+  void handleOnDaySelected(
+    DateTime tappedDay,
+    DateTime focused,
+    BuildContext context,
+    ValueNotifier<DateTime> selectedDay,
+    ValueNotifier<DateTime> focusedDay,
+  ) {
+    selectedDay.value = tappedDay;
+    focusedDay.value = focused;
+
+    if (resultHistories.value != null) {
+      final filteredResultHistoryies = resultHistories.value!.where((element) {
+        final elementDate = DateTime.parse(element.session.begTime);
+        return isSameDay(elementDate, tappedDay);
+      }).toList();
+
+      if (filteredResultHistoryies.isNotEmpty) {
+        final navigationService = NavigationService();
+        navigationService.push(
+            context,
+            ResultHistoryDetailView(
+              filteredResultHistories: filteredResultHistoryies,
+            ));
+      }
+    }
   }
 }
 
