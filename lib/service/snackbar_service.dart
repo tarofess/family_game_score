@@ -17,6 +17,5 @@ class SnackbarService {
         )
         .closed
         .then((_) => isSnackbarVisible = false);
-    ;
   }
 }

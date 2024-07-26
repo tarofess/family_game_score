@@ -15,7 +15,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('過去の成績'),
+        title: const Text('成績の詳細'),
       ),
       body: buildResultHistoryList(context),
     );
