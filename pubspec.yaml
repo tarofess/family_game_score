@@ -39,6 +39,7 @@ dependencies:
   grouped_list:
   intl:
   flutter_launcher_icons:
+  table_calendar:
 
 flutter_icons:
   android: true

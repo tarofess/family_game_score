@@ -1,43 +1,29 @@
+import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/view/widget/result_card.dart';
-import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
-import 'package:family_game_score/view/widget/common_async_widget.dart';
-import 'package:family_game_score/viewmodel/result_history_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:grouped_list/grouped_list.dart';
 
-class ResultHistoryView extends ConsumerWidget {
-  const ResultHistoryView({super.key});
+class ResultHistoryDetailView extends ConsumerWidget {
+  final List<ResultHistory> filteredResultHistories;
+
+  const ResultHistoryDetailView(
+      {super.key, required this.filteredResultHistories});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(resultHistoryViewModelProvider);
-
     return Scaffold(
-      body: vm.resultHistory.when(
-        data: (data) => data.isEmpty
-            ? buildNoMatchHistoryMessage(context)
-            : buildResultHistoryList(context, vm),
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, resultHistoryProvider, error),
+      appBar: AppBar(
+        title: const Text('過去の成績'),
       ),
+      body: buildResultHistoryList(context),
     );
   }
 
-  Widget buildNoMatchHistoryMessage(BuildContext context) {
-    return const Center(
-        child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text('まだ対戦履歴がありません', style: TextStyle(fontSize: 18))));
-  }
-
-  Widget buildResultHistoryList(
-      BuildContext context, ResultHistoryViewModel vm) {
+  Widget buildResultHistoryList(BuildContext context) {
     return GroupedListView<dynamic, String>(
-        elements: vm.resultHistory.value!,
+        elements: filteredResultHistories,
         groupBy: (element) => element.session.begTime,
         groupComparator: (value1, value2) => value2.compareTo(value1),
         itemComparator: (item1, item2) =>

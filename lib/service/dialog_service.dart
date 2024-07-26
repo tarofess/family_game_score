@@ -11,7 +11,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DialogService {
   final NavigationService navigationService;
-  bool isFinished = false; // pushAndRemoveUntilの直後にpopが呼ばれないようにするためのフラグ
 
   DialogService(this.navigationService);
 
@@ -20,8 +19,8 @@ class DialogService {
         context: context,
         title: '名前を入力してください',
         hintText: 'プレイヤー名',
-        action: (String inputText) async {
-          handleActionAndError(context, () async {
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
             await ref.read(playerProvider.notifier).addPlayer(inputText);
           });
         });
@@ -33,8 +32,8 @@ class DialogService {
         context: context,
         title: 'プレイヤー名を編集してください',
         hintText: player.name,
-        action: (String inputText) async {
-          handleActionAndError(context, () async {
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
             await ref
                 .read(playerProvider.notifier)
                 .updatePlayer(player.copyWith(name: inputText));
@@ -49,8 +48,8 @@ class DialogService {
         context: context,
         title: '${player.name}を削除します',
         content: '削除すると元に戻せませんが本当に削除しますか？',
-        action: () async {
-          handleActionAndError(context, () async {
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
             await ref.read(playerProvider.notifier).deletePlayer(player);
             ref.invalidate(resultHistoryProvider);
           });
@@ -66,8 +65,8 @@ class DialogService {
         context: context,
         title: '確認',
         content: '$nextRound回戦に進みますか？',
-        action: () {
-          handleActionAndError(context, () async {
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
             await ref.read(sessionProvider.notifier).addSession();
             await ref.read(sessionProvider.notifier).updateRound();
             await ref.read(resultProvider.notifier).addOrUpdateResult();
@@ -80,25 +79,23 @@ class DialogService {
         context: context,
         title: '確認',
         content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
-        action: () async {
-          handleActionAndError(context, () async {
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
             await ref.read(sessionProvider.notifier).updateEndTime();
             ref.read(sessionProvider.notifier).disposeSession();
             ref.read(playerProvider.notifier).resetOrder();
-
-            if (context.mounted) {
-              isFinished = true;
-              navigationService.pushAndRemoveUntil(
-                  context, const RankingView());
-            }
           });
+
+          if (context.mounted) {
+            navigationService.pushAndRemoveUntil(context, const RankingView());
+          }
         });
   }
 
   void showReturnToHomeDialog(BuildContext context, WidgetRef ref) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('お疲れ様でした！'),
           content: const Text('ホーム画面に戻ります'),
@@ -107,7 +104,7 @@ class DialogService {
               onPressed: () {
                 ref.invalidate(resultProvider);
                 ref.invalidate(resultHistoryProvider);
-                navigationService.pop(context);
+                navigationService.pop(dialogContext);
                 navigationService.pushReplacement(context, const MyApp());
               },
               child: const Text('はい'),
@@ -122,14 +119,14 @@ class DialogService {
       NavigationService navigationService) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('エラー'),
           content: Text('エラーが発生しました\n${error.toString()}'),
           actions: [
             TextButton(
               onPressed: () {
-                navigationService.pop(context);
+                navigationService.pop(dialogContext);
               },
               child: const Text('閉じる'),
             ),
@@ -143,13 +140,13 @@ class DialogService {
       {required BuildContext context,
       required String title,
       required String hintText,
-      required Function(String) action,
+      required Function(String, BuildContext) action,
       String confirmText = 'OK',
       String cancelText = 'キャンセル',
       String inputText = ''}) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(title),
           content: TextField(
@@ -160,11 +157,11 @@ class DialogService {
           actions: [
             TextButton(
                 onPressed: () {
-                  navigationService.pop(context);
+                  navigationService.pop(dialogContext);
                 },
                 child: Text(cancelText)),
             TextButton(
-              onPressed: () => action(inputText),
+              onPressed: () => action(inputText, dialogContext),
               child: Text(confirmText),
             ),
           ],
@@ -177,24 +174,24 @@ class DialogService {
     required BuildContext context,
     required String title,
     required String content,
-    required Function() action,
+    required Function(BuildContext dialogContext) action,
     String confirmText = '確認',
     String cancelText = 'キャンセル',
   }) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(title),
           content: Text(content),
           actions: [
             TextButton(
                 onPressed: () {
-                  navigationService.pop(context);
+                  navigationService.pop(dialogContext);
                 },
                 child: const Text('いいえ')),
             TextButton(
-              onPressed: () async => await action(),
+              onPressed: () async => await action(dialogContext),
               child: const Text('はい'),
             )
           ],
@@ -203,8 +200,8 @@ class DialogService {
     );
   }
 
-  Future<void> handleActionAndError(
-      BuildContext context, Future<void> Function() action) async {
+  Future<void> handleActionAndError(BuildContext context,
+      BuildContext dialogContext, Future<void> Function() action) async {
     try {
       await action();
     } catch (e) {
@@ -212,8 +209,8 @@ class DialogService {
         await showErrorDialog(context, e, NavigationService());
       }
     } finally {
-      if (context.mounted && !isFinished) {
-        navigationService.pop(context);
+      if (dialogContext.mounted) {
+        navigationService.pop(dialogContext);
       }
     }
   }
