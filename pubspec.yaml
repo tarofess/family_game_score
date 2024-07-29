@@ -40,6 +40,8 @@ dependencies:
   intl:
   flutter_launcher_icons:
   table_calendar:
+  firebase_core:
+  firebase_crashlytics:
 
 flutter_icons:
   android: true
