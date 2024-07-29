@@ -1,8 +1,5 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
-import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/service/snackbar_service.dart';
-import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -12,15 +9,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateMocks([Ref, NavigationService, SnackbarService, BuildContext])
+@GenerateMocks([Ref, BuildContext])
 import 'home_viewmodel_test.mocks.dart';
 
 void main() {
   late MockRef mockRef;
-  late MockNavigationService mockNavigationService;
-  late MockSnackbarService mockSnackbarService;
   late HomeViewModel viewModel;
-  late MockBuildContext mockContext;
 
   setUpAll(() {
     provideDummy<AsyncValue<List<Player>>>(const AsyncValue.data([]));
@@ -29,11 +23,7 @@ void main() {
 
   setUp(() {
     mockRef = MockRef();
-    mockNavigationService = MockNavigationService();
-    mockSnackbarService = MockSnackbarService();
-    mockContext = MockBuildContext();
-    viewModel =
-        HomeViewModel(mockRef, mockNavigationService, mockSnackbarService);
+    viewModel = HomeViewModel(mockRef);
 
     const mockPlayers = AsyncValue<List<Player>>.data([]);
     const mockSession = AsyncValue<Session?>.data(null);
@@ -69,11 +59,11 @@ void main() {
 
     test('getButtonText returns correct text based on session state', () {
       when(viewModel.session).thenReturn(const AsyncValue.data(null));
-      expect(viewModel.getButtonText(mockContext), equals('ゲームスタート！'));
+      expect(viewModel.getButtonText(), equals('ゲームスタート！'));
 
       when(viewModel.session).thenReturn(const AsyncValue.data(Session(
           id: 1, round: 1, begTime: '2023-07-22 10:00:00', endTime: null)));
-      expect(viewModel.getButtonText(mockContext), equals('ゲーム再開！'));
+      expect(viewModel.getButtonText(), equals('ゲーム再開！'));
     });
 
     test('getGradientColors returns correct colors based on player count', () {
@@ -97,27 +87,43 @@ void main() {
       expect(viewModel.getGradientColors(), equals(disabledColors));
     });
 
-    test('handleButtonPress navigates to ScoringView when canStartGame is true',
-        () {
+    test('handleButtonPress calls onStartGame when canStartGame is true', () {
       when(viewModel.players).thenReturn(const AsyncValue.data([
         Player(id: 1, name: 'Player1', status: 0),
         Player(id: 2, name: 'Player2', status: 0)
       ]));
-      viewModel.handleButtonPress(mockContext);
-      verify(mockNavigationService.pushReplacementWithAnimationFromBottom(
-        mockContext,
-        argThat(isA<ScoringView>()),
-      )).called(1);
-      verifyNever(mockSnackbarService.showHomeViewSnackBar(mockContext));
+
+      bool onStartGameCalled = false;
+      bool onShowSnackbarCalled = false;
+
+      final callback = viewModel.handleButtonPress(
+        onStartGame: () => onStartGameCalled = true,
+        onShowSnackbar: () => onShowSnackbarCalled = true,
+      );
+
+      callback();
+
+      expect(onStartGameCalled, isTrue);
+      expect(onShowSnackbarCalled, isFalse);
     });
 
-    test('handleButtonPress shows snackbar when canStartGame is false', () {
+    test('handleButtonPress calls onShowSnackbar when canStartGame is false',
+        () {
       when(viewModel.players).thenReturn(
           const AsyncValue.data([Player(id: 1, name: 'Player1', status: 0)]));
-      viewModel.handleButtonPress(mockContext);
-      verifyNever(mockNavigationService.pushReplacementWithAnimationFromBottom(
-          mockContext, const ScoringView()));
-      verify(mockSnackbarService.showHomeViewSnackBar(mockContext)).called(1);
+
+      bool onStartGameCalled = false;
+      bool onShowSnackbarCalled = false;
+
+      final callback = viewModel.handleButtonPress(
+        onStartGame: () => onStartGameCalled = true,
+        onShowSnackbar: () => onShowSnackbarCalled = true,
+      );
+
+      callback();
+
+      expect(onStartGameCalled, isFalse);
+      expect(onShowSnackbarCalled, isTrue);
     });
   });
 }
