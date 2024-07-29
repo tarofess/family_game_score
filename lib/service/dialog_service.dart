@@ -87,7 +87,11 @@ class DialogService {
           });
 
           if (context.mounted) {
-            navigationService.pushAndRemoveUntil(context, const RankingView());
+            navigationService.pushAndRemoveUntil(
+                context,
+                RankingView(
+                  dialogService: DialogService(NavigationService()),
+                ));
           }
         });
   }

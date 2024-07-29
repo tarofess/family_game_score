@@ -1,8 +1,5 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
-import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/service/snackbar_service.dart';
-import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +7,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeViewModel {
   final Ref ref;
-  final NavigationService navigationService;
-  final SnackbarService snackbarService;
 
-  HomeViewModel(this.ref, this.navigationService, this.snackbarService);
+  HomeViewModel(this.ref);
 
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
-  void handleButtonPress(BuildContext context) {
-    canStartGame()
-        ? navigationService.pushReplacementWithAnimationFromBottom(
-            context, const ScoringView())
-        : snackbarService.showHomeViewSnackBar(context);
+  VoidCallback handleButtonPress(
+      {required VoidCallback onStartGame,
+      required VoidCallback onShowSnackbar}) {
+    return canStartGame() ? onStartGame : onShowSnackbar;
   }
 
   bool canStartGame() => players.value!.length >= 2;
 
-  String getButtonText(BuildContext context) {
+  String getButtonText() {
     return session.value == null ? 'ゲームスタート！' : 'ゲーム再開！';
   }
 
@@ -44,5 +38,4 @@ class HomeViewModel {
   }
 }
 
-final homeViewModelProvider = Provider(
-    (ref) => HomeViewModel(ref, NavigationService(), SnackbarService()));
+final homeViewModelProvider = Provider((ref) => HomeViewModel(ref));

@@ -1,4 +1,5 @@
 import 'package:family_game_score/model/entity/result.dart';
+import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/view/widget/result_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
@@ -9,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RankingView extends HookConsumerWidget {
-  const RankingView({super.key});
+  final DialogService dialogService;
+
+  const RankingView({super.key, required this.dialogService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,20 +21,29 @@ class RankingView extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: vm.getAppBarTitle(context),
-        actions: [vm.getIconButton(context, ref)],
+        title: vm.getAppBarTitle(),
+        actions: [
+          vm.getIconButton(
+            () => dialogService.showReturnToHomeDialog(context, ref),
+          )
+        ],
       ),
       body: Stack(
         children: [
           vm.results.when(
-              data: (data) {
-                return buildRankingList(data, vm, context, ref);
-              },
-              loading: () => CommonAsyncWidgets.showLoading(),
-              error: (error, stackTrace) =>
-                  CommonAsyncWidgets.showDataFetchErrorMessage(
-                      context, ref, resultProvider, error)),
-          const Positioned.fill(child: IgnorePointer(child: SakuraAnimation())),
+            data: (data) {
+              return buildRankingList(data, vm, context, ref);
+            },
+            loading: () => CommonAsyncWidgets.showLoading(),
+            error: (error, stackTrace) =>
+                CommonAsyncWidgets.showDataFetchErrorMessage(
+                    context, ref, resultProvider, error),
+          ),
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: SakuraAnimation(),
+            ),
+          ),
         ],
       ),
     );
@@ -40,17 +52,18 @@ class RankingView extends HookConsumerWidget {
   Widget buildRankingList(List<Result> results, RankingViewModel vm,
       BuildContext context, WidgetRef ref) {
     return vm.players.when(
-        data: (data) => ListView.builder(
-              itemCount: results.length,
-              itemBuilder: (context, index) {
-                final result = results[index];
-                final player = data.firstWhere((p) => p.id == result.playerId);
-                return ResultCard(player: player, result: result);
-              },
-            ),
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, playerProvider, error));
+      data: (data) => ListView.builder(
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          final result = results[index];
+          final player = data.firstWhere((p) => p.id == result.playerId);
+          return ResultCard(player: player, result: result);
+        },
+      ),
+      loading: () => CommonAsyncWidgets.showLoading(),
+      error: (error, stackTrace) =>
+          CommonAsyncWidgets.showDataFetchErrorMessage(
+              context, ref, playerProvider, error),
+    );
   }
 }
