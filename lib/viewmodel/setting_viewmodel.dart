@@ -1,7 +1,5 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
-import 'package:family_game_score/service/dialog_service.dart';
-import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
@@ -9,17 +7,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SettingViewModel {
   final Ref ref;
-  final DialogService dialogService;
 
-  SettingViewModel(this.ref, this.dialogService);
+  SettingViewModel(this.ref);
 
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
   VoidCallback? getFloatingActionButtonCallback(
-      BuildContext context, WidgetRef ref) {
+      WidgetRef ref, VoidCallback onShowAddPlayerDialog) {
     if (players.hasValue && session.hasValue && session.value == null) {
-      return () => dialogService.showAddPlayerDialog(context, ref);
+      return onShowAddPlayerDialog;
     }
     return null;
   }
@@ -31,5 +28,4 @@ class SettingViewModel {
   }
 }
 
-final settingViewModelProvider = Provider(
-    (ref) => SettingViewModel(ref, DialogService(NavigationService())));
+final settingViewModelProvider = Provider((ref) => SettingViewModel(ref));

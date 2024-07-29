@@ -1,4 +1,8 @@
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/service/dialog_service.dart';
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/service/snackbar_service.dart';
+import 'package:family_game_score/view/scoring_view.dart';
 import 'package:family_game_score/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -8,7 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
-  const HomeView({super.key});
+  final NavigationService navigationService;
+  final SnackbarService snackbarService;
+
+  const HomeView(
+      {super.key,
+      required this.navigationService,
+      required this.snackbarService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,22 +37,33 @@ class HomeView extends ConsumerWidget {
 
   Widget buildPlayers(BuildContext context, WidgetRef ref, HomeViewModel vm) {
     return vm.players.when(
-        data: (data) {
-          return Center(child: buildCenterCircleButton(context, ref, data, vm));
-        },
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, playerProvider, error));
+      data: (data) {
+        return Center(child: buildCenterCircleButton(context, ref, data, vm));
+      },
+      loading: () => CommonAsyncWidgets.showLoading(),
+      error: (error, stackTrace) =>
+          CommonAsyncWidgets.showDataFetchErrorMessage(
+              context, ref, playerProvider, error),
+    );
   }
 
   Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
       List<Player> players, HomeViewModel vm) {
     return GradientCircleButton(
-      onPressed: () async {
-        vm.handleButtonPress(context);
-      },
-      text: vm.getButtonText(context),
+      onPressed: vm.handleButtonPress(
+        onStartGame: () =>
+            navigationService.pushReplacementWithAnimationFromBottom(
+          context,
+          ScoringView(
+            dialogService: DialogService(
+              NavigationService(),
+            ),
+            navigationService: NavigationService(),
+          ),
+        ),
+        onShowSnackbar: () => snackbarService.showHomeViewSnackBar(context),
+      ),
+      text: vm.getButtonText(),
       size: 200.0,
       gradientColors: vm.getGradientColors(),
       textStyle: const TextStyle(

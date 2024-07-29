@@ -1,4 +1,7 @@
 import 'package:family_game_score/model/repository/database_helper.dart';
+import 'package:family_game_score/service/dialog_service.dart';
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/service/snackbar_service.dart';
 import 'package:family_game_score/view/home_view.dart';
 import 'package:family_game_score/view/result_history_calendar_view.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +47,20 @@ class MyTabView extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            HomeView(),
-            ResultHistoryCalendarView(),
-            SettingView(),
+            HomeView(
+              navigationService: NavigationService(),
+              snackbarService: SnackbarService(),
+            ),
+            ResultHistoryCalendarView(
+              navigationService: NavigationService(),
+            ),
+            SettingView(
+              dialogService: DialogService(
+                NavigationService(),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,8 +1,6 @@
 import 'dart:collection';
 
 import 'package:family_game_score/model/entity/result_history.dart';
-import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/result_history_detail_view.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -44,9 +42,9 @@ class ResultHistoryCalendarViewModel {
   void handleOnDaySelected(
     DateTime tappedDay,
     DateTime focused,
-    BuildContext context,
     ValueNotifier<DateTime> selectedDay,
     ValueNotifier<DateTime> focusedDay,
+    Function(List<ResultHistory>) onShowResultHistoryDetailView,
   ) {
     selectedDay.value = tappedDay;
     focusedDay.value = focused;
@@ -58,12 +56,7 @@ class ResultHistoryCalendarViewModel {
       }).toList();
 
       if (filteredResultHistoryies.isNotEmpty) {
-        final navigationService = NavigationService();
-        navigationService.push(
-            context,
-            ResultHistoryDetailView(
-              filteredResultHistories: filteredResultHistoryies,
-            ));
+        onShowResultHistoryDetailView(filteredResultHistoryies);
       }
     }
   }

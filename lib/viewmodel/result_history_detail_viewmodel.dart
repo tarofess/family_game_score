@@ -4,10 +4,10 @@ import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ResultHistoryViewModel {
+class ResultHistoryDetailViewModel {
   final Ref ref;
 
-  ResultHistoryViewModel(this.ref);
+  ResultHistoryDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistory =>
       ref.watch(resultHistoryProvider);
@@ -15,4 +15,4 @@ class ResultHistoryViewModel {
 }
 
 final resultHistoryViewModelProvider =
-    Provider((ref) => ResultHistoryViewModel(ref));
+    Provider((ref) => ResultHistoryDetailViewModel(ref));

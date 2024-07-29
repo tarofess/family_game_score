@@ -1,3 +1,5 @@
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/view/result_history_detail_view.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/result_history_calendar_viewmodel.dart';
@@ -8,7 +10,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ResultHistoryCalendarView extends HookConsumerWidget {
-  const ResultHistoryCalendarView({super.key});
+  final NavigationService navigationService;
+
+  const ResultHistoryCalendarView({super.key, required this.navigationService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,26 +22,38 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
     var focusedDay = useState(DateTime.now());
 
     return Scaffold(
-        body: vm.resultHistories.when(
-            data: (data) => TableCalendar(
-                firstDay: DateTime.utc(2024, 1, 1),
-                lastDay: DateTime.utc(2123, 12, 31),
-                focusedDay: focusedDay.value,
-                headerStyle: const HeaderStyle(
-                  formatButtonVisible: false,
+      body: vm.resultHistories.when(
+        data: (data) => TableCalendar(
+            firstDay: DateTime.utc(2024, 1, 1),
+            lastDay: DateTime.utc(2123, 12, 31),
+            focusedDay: focusedDay.value,
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+            ),
+            locale: 'ja_JP',
+            eventLoader: (day) => vm.events[day] ?? [],
+            onDaySelected: (tappedDay, focused) {
+              vm.handleOnDaySelected(
+                tappedDay,
+                focused,
+                selectedDay,
+                focusedDay,
+                (filteredResultHistoryies) => navigationService.push(
+                  context,
+                  ResultHistoryDetailView(
+                    filteredResultHistories: filteredResultHistoryies,
+                  ),
                 ),
-                locale: 'ja_JP',
-                eventLoader: (day) => vm.events[day] ?? [],
-                onDaySelected: (tappedDay, focused) {
-                  vm.handleOnDaySelected(
-                      tappedDay, focused, context, selectedDay, focusedDay);
-                },
-                selectedDayPredicate: (day) {
-                  return isSameDay(selectedDay.value, day);
-                }),
-            loading: () => CommonAsyncWidgets.showLoading(),
-            error: (error, stackTrace) =>
-                CommonAsyncWidgets.showDataFetchErrorMessage(
-                    context, ref, resultHistoryProvider, error)));
+              );
+            },
+            selectedDayPredicate: (day) {
+              return isSameDay(selectedDay.value, day);
+            }),
+        loading: () => CommonAsyncWidgets.showLoading(),
+        error: (error, stackTrace) =>
+            CommonAsyncWidgets.showDataFetchErrorMessage(
+                context, ref, resultHistoryProvider, error),
+      ),
+    );
   }
 }

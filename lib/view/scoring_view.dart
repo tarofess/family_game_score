@@ -1,4 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/service/dialog_service.dart';
+import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/view/ranking_view.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
@@ -7,29 +10,42 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ScoringView extends ConsumerWidget {
-  const ScoringView({super.key});
+  final DialogService dialogService;
+  final NavigationService navigationService;
+
+  const ScoringView(
+      {super.key,
+      required this.dialogService,
+      required this.navigationService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(scoringViewModelProvider);
 
     return Scaffold(
-        appBar: buildAppBar(context, ref, vm),
-        body: buildBody(context, ref, vm),
-        floatingActionButton: buildFloatingActionButton(context, ref, vm));
+      appBar: buildAppBar(context, ref, vm),
+      body: buildBody(context, ref, vm),
+      floatingActionButton: buildFloatingActionButton(context, ref, vm),
+    );
   }
 
   AppBar buildAppBar(BuildContext context, WidgetRef ref, ScoringViewModel vm) {
     return AppBar(
       centerTitle: true,
-      title: vm.getAppBarTitle(context),
+      title: vm.getAppBarTitle(),
       leading: IconButton(
-          icon: const Icon(Icons.exit_to_app),
-          onPressed: vm.getExitButtonCallback(context, ref)),
+        icon: const Icon(Icons.exit_to_app),
+        onPressed: vm.getExitButtonCallback(
+          () => dialogService.showFinishGameDialog(context, ref),
+        ),
+      ),
       actions: [
         IconButton(
-            onPressed: vm.getCheckButtonCallback(context, ref),
-            icon: const Icon(Icons.check_circle_outline)),
+          onPressed: vm.getCheckButtonCallback(
+            () => dialogService.showMoveToNextRoundDialog(context, ref),
+          ),
+          icon: const Icon(Icons.check_circle_outline),
+        ),
       ],
     );
   }
@@ -40,12 +56,14 @@ class ScoringView extends ConsumerWidget {
         children: [
           buildHereAreTheCurrentRankingsText(context),
           Expanded(
-              child: vm.results.when(
-                  data: (data) => buildPlayers(context, ref, vm),
-                  loading: () => CommonAsyncWidgets.showLoading(),
-                  error: (error, stackTrace) =>
-                      CommonAsyncWidgets.showDataFetchErrorMessage(
-                          context, ref, resultProvider, error))),
+            child: vm.results.when(
+              data: (data) => buildPlayers(context, ref, vm),
+              loading: () => CommonAsyncWidgets.showLoading(),
+              error: (error, stackTrace) =>
+                  CommonAsyncWidgets.showDataFetchErrorMessage(
+                      context, ref, resultProvider, error),
+            ),
+          ),
         ],
       ),
     );
@@ -54,7 +72,16 @@ class ScoringView extends ConsumerWidget {
   FloatingActionButton buildFloatingActionButton(
       BuildContext context, WidgetRef ref, ScoringViewModel vm) {
     return FloatingActionButton(
-      onPressed: vm.getFloatingActionButtonCallback(context, ref),
+      onPressed: vm.getFloatingActionButtonCallback(
+        () => navigationService.push(
+          context,
+          RankingView(
+            dialogService: DialogService(
+              NavigationService(),
+            ),
+          ),
+        ),
+      ),
       backgroundColor: vm.getFloatingActionButtonColor(),
       child: const Icon(Icons.description),
     );
@@ -63,11 +90,12 @@ class ScoringView extends ConsumerWidget {
   Widget buildPlayers(
       BuildContext context, WidgetRef ref, ScoringViewModel vm) {
     return vm.players.when(
-        data: (data) => buildScoringList(data, ref),
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, playerProvider, error));
+      data: (data) => buildScoringList(data, ref),
+      loading: () => CommonAsyncWidgets.showLoading(),
+      error: (error, stackTrace) =>
+          CommonAsyncWidgets.showDataFetchErrorMessage(
+              context, ref, playerProvider, error),
+    );
   }
 
   Widget buildHereAreTheCurrentRankingsText(BuildContext context) {
