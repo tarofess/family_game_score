@@ -1,7 +1,6 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/model/entity/session.dart';
-import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -12,12 +11,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 
-@GenerateMocks([Ref, DialogService, BuildContext, WidgetRef])
+@GenerateMocks([Ref])
 import 'ranking_viewmodel_test.mocks.dart';
 
 void main() {
   late MockRef mockRef;
-  late MockDialogService mockDialogService;
   late RankingViewModel viewModel;
 
   setUpAll(() {
@@ -28,7 +26,6 @@ void main() {
 
   setUp(() {
     mockRef = MockRef();
-    mockDialogService = MockDialogService();
 
     // AsyncValue インスタンスを使用
     const mockResults = AsyncValue<List<Result>>.data([]);
@@ -39,7 +36,7 @@ void main() {
     when(mockRef.watch(playerProvider)).thenReturn(mockPlayers);
     when(mockRef.watch(sessionProvider)).thenReturn(mockSession);
 
-    viewModel = RankingViewModel(mockRef, mockDialogService);
+    viewModel = RankingViewModel(mockRef);
   });
 
   group('RankingViewModel', () {
@@ -59,7 +56,7 @@ void main() {
       test('should return "結果発表" when session is null', () {
         when(mockRef.watch(sessionProvider))
             .thenReturn(const AsyncValue<Session?>.data(null));
-        final result = viewModel.getAppBarTitle(MockBuildContext());
+        final result = viewModel.getAppBarTitle();
         expect(result.runtimeType, Text);
         expect((result as Text).data, '結果発表');
       });
@@ -68,7 +65,7 @@ void main() {
         when(mockRef.watch(sessionProvider)).thenReturn(
             const AsyncValue<Session?>.data(
                 Session(id: 1, round: 1, begTime: '2023-07-22 10:00:00')));
-        final result = viewModel.getAppBarTitle(MockBuildContext());
+        final result = viewModel.getAppBarTitle();
         expect(result.runtimeType, Text);
         expect((result as Text).data, '現在の順位');
       });
@@ -78,8 +75,7 @@ void main() {
       test('should return IconButton when session is null', () {
         when(mockRef.watch(sessionProvider))
             .thenReturn(const AsyncValue<Session?>.data(null));
-        final result =
-            viewModel.getIconButton(MockBuildContext(), MockWidgetRef());
+        final result = viewModel.getIconButton(() {});
         expect(result.runtimeType, IconButton);
       });
 
@@ -87,24 +83,21 @@ void main() {
         when(mockRef.watch(sessionProvider)).thenReturn(
             const AsyncValue<Session?>.data(
                 Session(id: 1, round: 1, begTime: '2023-07-22 10:00:00')));
-        final result =
-            viewModel.getIconButton(MockBuildContext(), MockWidgetRef());
+        final result = viewModel.getIconButton(() {});
         expect(result.runtimeType, SizedBox);
       });
 
-      test('should call showReturnToHomeDialog when IconButton is pressed', () {
+      test('should call onIconButtonPressed when IconButton is pressed', () {
         when(mockRef.watch(sessionProvider))
             .thenReturn(const AsyncValue<Session?>.data(null));
-        final mockContext = MockBuildContext();
-        final mockWidgetRef = MockWidgetRef();
-        final iconButton =
-            viewModel.getIconButton(mockContext, mockWidgetRef) as IconButton;
+        var called = false;
+        final iconButton = viewModel.getIconButton(() {
+          called = true;
+        }) as IconButton;
 
         iconButton.onPressed!();
 
-        verify(mockDialogService.showReturnToHomeDialog(
-                mockContext, mockWidgetRef))
-            .called(1);
+        expect(called, true);
       });
     });
   });
