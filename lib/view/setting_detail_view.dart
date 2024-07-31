@@ -32,9 +32,18 @@ class PlayerDetailView extends HookConsumerWidget {
     final nameTextEditingController =
         useTextEditingController(text: player?.name ?? '');
     final playerName = useState(nameTextEditingController.text);
-    nameTextEditingController.addListener(() {
-      playerName.value = nameTextEditingController.text;
-    });
+
+    useEffect(() {
+      void listener() {
+        playerName.value = nameTextEditingController.text;
+      }
+
+      nameTextEditingController.addListener(listener);
+
+      return () {
+        nameTextEditingController.removeListener(listener);
+      };
+    }, [nameTextEditingController]);
 
     final vm = ref.watch(playerDetailViewmodelProvider);
 
