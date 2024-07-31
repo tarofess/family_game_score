@@ -41,7 +41,7 @@ class SettingView extends ConsumerWidget {
           ref,
           () => navigationService.push(
             context,
-            PlayerDetailView(
+            SettingDetailView(
               player: null,
               cameraService: CameraService(),
               navigationService: NavigationService(),
@@ -99,7 +99,9 @@ class SettingView extends ConsumerWidget {
         return PlayerListCard(
           player: players[index],
           navigationService: NavigationService(),
+          dialogService: DialogService(NavigationService()),
           cameraService: CameraService(),
+          ref: ref,
         );
       },
     );
