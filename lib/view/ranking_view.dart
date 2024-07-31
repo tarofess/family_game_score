@@ -1,7 +1,7 @@
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
-import 'package:family_game_score/view/widget/result_list_card.dart';
+import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';

@@ -3,6 +3,7 @@ import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/player_detail_view.dart';
+import 'package:family_game_score/view/widget/list_card/player_image.dart';
 import 'package:flutter/material.dart';
 
 class PlayerListCard extends StatelessWidget {
@@ -24,26 +25,7 @@ class PlayerListCard extends StatelessWidget {
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        leading: FutureBuilder<Image?>(
-          future: cameraService.getImageFromPath(player.image),
-          builder: (context, snapshot) {
-            const double avatarRadius = 18.0;
-            const double iconSize = avatarRadius * 2;
-
-            if (snapshot.hasData) {
-              return CircleAvatar(
-                backgroundImage: snapshot.data!.image,
-                radius: avatarRadius,
-              );
-            } else {
-              return const Icon(
-                Icons.person,
-                color: Colors.blue,
-                size: iconSize,
-              );
-            }
-          },
-        ),
+        leading: PlayerImage(player: player, cameraService: cameraService),
         title: Text(player.name),
         onTap: () => navigationService.push(
           context,
