@@ -27,12 +27,20 @@ class PlayerListCard extends StatelessWidget {
         leading: FutureBuilder<Image?>(
           future: cameraService.getImageFromPath(player.image),
           builder: (context, snapshot) {
+            const double avatarRadius = 18.0;
+            const double iconSize = avatarRadius * 2;
+
             if (snapshot.hasData) {
               return CircleAvatar(
                 backgroundImage: snapshot.data!.image,
+                radius: avatarRadius,
               );
             } else {
-              return const Icon(Icons.person, color: Colors.blue);
+              return const Icon(
+                Icons.person,
+                color: Colors.blue,
+                size: iconSize,
+              );
             }
           },
         ),

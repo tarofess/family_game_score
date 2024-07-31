@@ -17,6 +17,7 @@ class ResultHistoryRepository {
             Result.rank,
             Player.id as playerId,
             Player.name as playerName,
+            Player.image as playerImage,
             Player.status as playerStatus,
             Session.id as sessionId,
             Session.round,
