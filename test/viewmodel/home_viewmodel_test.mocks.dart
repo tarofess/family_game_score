@@ -3,10 +3,9 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:family_game_score/service/navigation_service.dart' as _i6;
-import 'package:family_game_score/service/snackbar_service.dart' as _i7;
 import 'package:flutter/foundation.dart' as _i4;
-import 'package:flutter/material.dart' as _i3;
+import 'package:flutter/src/widgets/framework.dart' as _i3;
+import 'package:flutter/src/widgets/notification_listener.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
 import 'package:riverpod/src/internals.dart' as _i2;
@@ -56,7 +55,7 @@ class _FakeWidget_2 extends _i1.SmartFake implements _i3.Widget {
         );
 
   @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
+  String toString({_i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info}) =>
       super.toString();
 }
 
@@ -71,12 +70,12 @@ class _FakeInheritedWidget_3 extends _i1.SmartFake
         );
 
   @override
-  String toString({_i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info}) =>
+  String toString({_i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info}) =>
       super.toString();
 }
 
 class _FakeDiagnosticsNode_4 extends _i1.SmartFake
-    implements _i3.DiagnosticsNode {
+    implements _i4.DiagnosticsNode {
   _FakeDiagnosticsNode_4(
     Object parent,
     Invocation parentInvocation,
@@ -88,7 +87,7 @@ class _FakeDiagnosticsNode_4 extends _i1.SmartFake
   @override
   String toString({
     _i4.TextTreeConfiguration? parentConfiguration,
-    _i3.DiagnosticLevel? minLevel = _i3.DiagnosticLevel.info,
+    _i4.DiagnosticLevel? minLevel = _i4.DiagnosticLevel.info,
   }) =>
       super.toString();
 }
@@ -300,106 +299,6 @@ class MockRef<State extends Object?> extends _i1.Mock
       ) as _i2.ProviderSubscription<T>);
 }
 
-/// A class which mocks [NavigationService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockNavigationService extends _i1.Mock implements _i6.NavigationService {
-  MockNavigationService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  void push(
-    _i3.BuildContext? context,
-    _i3.Widget? view,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #push,
-          [
-            context,
-            view,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void pushReplacement(
-    _i3.BuildContext? context,
-    _i3.Widget? view,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #pushReplacement,
-          [
-            context,
-            view,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void pop(_i3.BuildContext? context) => super.noSuchMethod(
-        Invocation.method(
-          #pop,
-          [context],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void pushReplacementWithAnimationFromBottom(
-    _i3.BuildContext? context,
-    _i3.Widget? view,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #pushReplacementWithAnimationFromBottom,
-          [
-            context,
-            view,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void pushAndRemoveUntil(
-    _i3.BuildContext? context,
-    _i3.Widget? view,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #pushAndRemoveUntil,
-          [
-            context,
-            view,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-}
-
-/// A class which mocks [SnackbarService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockSnackbarService extends _i1.Mock implements _i7.SnackbarService {
-  MockSnackbarService() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  void showHomeViewSnackBar(_i3.BuildContext? context) => super.noSuchMethod(
-        Invocation.method(
-          #showHomeViewSnackBar,
-          [context],
-        ),
-        returnValueForMissingStub: null,
-      );
-}
-
 /// A class which mocks [BuildContext].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -470,7 +369,7 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
       );
 
   @override
-  void dispatchNotification(_i3.Notification? notification) =>
+  void dispatchNotification(_i6.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
@@ -480,7 +379,7 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
       );
 
   @override
-  _i3.DiagnosticsNode describeElement(
+  _i4.DiagnosticsNode describeElement(
     String? name, {
     _i4.DiagnosticsTreeStyle? style = _i4.DiagnosticsTreeStyle.errorProperty,
   }) =>
@@ -498,10 +397,10 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i3.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 
   @override
-  _i3.DiagnosticsNode describeWidget(
+  _i4.DiagnosticsNode describeWidget(
     String? name, {
     _i4.DiagnosticsTreeStyle? style = _i4.DiagnosticsTreeStyle.errorProperty,
   }) =>
@@ -519,10 +418,10 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
             {#style: style},
           ),
         ),
-      ) as _i3.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 
   @override
-  List<_i3.DiagnosticsNode> describeMissingAncestor(
+  List<_i4.DiagnosticsNode> describeMissingAncestor(
           {required Type? expectedAncestorType}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -530,11 +429,11 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
           [],
           {#expectedAncestorType: expectedAncestorType},
         ),
-        returnValue: <_i3.DiagnosticsNode>[],
-      ) as List<_i3.DiagnosticsNode>);
+        returnValue: <_i4.DiagnosticsNode>[],
+      ) as List<_i4.DiagnosticsNode>);
 
   @override
-  _i3.DiagnosticsNode describeOwnershipChain(String? name) =>
+  _i4.DiagnosticsNode describeOwnershipChain(String? name) =>
       (super.noSuchMethod(
         Invocation.method(
           #describeOwnershipChain,
@@ -547,5 +446,5 @@ class MockBuildContext extends _i1.Mock implements _i3.BuildContext {
             [name],
           ),
         ),
-      ) as _i3.DiagnosticsNode);
+      ) as _i4.DiagnosticsNode);
 }

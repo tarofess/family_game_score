@@ -8,7 +8,8 @@ class Player with _$Player {
   const factory Player({
     required int id,
     required String name,
-    required int status,
+    required String image,
+    @Default(0) int status,
   }) = _Player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);

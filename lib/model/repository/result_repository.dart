@@ -28,6 +28,15 @@ class ResultRepository {
     return results.map((e) => Result.fromJson(e)).toList();
   }
 
+  Future<int> getTotalScore(Player player) async {
+    final response = await database.rawQuery(
+        'SELECT SUM(score) AS totalScore FROM Result WHERE playerId = ?',
+        [player.id]);
+    final totalScore = response.first['totalScore'] as int;
+
+    return totalScore;
+  }
+
   Future<void> updateResult(List<Player> players, Session session) async {
     int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 

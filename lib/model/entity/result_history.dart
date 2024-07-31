@@ -18,6 +18,7 @@ class ResultHistory with _$ResultHistory {
       player: Player(
         id: json['playerId'] as int,
         name: json['playerName'] as String,
+        image: json['playerImage'] as String,
         status: json['playerStatus'] as int,
       ),
       session: Session(

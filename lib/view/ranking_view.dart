@@ -1,6 +1,6 @@
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/service/dialog_service.dart';
-import 'package:family_game_score/view/widget/result_card.dart';
+import 'package:family_game_score/view/widget/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
@@ -57,7 +57,7 @@ class RankingView extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final result = results[index];
           final player = data.firstWhere((p) => p.id == result.playerId);
-          return ResultCard(player: player, result: result);
+          return ResultListCard(player: player, result: result);
         },
       ),
       loading: () => CommonAsyncWidgets.showLoading(),

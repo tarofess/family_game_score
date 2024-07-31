@@ -6,10 +6,11 @@ class PlayerRepository {
 
   PlayerRepository(this.database);
 
-  Future<Player> addPlayer(String inputText) async {
+  Future<Player> addPlayer(String name, String image) async {
     int id = await database.rawInsert(
-        'INSERT INTO Player(name, status) VALUES(?, 0)', [inputText]);
-    final newPlayer = Player(id: id, name: inputText, status: 0);
+        'INSERT INTO Player(name, image, status) VALUES(?, ?, 0)',
+        [name, image]);
+    final newPlayer = Player(id: id, name: name, image: image);
     return newPlayer;
   }
 
@@ -22,7 +23,8 @@ class PlayerRepository {
 
   Future<void> updatePlayer(Player player) async {
     await database.rawUpdate(
-        'UPDATE Player SET name = ? WHERE id = ?', [player.name, player.id]);
+        'UPDATE Player SET name = ?, image = ? WHERE id = ?',
+        [player.name, player.image, player.id]);
   }
 
   Future<void> deletePlayer(Player player) async {

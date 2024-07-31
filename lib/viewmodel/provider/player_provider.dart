@@ -23,10 +23,10 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     }
   }
 
-  Future<void> addPlayer(String inputText) async {
+  Future<void> addPlayer(String inputText, String image) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final newPlayer = await playerRepository.addPlayer(inputText);
+      final newPlayer = await playerRepository.addPlayer(inputText, image);
       return [...state.value ?? [], newPlayer];
     });
   }

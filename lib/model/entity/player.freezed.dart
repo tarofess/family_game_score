@@ -22,6 +22,7 @@ Player _$PlayerFromJson(Map<String, dynamic> json) {
 mixin _$Player {
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get image => throw _privateConstructorUsedError;
   int get status => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -34,7 +35,7 @@ abstract class $PlayerCopyWith<$Res> {
   factory $PlayerCopyWith(Player value, $Res Function(Player) then) =
       _$PlayerCopyWithImpl<$Res, Player>;
   @useResult
-  $Res call({int id, String name, int status});
+  $Res call({int id, String name, String image, int status});
 }
 
 /// @nodoc
@@ -52,6 +53,7 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? image = null,
     Object? status = null,
   }) {
     return _then(_value.copyWith(
@@ -62,6 +64,10 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
@@ -78,7 +84,7 @@ abstract class _$$PlayerImplCopyWith<$Res> implements $PlayerCopyWith<$Res> {
       __$$PlayerImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, String name, int status});
+  $Res call({int id, String name, String image, int status});
 }
 
 /// @nodoc
@@ -94,6 +100,7 @@ class __$$PlayerImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? image = null,
     Object? status = null,
   }) {
     return _then(_$PlayerImpl(
@@ -104,6 +111,10 @@ class __$$PlayerImplCopyWithImpl<$Res>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      image: null == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
               as String,
       status: null == status
           ? _value.status
@@ -117,7 +128,10 @@ class __$$PlayerImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PlayerImpl implements _Player {
   const _$PlayerImpl(
-      {required this.id, required this.name, required this.status});
+      {required this.id,
+      required this.name,
+      required this.image,
+      this.status = 0});
 
   factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlayerImplFromJson(json);
@@ -127,11 +141,14 @@ class _$PlayerImpl implements _Player {
   @override
   final String name;
   @override
+  final String image;
+  @override
+  @JsonKey()
   final int status;
 
   @override
   String toString() {
-    return 'Player(id: $id, name: $name, status: $status)';
+    return 'Player(id: $id, name: $name, image: $image, status: $status)';
   }
 
   @override
@@ -141,12 +158,13 @@ class _$PlayerImpl implements _Player {
             other is _$PlayerImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.image, image) || other.image == image) &&
             (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, status);
+  int get hashCode => Object.hash(runtimeType, id, name, image, status);
 
   @JsonKey(ignore: true)
   @override
@@ -166,7 +184,8 @@ abstract class _Player implements Player {
   const factory _Player(
       {required final int id,
       required final String name,
-      required final int status}) = _$PlayerImpl;
+      required final String image,
+      final int status}) = _$PlayerImpl;
 
   factory _Player.fromJson(Map<String, dynamic> json) = _$PlayerImpl.fromJson;
 
@@ -174,6 +193,8 @@ abstract class _Player implements Player {
   int get id;
   @override
   String get name;
+  @override
+  String get image;
   @override
   int get status;
   @override

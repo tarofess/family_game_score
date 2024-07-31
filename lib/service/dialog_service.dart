@@ -14,32 +14,49 @@ class DialogService {
 
   DialogService(this.navigationService);
 
-  Future<void> showAddPlayerDialog(BuildContext context, WidgetRef ref) {
-    return showInputDialog(
-        context: context,
-        title: '名前を入力してください',
-        hintText: 'プレイヤー名',
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref.read(playerProvider.notifier).addPlayer(inputText);
-          });
-        });
+  Future<void> showConfimationDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required Function(BuildContext dialogContext) action,
+    String confirmText = '確認',
+    String cancelText = 'キャンセル',
+  }) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  navigationService.pop(dialogContext);
+                },
+                child: const Text('いいえ')),
+            TextButton(
+              onPressed: () async => await action(dialogContext),
+              child: const Text('はい'),
+            )
+          ],
+        );
+      },
+    );
   }
 
-  Future<void> showEditPlayerDialog(
-      BuildContext context, WidgetRef ref, Player player) {
-    return showInputDialog(
-        context: context,
-        title: 'プレイヤー名を編集してください',
-        hintText: player.name,
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref
-                .read(playerProvider.notifier)
-                .updatePlayer(player.copyWith(name: inputText));
-            ref.invalidate(resultHistoryProvider);
-          });
-        });
+  Future<void> handleActionAndError(BuildContext context,
+      BuildContext dialogContext, Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (e) {
+      if (context.mounted) {
+        await showErrorDialog(context, e, NavigationService());
+      }
+    } finally {
+      if (dialogContext.mounted) {
+        navigationService.pop(dialogContext);
+      }
+    }
   }
 
   Future<void> showDeletePlayerDialog(
@@ -174,48 +191,31 @@ class DialogService {
     );
   }
 
-  Future<void> showConfimationDialog({
-    required BuildContext context,
-    required String title,
-    required String content,
-    required Function(BuildContext dialogContext) action,
-    String confirmText = '確認',
-    String cancelText = 'キャンセル',
-  }) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(dialogContext);
-                },
-                child: const Text('いいえ')),
-            TextButton(
-              onPressed: () async => await action(dialogContext),
-              child: const Text('はい'),
-            )
-          ],
-        );
-      },
-    );
+  Future<void> showAddPlayerDialog(BuildContext context, WidgetRef ref) {
+    return showInputDialog(
+        context: context,
+        title: '名前を入力してください',
+        hintText: 'プレイヤー名',
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
+            await ref.read(playerProvider.notifier).addPlayer(inputText, '');
+          });
+        });
   }
 
-  Future<void> handleActionAndError(BuildContext context,
-      BuildContext dialogContext, Future<void> Function() action) async {
-    try {
-      await action();
-    } catch (e) {
-      if (context.mounted) {
-        await showErrorDialog(context, e, NavigationService());
-      }
-    } finally {
-      if (dialogContext.mounted) {
-        navigationService.pop(dialogContext);
-      }
-    }
+  Future<void> showEditPlayerDialog(
+      BuildContext context, WidgetRef ref, Player player) {
+    return showInputDialog(
+        context: context,
+        title: 'プレイヤー名を編集してください',
+        hintText: player.name,
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, dialogContext, () async {
+            await ref
+                .read(playerProvider.notifier)
+                .updatePlayer(player.copyWith(name: inputText));
+            ref.invalidate(resultHistoryProvider);
+          });
+        });
   }
 }

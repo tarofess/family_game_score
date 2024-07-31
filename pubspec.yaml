@@ -42,6 +42,9 @@ dependencies:
   table_calendar:
   firebase_core:
   firebase_crashlytics:
+  image_picker:
+  path_provider:
+  path:
 
 flutter_icons:
   android: true
