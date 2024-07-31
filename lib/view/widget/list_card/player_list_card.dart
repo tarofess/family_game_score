@@ -36,7 +36,6 @@ class PlayerListCard extends StatelessWidget {
           context,
           SettingDetailView(
             player: player,
-            cameraService: CameraService(),
             navigationService: NavigationService(),
             dialogService: DialogService(
               NavigationService(),
