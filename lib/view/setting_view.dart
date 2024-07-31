@@ -2,7 +2,7 @@ import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/player_detail_view.dart';
+import 'package:family_game_score/view/setting_detail_view.dart';
 import 'package:family_game_score/view/widget/list_card/player_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';

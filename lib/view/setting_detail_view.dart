@@ -6,6 +6,7 @@ import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/viewmodel/player_detail_viewmodel.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
+import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -187,6 +188,7 @@ class PlayerDetailView extends HookConsumerWidget {
     try {
       await saveImage(name, imagePath, ref);
       await saveName(name, imagePath, ref);
+      ref.invalidate(resultHistoryProvider);
     } catch (e) {
       rethrow;
     }
