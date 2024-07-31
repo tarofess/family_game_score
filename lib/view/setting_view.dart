@@ -43,7 +43,6 @@ class SettingView extends ConsumerWidget {
             context,
             SettingDetailView(
               player: null,
-              cameraService: CameraService(),
               navigationService: NavigationService(),
               dialogService: DialogService(
                 NavigationService(),
