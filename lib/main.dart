@@ -65,6 +65,7 @@ class MyTabView extends StatelessWidget {
               navigationService: NavigationService(),
             ),
             SettingView(
+              navigationService: NavigationService(),
               dialogService: DialogService(
                 NavigationService(),
               ),

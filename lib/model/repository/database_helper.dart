@@ -14,7 +14,7 @@ class DatabaseHelper {
 
   Database get database {
     if (_database == null) {
-      throw StateError("Database not initialized. Call initDatabase() first.");
+      throw StateError("Database not initialized");
     }
     return _database!;
   }
@@ -25,7 +25,7 @@ class DatabaseHelper {
       version: 1,
       onCreate: (Database db, int version) async {
         await db.execute(
-          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, status INTEGER)',
+          'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, image TEXT, status INTEGER)',
         );
         await db.execute(
           'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT)',
