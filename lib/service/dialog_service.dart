@@ -63,8 +63,8 @@ class DialogService {
       BuildContext context, WidgetRef ref, Player player) {
     return showConfimationDialog(
         context: context,
-        title: '${player.name}を削除します',
-        content: '削除すると元に戻せませんが本当に削除しますか？',
+        title: '${player.name}を削除しますか？',
+        content: '削除すると元に戻せませんが、本当に削除しますか？',
         action: (BuildContext dialogContext) async {
           await handleActionAndError(context, dialogContext, () async {
             await ref.read(playerProvider.notifier).deletePlayer(player);

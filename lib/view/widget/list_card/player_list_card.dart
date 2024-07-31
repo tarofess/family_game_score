@@ -5,17 +5,22 @@ import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/setting_detail_view.dart';
 import 'package:family_game_score/view/widget/list_card/player_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerListCard extends StatelessWidget {
   final Player player;
   final NavigationService navigationService;
+  final DialogService dialogService;
   final CameraService cameraService;
+  final WidgetRef ref;
 
   const PlayerListCard(
       {super.key,
       required this.player,
       required this.navigationService,
-      required this.cameraService});
+      required this.dialogService,
+      required this.cameraService,
+      required this.ref});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,7 @@ class PlayerListCard extends StatelessWidget {
         title: Text(player.name),
         onTap: () => navigationService.push(
           context,
-          PlayerDetailView(
+          SettingDetailView(
             player: player,
             cameraService: CameraService(),
             navigationService: NavigationService(),
@@ -38,6 +43,9 @@ class PlayerListCard extends StatelessWidget {
             ),
           ),
         ),
+        onLongPress: () {
+          dialogService.showDeletePlayerDialog(context, ref, player);
+        },
       ),
     );
   }
