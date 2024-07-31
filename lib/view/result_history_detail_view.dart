@@ -1,5 +1,6 @@
 import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/view/widget/result_list_card.dart';
 import 'package:family_game_score/viewmodel/result_history_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,11 @@ class ResultHistoryDetailView extends ConsumerWidget {
         groupSeparatorBuilder: (String value) =>
             buildGroupedListSeparator(context, value),
         itemBuilder: (context, dynamic element) => element.player.status == 0
-            ? ResultListCard(player: element.player, result: element.result)
+            ? ResultListCard(
+                player: element.player,
+                result: element.result,
+                cameraService: CameraService(),
+              )
             : buildPlayerHasBeenDeletedCard(context));
   }
 

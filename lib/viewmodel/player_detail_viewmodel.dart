@@ -15,8 +15,8 @@ class PlayerDetailViewmodel {
     return playerName.isEmpty && imagePath == null ? true : false;
   }
 
-  bool isImageAlreadySet(Player? player) {
-    return player == null || player.image.isEmpty ? false : true;
+  bool isImageAlreadySet(String? imagePath) {
+    return imagePath == null || imagePath.isEmpty ? false : true;
   }
 
   int getTotalScore(Player? player) {

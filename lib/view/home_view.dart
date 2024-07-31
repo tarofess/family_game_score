@@ -1,4 +1,5 @@
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/service/snackbar_service.dart';
@@ -59,6 +60,7 @@ class HomeView extends ConsumerWidget {
               NavigationService(),
             ),
             navigationService: NavigationService(),
+            cameraService: CameraService(),
           ),
         ),
         onShowSnackbar: () => snackbarService.showHomeViewSnackBar(context),

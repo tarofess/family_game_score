@@ -101,7 +101,7 @@ class PlayerDetailView extends HookConsumerWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: vm.isImageAlreadySet(player)
+        child: vm.isImageAlreadySet(imagePath.value)
             ? null
             : const Icon(
                 Icons.camera_alt,
@@ -265,10 +265,12 @@ class PlayerDetailView extends HookConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.cancel),
-              title: const Text('キャンセル'),
-              onTap: () => navigationService.pop(context),
-            ),
+                leading: const Icon(Icons.cancel),
+                title: const Text('削除する'),
+                onTap: () {
+                  imagePath.value = null;
+                  navigationService.pop(context);
+                }),
           ],
         );
       },

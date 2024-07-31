@@ -1,4 +1,5 @@
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/ranking_view.dart';
@@ -12,11 +13,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ScoringView extends ConsumerWidget {
   final DialogService dialogService;
   final NavigationService navigationService;
+  final CameraService cameraService;
 
   const ScoringView(
       {super.key,
       required this.dialogService,
-      required this.navigationService});
+      required this.navigationService,
+      required this.cameraService});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -119,8 +122,33 @@ class ScoringView extends ConsumerWidget {
   Widget buildListTile(BuildContext context, List<Player> players, int index) {
     return ListTile(
       key: Key(players[index].id.toString()),
-      title: Text(players[index].name, style: const TextStyle(fontSize: 18)),
       leading: Text('${index + 1}位', style: const TextStyle(fontSize: 16)),
+      title: Row(
+        children: [
+          FutureBuilder<Image?>(
+            future: cameraService.getImageFromPath(players[index].image),
+            builder: (context, snapshot) {
+              const double avatarRadius = 18.0;
+              const double iconSize = avatarRadius * 2;
+
+              if (snapshot.hasData) {
+                return CircleAvatar(
+                  backgroundImage: snapshot.data!.image,
+                  radius: avatarRadius,
+                );
+              } else {
+                return const Icon(
+                  Icons.person,
+                  color: Colors.blue,
+                  size: iconSize,
+                );
+              }
+            },
+          ),
+          const SizedBox(width: 12),
+          Text(players[index].name, style: const TextStyle(fontSize: 18)),
+        ],
+      ),
       trailing: ReorderableDragStartListener(
         index: index,
         child: const Icon(Icons.drag_handle),
