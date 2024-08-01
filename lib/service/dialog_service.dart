@@ -12,15 +12,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class DialogService {
   final NavigationService navigationService = getIt<NavigationService>();
 
-  Future<void> showConfimationDialog({
-    required BuildContext context,
-    required String title,
-    required String content,
-    required Function(BuildContext dialogContext) action,
-    String confirmText = '確認',
-    String cancelText = 'キャンセル',
-  }) {
-    return showDialog(
+  Future<void> showConfimationDialog(
+      {required BuildContext context,
+      required String title,
+      required String content,
+      required Function(BuildContext dialogContext) action,
+      String confirmText = '確認',
+      String cancelText = 'キャンセル'}) async {
+    await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -58,8 +57,8 @@ class DialogService {
   }
 
   Future<void> showDeletePlayerDialog(
-      BuildContext context, WidgetRef ref, Player player) {
-    return showConfimationDialog(
+      BuildContext context, WidgetRef ref, Player player) async {
+    await showConfimationDialog(
         context: context,
         title: '${player.name}を削除しますか？',
         content: '削除すると元に戻せませんが、本当に削除しますか？',
@@ -71,12 +70,13 @@ class DialogService {
         });
   }
 
-  Future<void> showMoveToNextRoundDialog(BuildContext context, WidgetRef ref) {
+  Future<void> showMoveToNextRoundDialog(
+      BuildContext context, WidgetRef ref) async {
     final session = ref.read(sessionProvider);
     final nextRound =
         session.value != null ? (session.value!.round + 1).toString() : '2';
 
-    return showConfimationDialog(
+    await showConfimationDialog(
         context: context,
         title: '確認',
         content: '$nextRound回戦に進みますか？',
@@ -89,8 +89,8 @@ class DialogService {
         });
   }
 
-  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) {
-    return showConfimationDialog(
+  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
+    await showConfimationDialog(
         context: context,
         title: '確認',
         content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
@@ -119,7 +119,6 @@ class DialogService {
               onPressed: () {
                 ref.invalidate(resultProvider);
                 ref.invalidate(resultHistoryProvider);
-                navigationService.pop(dialogContext);
                 navigationService.pushReplacement(context, const MyApp());
               },
               child: const Text('はい'),
@@ -131,8 +130,8 @@ class DialogService {
   }
 
   Future<void> showErrorDialog(BuildContext context, dynamic error,
-      NavigationService navigationService) {
-    return showDialog(
+      NavigationService navigationService) async {
+    await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -149,67 +148,5 @@ class DialogService {
         );
       },
     );
-  }
-
-  Future<void> showInputDialog(
-      {required BuildContext context,
-      required String title,
-      required String hintText,
-      required Function(String, BuildContext) action,
-      String confirmText = 'OK',
-      String cancelText = 'キャンセル',
-      String inputText = ''}) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: TextField(
-              onChanged: (value) {
-                inputText = value;
-              },
-              decoration: InputDecoration(hintText: hintText)),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(dialogContext);
-                },
-                child: Text(cancelText)),
-            TextButton(
-              onPressed: () => action(inputText, dialogContext),
-              child: Text(confirmText),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> showAddPlayerDialog(BuildContext context, WidgetRef ref) {
-    return showInputDialog(
-        context: context,
-        title: '名前を入力してください',
-        hintText: 'プレイヤー名',
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref.read(playerProvider.notifier).addPlayer(inputText, '');
-          });
-        });
-  }
-
-  Future<void> showEditPlayerDialog(
-      BuildContext context, WidgetRef ref, Player player) {
-    return showInputDialog(
-        context: context,
-        title: 'プレイヤー名を編集してください',
-        hintText: player.name,
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref
-                .read(playerProvider.notifier)
-                .updatePlayer(player.copyWith(name: inputText));
-            ref.invalidate(resultHistoryProvider);
-          });
-        });
   }
 }
