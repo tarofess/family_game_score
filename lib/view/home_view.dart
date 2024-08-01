@@ -22,13 +22,17 @@ class HomeView extends ConsumerWidget {
     final vm = ref.watch(homeViewModelProvider);
 
     return Scaffold(
-      body: vm.session.when(
-        data: (data) => buildPlayers(context, ref, vm),
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, sessionProvider, error),
-      ),
+      body: buildBody(context, ref, vm),
+    );
+  }
+
+  Widget buildBody(BuildContext context, WidgetRef ref, HomeViewModel vm) {
+    return vm.session.when(
+      data: (data) => buildPlayers(context, ref, vm),
+      loading: () => CommonAsyncWidgets.showLoading(),
+      error: (error, stackTrace) =>
+          CommonAsyncWidgets.showDataFetchErrorMessage(
+              context, ref, sessionProvider, error),
     );
   }
 
