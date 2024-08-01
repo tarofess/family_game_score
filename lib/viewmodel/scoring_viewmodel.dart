@@ -23,7 +23,11 @@ class ScoringViewModel {
 
   VoidCallback? getExitButtonCallback(VoidCallback onShowFinishGameDialog) {
     if (results.hasValue && session.value != null) {
-      return onShowFinishGameDialog;
+      try {
+        return onShowFinishGameDialog;
+      } catch (e) {
+        throw Exception('予期せぬエラーがは発生しました');
+      }
     }
     return null;
   }
@@ -31,7 +35,11 @@ class ScoringViewModel {
   VoidCallback? getCheckButtonCallback(
       VoidCallback onShowMoveToNextRoundDialog) {
     if (results.hasValue) {
-      return onShowMoveToNextRoundDialog;
+      try {
+        return onShowMoveToNextRoundDialog;
+      } catch (e) {
+        throw Exception('予期せぬエラーがは発生しました');
+      }
     }
     return null;
   }

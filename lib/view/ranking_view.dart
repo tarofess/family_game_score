@@ -31,7 +31,7 @@ class RankingView extends HookConsumerWidget {
       title: vm.getAppBarTitle(),
       actions: [
         vm.getIconButton(
-          () => dialogService.showReturnToHomeDialog(context, ref),
+          () async => await dialogService.showReturnToHomeDialog(context, ref),
         )
       ],
     );

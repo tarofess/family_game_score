@@ -63,7 +63,11 @@ class PlayerDetailViewModel {
       return;
     }
 
-    await cameraService.saveImage(File(imagePath));
+    try {
+      await cameraService.saveImage(File(imagePath));
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> saveName(

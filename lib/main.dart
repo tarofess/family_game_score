@@ -20,10 +20,10 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseHelper.instance.initDatabase();
+  setupLocator();
   await initializeDateFormatting('ja_JP');
   await setupFirebaseCrashlytics();
-  setupLocator();
+  await DatabaseHelper.instance.initDatabase();
 
   runApp(const ProviderScope(child: MyApp()));
 }

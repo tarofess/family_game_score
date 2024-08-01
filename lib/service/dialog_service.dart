@@ -12,6 +12,104 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class DialogService {
   final NavigationService navigationService = getIt<NavigationService>();
 
+  Future<void> showDeletePlayerDialog(
+      BuildContext context, WidgetRef ref, Player player) async {
+    await showConfimationDialog(
+        context: context,
+        title: '${player.name}を削除しますか？',
+        content: '削除すると元に戻せませんが、本当に削除しますか？',
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(
+              context, dialogContext, 'プレイヤーの削除中にエラーが発生しました', () async {
+            await ref.read(playerProvider.notifier).deletePlayer(player);
+            ref.invalidate(resultHistoryProvider);
+          });
+        });
+  }
+
+  Future<void> showMoveToNextRoundDialog(
+      BuildContext context, WidgetRef ref) async {
+    final session = ref.read(sessionProvider);
+    final nextRound =
+        session.value != null ? (session.value!.round + 1).toString() : '2';
+
+    await showConfimationDialog(
+        context: context,
+        title: '確認',
+        content: '$nextRound回戦に進みますか？',
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(
+              context, dialogContext, '結果の保存中にエラーが発生しました', () async {
+            await ref.read(sessionProvider.notifier).addSession();
+            await ref.read(sessionProvider.notifier).updateRound();
+            await ref.read(resultProvider.notifier).addOrUpdateResult();
+          });
+        });
+  }
+
+  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
+    await showConfimationDialog(
+        context: context,
+        title: '確認',
+        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
+        action: (BuildContext dialogContext) async {
+          await handleActionAndError(
+              context, dialogContext, '結果の保存中にエラーが発生しました', () async {
+            await ref.read(sessionProvider.notifier).updateEndTime();
+            ref.read(sessionProvider.notifier).disposeSession();
+            ref.read(playerProvider.notifier).resetOrder();
+          });
+
+          if (context.mounted) {
+            navigationService.pushAndRemoveUntil(context, RankingView());
+          }
+        });
+  }
+
+  Future<void> showReturnToHomeDialog(
+      BuildContext context, WidgetRef ref) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('お疲れ様でした！'),
+          content: const Text('ホーム画面に戻ります'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                ref.invalidate(resultProvider);
+                ref.invalidate(resultHistoryProvider);
+                navigationService.pop(dialogContext);
+                navigationService.pushReplacement(context, const MyApp());
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showErrorDialog(BuildContext context, dynamic error) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('エラー発生'),
+          content: Text(error.toString()),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigationService.pop(dialogContext);
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> showConfimationDialog(
       {required BuildContext context,
       required String title,
@@ -41,112 +139,19 @@ class DialogService {
     );
   }
 
-  Future<void> handleActionAndError(BuildContext context,
-      BuildContext dialogContext, Future<void> Function() action) async {
+  Future<void> handleActionAndError(
+      BuildContext context,
+      BuildContext dialogContext,
+      String? errorReason,
+      Future<void> Function() action) async {
     try {
       await action();
     } catch (e) {
-      if (context.mounted) {
-        await showErrorDialog(context, e, NavigationService());
-      }
+      throw Exception(errorReason);
     } finally {
       if (dialogContext.mounted) {
         navigationService.pop(dialogContext);
       }
     }
-  }
-
-  Future<void> showDeletePlayerDialog(
-      BuildContext context, WidgetRef ref, Player player) async {
-    await showConfimationDialog(
-        context: context,
-        title: '${player.name}を削除しますか？',
-        content: '削除すると元に戻せませんが、本当に削除しますか？',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref.read(playerProvider.notifier).deletePlayer(player);
-            ref.invalidate(resultHistoryProvider);
-          });
-        });
-  }
-
-  Future<void> showMoveToNextRoundDialog(
-      BuildContext context, WidgetRef ref) async {
-    final session = ref.read(sessionProvider);
-    final nextRound =
-        session.value != null ? (session.value!.round + 1).toString() : '2';
-
-    await showConfimationDialog(
-        context: context,
-        title: '確認',
-        content: '$nextRound回戦に進みますか？',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref.read(sessionProvider.notifier).addSession();
-            await ref.read(sessionProvider.notifier).updateRound();
-            await ref.read(resultProvider.notifier).addOrUpdateResult();
-          });
-        });
-  }
-
-  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
-    await showConfimationDialog(
-        context: context,
-        title: '確認',
-        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(context, dialogContext, () async {
-            await ref.read(sessionProvider.notifier).updateEndTime();
-            ref.read(sessionProvider.notifier).disposeSession();
-            ref.read(playerProvider.notifier).resetOrder();
-          });
-
-          if (context.mounted) {
-            navigationService.pushAndRemoveUntil(context, RankingView());
-          }
-        });
-  }
-
-  void showReturnToHomeDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('お疲れ様でした！'),
-          content: const Text('ホーム画面に戻ります'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                ref.invalidate(resultProvider);
-                ref.invalidate(resultHistoryProvider);
-                navigationService.pushReplacement(context, const MyApp());
-              },
-              child: const Text('はい'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> showErrorDialog(BuildContext context, dynamic error,
-      NavigationService navigationService) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('エラー'),
-          content: Text('エラーが発生しました\n${error.toString()}'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                navigationService.pop(dialogContext);
-              },
-              child: const Text('閉じる'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

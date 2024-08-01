@@ -37,14 +37,29 @@ class ScoringView extends ConsumerWidget {
       leading: IconButton(
         icon: const Icon(Icons.exit_to_app),
         onPressed: vm.getExitButtonCallback(
-          () async => await dialogService.showFinishGameDialog(context, ref),
+          () async {
+            try {
+              await dialogService.showFinishGameDialog(context, ref);
+            } catch (e) {
+              if (context.mounted) {
+                dialogService.showErrorDialog(context, e.toString());
+              }
+            }
+          },
         ),
       ),
       actions: [
         IconButton(
           onPressed: vm.getCheckButtonCallback(
-            () async =>
-                await dialogService.showMoveToNextRoundDialog(context, ref),
+            () async {
+              try {
+                await dialogService.showMoveToNextRoundDialog(context, ref);
+              } catch (e) {
+                if (context.mounted) {
+                  dialogService.showErrorDialog(context, e.toString());
+                }
+              }
+            },
           ),
           icon: const Icon(Icons.check_circle_outline),
         ),

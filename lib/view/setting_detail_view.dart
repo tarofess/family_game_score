@@ -76,8 +76,7 @@ class SettingDetailView extends HookConsumerWidget {
                     if (context.mounted) navigationService.pop(context);
                   } catch (e) {
                     if (context.mounted) {
-                      dialogService.showErrorDialog(
-                          context, e, NavigationService());
+                      dialogService.showErrorDialog(context, e);
                     }
                   }
                 },
@@ -108,15 +107,7 @@ class SettingDetailView extends HookConsumerWidget {
                 size: 50,
               ),
       ),
-      onTap: () async {
-        try {
-          showActionSheet(context, imagePath, vm);
-        } catch (e) {
-          if (context.mounted) {
-            dialogService.showErrorDialog(context, e, NavigationService());
-          }
-        }
-      },
+      onTap: () => showActionSheet(context, imagePath, vm),
     );
   }
 
@@ -189,16 +180,28 @@ class SettingDetailView extends HookConsumerWidget {
               leading: const Icon(Icons.camera_alt),
               title: const Text('写真を撮る'),
               onTap: () async {
-                await vm.takePicture(imagePath);
-                if (context.mounted) navigationService.pop(context);
+                try {
+                  await vm.takePicture(imagePath);
+                  if (context.mounted) navigationService.pop(context);
+                } catch (e) {
+                  if (context.mounted) {
+                    dialogService.showErrorDialog(context, e);
+                  }
+                }
               },
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
               title: const Text('フォトライブラリから選択'),
               onTap: () async {
-                await vm.pickImageFromGallery(imagePath);
-                if (context.mounted) navigationService.pop(context);
+                try {
+                  await vm.pickImageFromGallery(imagePath);
+                  if (context.mounted) navigationService.pop(context);
+                } catch (e) {
+                  if (context.mounted) {
+                    dialogService.showErrorDialog(context, e);
+                  }
+                }
               },
             ),
             ListTile(
