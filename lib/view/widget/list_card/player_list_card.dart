@@ -32,7 +32,13 @@ class PlayerListCard extends StatelessWidget {
           SettingDetailView(player: player),
         ),
         onLongPress: () async {
-          await dialogService.showDeletePlayerDialog(context, ref, player);
+          try {
+            await dialogService.showDeletePlayerDialog(context, ref, player);
+          } catch (e) {
+            if (context.mounted) {
+              dialogService.showErrorDialog(context, e.toString());
+            }
+          }
         },
       ),
     );
