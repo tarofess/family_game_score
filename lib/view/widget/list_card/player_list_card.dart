@@ -1,3 +1,4 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
@@ -9,18 +10,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerListCard extends StatelessWidget {
   final Player player;
-  final NavigationService navigationService;
-  final DialogService dialogService;
-  final CameraService cameraService;
   final WidgetRef ref;
+  final NavigationService navigationService = getIt<NavigationService>();
+  final DialogService dialogService = getIt<DialogService>();
+  final CameraService cameraService = getIt<CameraService>();
 
-  const PlayerListCard(
-      {super.key,
-      required this.player,
-      required this.navigationService,
-      required this.dialogService,
-      required this.cameraService,
-      required this.ref});
+  PlayerListCard({super.key, required this.player, required this.ref});
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +25,11 @@ class PlayerListCard extends StatelessWidget {
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        leading: PlayerImage(player: player, cameraService: cameraService),
+        leading: PlayerImage(player: player),
         title: Text(player.name),
         onTap: () => navigationService.push(
           context,
-          SettingDetailView(
-            player: player,
-            navigationService: NavigationService(),
-            dialogService: DialogService(
-              NavigationService(),
-            ),
-          ),
+          SettingDetailView(player: player),
         ),
         onLongPress: () {
           dialogService.showDeletePlayerDialog(context, ref, player);

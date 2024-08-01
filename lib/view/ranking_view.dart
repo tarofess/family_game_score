@@ -1,5 +1,5 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/result.dart';
-import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RankingView extends HookConsumerWidget {
-  final DialogService dialogService;
+  final DialogService dialogService = getIt<DialogService>();
 
-  const RankingView({super.key, required this.dialogService});
+  RankingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,11 +58,7 @@ class RankingView extends HookConsumerWidget {
         itemBuilder: (context, index) {
           final result = results[index];
           final player = data.firstWhere((p) => p.id == result.playerId);
-          return ResultListCard(
-            player: player,
-            result: result,
-            cameraService: CameraService(),
-          );
+          return ResultListCard(player: player, result: result);
         },
       ),
       loading: () => CommonAsyncWidgets.showLoading(),

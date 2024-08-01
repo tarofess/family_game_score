@@ -1,12 +1,11 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 
 class ErrorHandlingService {
   final FirebaseCrashlytics crashlytics = FirebaseCrashlytics.instance;
-  final NavigationService navigationService;
-
-  ErrorHandlingService(this.navigationService);
+  final NavigationService navigationService = getIt<NavigationService>();
 
   Future<void> handleError(BuildContext context, dynamic error,
       StackTrace? stackTrace, String? reason) async {

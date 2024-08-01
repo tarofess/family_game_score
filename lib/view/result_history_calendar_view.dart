@@ -1,3 +1,4 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/result_history_detail_view.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
@@ -10,9 +11,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ResultHistoryCalendarView extends HookConsumerWidget {
-  final NavigationService navigationService;
+  final NavigationService navigationService = getIt<NavigationService>();
 
-  const ResultHistoryCalendarView({super.key, required this.navigationService});
+  ResultHistoryCalendarView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

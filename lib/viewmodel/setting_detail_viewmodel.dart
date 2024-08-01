@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/service/camera_service.dart';
@@ -10,9 +11,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerDetailViewModel {
   Ref ref;
-  final CameraService cameraService;
+  final CameraService cameraService = getIt<CameraService>();
 
-  PlayerDetailViewModel(this.ref, this.cameraService);
+  PlayerDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
@@ -117,5 +118,5 @@ class PlayerDetailViewModel {
 }
 
 final playerDetailViewmodelProvider = Provider<PlayerDetailViewModel>((ref) {
-  return PlayerDetailViewModel(ref, CameraService());
+  return PlayerDetailViewModel(ref);
 });

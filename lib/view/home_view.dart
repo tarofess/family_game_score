@@ -1,6 +1,5 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/service/camera_service.dart';
-import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/service/snackbar_service.dart';
 import 'package:family_game_score/view/scoring_view.dart';
@@ -13,13 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
-  final NavigationService navigationService;
-  final SnackbarService snackbarService;
+  final NavigationService navigationService = getIt<NavigationService>();
+  final SnackbarService snackbarService = getIt<SnackbarService>();
 
-  const HomeView(
-      {super.key,
-      required this.navigationService,
-      required this.snackbarService});
+  HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,17 +48,8 @@ class HomeView extends ConsumerWidget {
       List<Player> players, HomeViewModel vm) {
     return GradientCircleButton(
       onPressed: vm.handleButtonPress(
-        onStartGame: () =>
-            navigationService.pushReplacementWithAnimationFromBottom(
-          context,
-          ScoringView(
-            dialogService: DialogService(
-              NavigationService(),
-            ),
-            navigationService: NavigationService(),
-            cameraService: CameraService(),
-          ),
-        ),
+        onStartGame: () => navigationService
+            .pushReplacementWithAnimationFromBottom(context, ScoringView()),
         onShowSnackbar: () => snackbarService.showHomeViewSnackBar(context),
       ),
       text: vm.getButtonText(),

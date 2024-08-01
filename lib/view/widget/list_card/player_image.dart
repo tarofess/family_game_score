@@ -1,13 +1,13 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:flutter/material.dart';
 
 class PlayerImage extends StatelessWidget {
   final Player player;
-  final CameraService cameraService;
+  final CameraService cameraService = getIt<CameraService>();
 
-  const PlayerImage(
-      {super.key, required this.player, required this.cameraService});
+  PlayerImage({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {
