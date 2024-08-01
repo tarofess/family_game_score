@@ -20,33 +20,41 @@ class RankingView extends HookConsumerWidget {
     final vm = ref.watch(rankingViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: vm.getAppBarTitle(),
-        actions: [
-          vm.getIconButton(
-            () => dialogService.showReturnToHomeDialog(context, ref),
-          )
-        ],
-      ),
-      body: Stack(
-        children: [
-          vm.results.when(
-            data: (data) {
-              return buildRankingList(data, vm, context, ref);
-            },
-            loading: () => CommonAsyncWidgets.showLoading(),
-            error: (error, stackTrace) =>
-                CommonAsyncWidgets.showDataFetchErrorMessage(
-                    context, ref, resultProvider, error),
+      appBar: buildAppBar(context, ref, vm),
+      body: buildBody(context, ref, vm),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context, WidgetRef ref, RankingViewModel vm) {
+    return AppBar(
+      centerTitle: true,
+      title: vm.getAppBarTitle(),
+      actions: [
+        vm.getIconButton(
+          () => dialogService.showReturnToHomeDialog(context, ref),
+        )
+      ],
+    );
+  }
+
+  Widget buildBody(BuildContext context, WidgetRef ref, RankingViewModel vm) {
+    return Stack(
+      children: [
+        vm.results.when(
+          data: (data) {
+            return buildRankingList(data, vm, context, ref);
+          },
+          loading: () => CommonAsyncWidgets.showLoading(),
+          error: (error, stackTrace) =>
+              CommonAsyncWidgets.showDataFetchErrorMessage(
+                  context, ref, resultProvider, error),
+        ),
+        const Positioned.fill(
+          child: IgnorePointer(
+            child: SakuraAnimation(),
           ),
-          const Positioned.fill(
-            child: IgnorePointer(
-              child: SakuraAnimation(),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

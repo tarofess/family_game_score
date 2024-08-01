@@ -17,27 +17,31 @@ class ResultHistoryDetailView extends ConsumerWidget {
     final vm = ref.read(resultHistoryViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('成績の詳細'),
-      ),
-      body: buildResultHistoryList(context, vm),
+      appBar: buildAppBar(context, vm),
+      body: buildBody(context, vm),
     );
   }
 
-  Widget buildResultHistoryList(
-      BuildContext context, ResultHistoryDetailViewModel vm) {
+  AppBar buildAppBar(BuildContext context, ResultHistoryDetailViewModel vm) {
+    return AppBar(
+      centerTitle: true,
+      title: const Text('成績の詳細'),
+    );
+  }
+
+  Widget buildBody(BuildContext context, ResultHistoryDetailViewModel vm) {
     return GroupedListView<dynamic, String>(
-        elements: filteredResultHistories,
-        groupBy: (element) => element.session.begTime,
-        groupComparator: (value1, value2) => value2.compareTo(value1),
-        itemComparator: (item1, item2) =>
-            item1.result.rank.compareTo(item2.result.rank),
-        groupSeparatorBuilder: (String value) =>
-            buildGroupedListSeparator(context, value),
-        itemBuilder: (context, dynamic element) => element.player.status == 0
-            ? ResultListCard(player: element.player, result: element.result)
-            : buildPlayerHasBeenDeletedCard(context));
+      elements: filteredResultHistories,
+      groupBy: (element) => element.session.begTime,
+      groupComparator: (value1, value2) => value2.compareTo(value1),
+      itemComparator: (item1, item2) =>
+          item1.result.rank.compareTo(item2.result.rank),
+      groupSeparatorBuilder: (String value) =>
+          buildGroupedListSeparator(context, value),
+      itemBuilder: (context, dynamic element) => element.player.status == 0
+          ? ResultListCard(player: element.player, result: element.result)
+          : buildPlayerHasBeenDeletedCard(context),
+    );
   }
 
   Widget buildGroupedListSeparator(BuildContext context, String value) {

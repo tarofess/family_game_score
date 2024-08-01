@@ -22,28 +22,34 @@ class SettingView extends ConsumerWidget {
     final vm = ref.watch(settingViewModelProvider);
 
     return Scaffold(
-      body: Center(
-        child: vm.session.when(
-          data: (data) => data == null
-              ? buildPlayers(context, ref, vm)
-              : buildUnableToEditPlayerText(context),
-          loading: () => CommonAsyncWidgets.showLoading(),
-          error: (error, stackTrace) =>
-              CommonAsyncWidgets.showDataFetchErrorMessage(
-                  context, ref, sessionProvider, error),
-        ),
+      body: buildBody(context, ref, vm),
+      floatingActionButton: buildFloatingActionButton(context, ref, vm),
+    );
+  }
+
+  Widget buildBody(BuildContext context, WidgetRef ref, SettingViewModel vm) {
+    return Center(
+      child: vm.session.when(
+        data: (data) => data == null
+            ? buildPlayers(context, ref, vm)
+            : buildUnableToEditPlayerText(context),
+        loading: () => CommonAsyncWidgets.showLoading(),
+        error: (error, stackTrace) =>
+            CommonAsyncWidgets.showDataFetchErrorMessage(
+                context, ref, sessionProvider, error),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: vm.getFloatingActionButtonCallback(
-          ref,
-          () => navigationService.push(
-            context,
-            SettingDetailView(player: null),
-          ),
-        ),
-        backgroundColor: vm.getFloatingActionButtonColor(),
-        child: const Icon(Icons.add),
+    );
+  }
+
+  Widget buildFloatingActionButton(
+      BuildContext context, WidgetRef ref, SettingViewModel vm) {
+    return FloatingActionButton(
+      onPressed: vm.getFloatingActionButtonCallback(
+        ref,
+        () => navigationService.push(context, SettingDetailView(player: null)),
       ),
+      backgroundColor: vm.getFloatingActionButtonColor(),
+      child: const Icon(Icons.add),
     );
   }
 
