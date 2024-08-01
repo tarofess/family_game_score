@@ -12,7 +12,7 @@ class CameraService {
       final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
       return photo?.path;
     } catch (e) {
-      rethrow;
+      throw Exception('画像の撮影中にエラーが発生しました');
     }
   }
 
@@ -21,7 +21,7 @@ class CameraService {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       return image?.path;
     } catch (e) {
-      rethrow;
+      throw Exception('画像の選択中にエラーが発生しました');
     }
   }
 
@@ -32,7 +32,7 @@ class CameraService {
       final String filePath = path.join(appDir.path, fileName);
       await imageFile.copy(filePath);
     } catch (e) {
-      rethrow;
+      throw Exception('画像の保存中にエラーが発生しました');
     }
   }
 
@@ -44,7 +44,7 @@ class CameraService {
       }
       return null;
     } catch (e) {
-      rethrow;
+      throw Exception('画像の取得中にエラーが発生しました');
     }
   }
 }
