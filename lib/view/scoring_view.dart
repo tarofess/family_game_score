@@ -1,3 +1,4 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
@@ -12,15 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ScoringView extends ConsumerWidget {
-  final DialogService dialogService;
-  final NavigationService navigationService;
-  final CameraService cameraService;
+  final DialogService dialogService = getIt<DialogService>();
+  final NavigationService navigationService = getIt<NavigationService>();
+  final CameraService cameraService = getIt<CameraService>();
 
-  const ScoringView(
-      {super.key,
-      required this.dialogService,
-      required this.navigationService,
-      required this.cameraService});
+  ScoringView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,11 +76,7 @@ class ScoringView extends ConsumerWidget {
       onPressed: vm.getFloatingActionButtonCallback(
         () => navigationService.push(
           context,
-          RankingView(
-            dialogService: DialogService(
-              NavigationService(),
-            ),
-          ),
+          RankingView(),
         ),
       ),
       backgroundColor: vm.getFloatingActionButtonColor(),
@@ -113,9 +106,7 @@ class ScoringView extends ConsumerWidget {
       itemBuilder: (context, index) => ScoringListCard(
           key: Key(players[index].id.toString()),
           players: players,
-          index: index,
-          navigationService: navigationService,
-          cameraService: cameraService),
+          index: index),
       onReorder: (oldIndex, newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;

@@ -1,3 +1,4 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
@@ -7,15 +8,10 @@ import 'package:flutter/material.dart';
 class ScoringListCard extends StatelessWidget {
   final List<Player> players;
   final int index;
-  final NavigationService navigationService;
-  final CameraService cameraService;
+  final NavigationService navigationService = getIt<NavigationService>();
+  final CameraService cameraService = getIt<CameraService>();
 
-  const ScoringListCard(
-      {super.key,
-      required this.players,
-      required this.index,
-      required this.navigationService,
-      required this.cameraService});
+  ScoringListCard({super.key, required this.players, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +22,7 @@ class ScoringListCard extends StatelessWidget {
         leading: Text('${index + 1}位', style: const TextStyle(fontSize: 16)),
         title: Row(
           children: [
-            PlayerImage(player: players[index], cameraService: cameraService),
+            PlayerImage(player: players[index]),
             const SizedBox(width: 12),
             Text(players[index].name, style: const TextStyle(fontSize: 18)),
           ],

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
@@ -10,16 +11,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SettingDetailView extends HookConsumerWidget {
   final Player? player;
-  final NavigationService navigationService;
-  final DialogService dialogService;
+  final NavigationService navigationService = getIt<NavigationService>();
+  final DialogService dialogService = getIt<DialogService>();
 
   final formKey = GlobalKey<FormState>();
 
-  SettingDetailView(
-      {super.key,
-      required this.player,
-      required this.dialogService,
-      required this.navigationService});
+  SettingDetailView({super.key, required this.player});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

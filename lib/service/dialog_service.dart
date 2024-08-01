@@ -10,9 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DialogService {
-  final NavigationService navigationService;
-
-  DialogService(this.navigationService);
+  final NavigationService navigationService = getIt<NavigationService>();
 
   Future<void> showConfimationDialog({
     required BuildContext context,
@@ -104,11 +102,7 @@ class DialogService {
           });
 
           if (context.mounted) {
-            navigationService.pushAndRemoveUntil(
-                context,
-                RankingView(
-                  dialogService: DialogService(NavigationService()),
-                ));
+            navigationService.pushAndRemoveUntil(context, RankingView());
           }
         });
   }

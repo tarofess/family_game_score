@@ -1,5 +1,5 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/setting_detail_view.dart';
@@ -12,13 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SettingView extends ConsumerWidget {
-  final NavigationService navigationService;
-  final DialogService dialogService;
+  final NavigationService navigationService = getIt<NavigationService>();
+  final DialogService dialogService = getIt<DialogService>();
 
-  const SettingView(
-      {super.key,
-      required this.dialogService,
-      required this.navigationService});
+  SettingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,13 +38,7 @@ class SettingView extends ConsumerWidget {
           ref,
           () => navigationService.push(
             context,
-            SettingDetailView(
-              player: null,
-              navigationService: NavigationService(),
-              dialogService: DialogService(
-                NavigationService(),
-              ),
-            ),
+            SettingDetailView(player: null),
           ),
         ),
         backgroundColor: vm.getFloatingActionButtonColor(),
@@ -95,13 +86,7 @@ class SettingView extends ConsumerWidget {
     return ListView.builder(
       itemCount: players.length,
       itemBuilder: (BuildContext context, int index) {
-        return PlayerListCard(
-          player: players[index],
-          navigationService: NavigationService(),
-          dialogService: DialogService(NavigationService()),
-          cameraService: CameraService(),
-          ref: ref,
-        );
+        return PlayerListCard(player: players[index], ref: ref);
       },
     );
   }

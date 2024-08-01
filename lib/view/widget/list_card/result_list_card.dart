@@ -1,3 +1,4 @@
+import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/service/camera_service.dart';
@@ -7,13 +8,9 @@ import 'package:flutter/material.dart';
 class ResultListCard extends StatelessWidget {
   final Player player;
   final Result result;
-  final CameraService cameraService;
+  final CameraService cameraService = getIt<CameraService>();
 
-  const ResultListCard(
-      {super.key,
-      required this.player,
-      required this.result,
-      required this.cameraService});
+  ResultListCard({super.key, required this.player, required this.result});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,7 @@ class ResultListCard extends StatelessWidget {
         leading: Text('${result.rank}位', style: const TextStyle(fontSize: 14)),
         title: Row(
           children: [
-            PlayerImage(player: player, cameraService: cameraService),
+            PlayerImage(player: player),
             const SizedBox(width: 12),
             Text(player.name),
           ],
