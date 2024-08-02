@@ -20,22 +20,73 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: MyApp()));
+}
+
+final initializationProvider = FutureProvider<void>((ref) async {
   setupLocator();
   await initializeDateFormatting('ja_JP');
   await setupFirebaseCrashlytics();
   await DatabaseHelper.instance.initDatabase();
-
-  runApp(const ProviderScope(child: MyApp()));
-}
+});
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const MaterialApp(
-      home: MyTabView(),
+    final initialization = ref.watch(initializationProvider);
+
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: initialization.when(
+        data: (_) => const MyTabView(),
+        loading: () => const SplashScreen(),
+        error: (error, stack) => ErrorScreen(
+          error: error,
+          retry: () {
+            // ignore: unused_result
+            ref.refresh(initializationProvider);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class ErrorScreen extends StatelessWidget {
+  final Object? error;
+  final VoidCallback retry;
+
+  const ErrorScreen({super.key, this.error, required this.retry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('アプリの初期化に失敗しました'),
+            if (error != null) Text('Error: $error'),
+            ElevatedButton(
+              onPressed: retry,
+              child: const Text('リトライ'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

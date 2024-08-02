@@ -28,7 +28,7 @@ class HomeView extends ConsumerWidget {
 
   Widget buildBody(BuildContext context, WidgetRef ref, HomeViewModel vm) {
     return vm.session.when(
-      data: (data) => buildPlayers(context, ref, vm),
+      data: (_) => buildPlayers(context, ref, vm),
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>
           CommonAsyncWidgets.showDataFetchErrorMessage(

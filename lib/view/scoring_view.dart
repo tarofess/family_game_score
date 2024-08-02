@@ -74,7 +74,7 @@ class ScoringView extends ConsumerWidget {
           buildHereAreTheCurrentRankingsText(context),
           Expanded(
             child: vm.results.when(
-              data: (data) => buildPlayers(context, ref, vm),
+              data: (_) => buildPlayers(context, ref, vm),
               loading: () => CommonAsyncWidgets.showLoading(),
               error: (error, stackTrace) =>
                   CommonAsyncWidgets.showDataFetchErrorMessage(

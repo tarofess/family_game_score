@@ -24,7 +24,7 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
 
     return Scaffold(
       body: vm.resultHistories.when(
-        data: (data) => TableCalendar(
+        data: (_) => TableCalendar(
           firstDay: DateTime.utc(2024, 1, 1),
           lastDay: DateTime.utc(2123, 12, 31),
           focusedDay: focusedDay.value,
