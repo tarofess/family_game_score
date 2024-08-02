@@ -15,9 +15,13 @@ class CommonAsyncWidgets {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Text(
-              'エラーが発生しました\n${error.toString()}',
-              textAlign: TextAlign.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('エラーが発生しました\n再度お試しください'),
+                const SizedBox(height: 12),
+                Text(error.toString()),
+              ],
             ),
           ),
           ElevatedButton(

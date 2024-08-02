@@ -187,7 +187,8 @@ class SettingDetailView extends HookConsumerWidget {
                   if (context.mounted) navigationService.pop(context);
                 } catch (e) {
                   if (context.mounted) {
-                    dialogService.showErrorDialog(context, e);
+                    navigationService.pop(context);
+                    await dialogService.showErrorDialog(context, e);
                   }
                 }
               },
@@ -201,6 +202,7 @@ class SettingDetailView extends HookConsumerWidget {
                   if (context.mounted) navigationService.pop(context);
                 } catch (e) {
                   if (context.mounted) {
+                    navigationService.pop(context);
                     dialogService.showErrorDialog(context, e);
                   }
                 }
