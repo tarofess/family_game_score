@@ -71,9 +71,11 @@ class SettingDetailView extends HookConsumerWidget {
                 child: const Text('保存'),
                 onPressed: () async {
                   try {
-                    await vm.savePlayer(player, formKey,
+                    final isSuccess = await vm.savePlayer(player, formKey,
                         nameTextEditingController.text, imagePath.value, ref);
-                    if (context.mounted) navigationService.pop(context);
+                    if (isSuccess && context.mounted) {
+                      navigationService.pop(context);
+                    }
                   } catch (e) {
                     if (context.mounted) {
                       dialogService.showErrorDialog(context, e);
