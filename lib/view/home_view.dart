@@ -1,5 +1,4 @@
 import 'package:family_game_score/main.dart';
-import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/service/snackbar_service.dart';
 import 'package:family_game_score/view/scoring_view.dart';
@@ -38,8 +37,8 @@ class HomeView extends ConsumerWidget {
 
   Widget buildPlayers(BuildContext context, WidgetRef ref, HomeViewModel vm) {
     return vm.players.when(
-      data: (data) {
-        return Center(child: buildCenterCircleButton(context, ref, data, vm));
+      data: (_) {
+        return Center(child: buildCenterCircleButton(context, ref, vm));
       },
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>
@@ -48,8 +47,8 @@ class HomeView extends ConsumerWidget {
     );
   }
 
-  Widget buildCenterCircleButton(BuildContext context, WidgetRef ref,
-      List<Player> players, HomeViewModel vm) {
+  Widget buildCenterCircleButton(
+      BuildContext context, WidgetRef ref, HomeViewModel vm) {
     return GradientCircleButton(
       onPressed: vm.handleButtonPress(
         onStartGame: () => navigationService

@@ -19,8 +19,8 @@ class DialogService {
         title: '${player.name}を削除しますか？',
         content: '削除すると元に戻せませんが、本当に削除しますか？',
         action: (BuildContext dialogContext) async {
-          await handleActionAndError(
-              context, dialogContext, 'プレイヤーの削除中にエラーが発生しました', () async {
+          await handleActionAndError(dialogContext, 'プレイヤーの削除中にエラーが発生しました',
+              () async {
             await ref.read(playerProvider.notifier).deletePlayer(player);
             ref.invalidate(resultHistoryProvider);
           });
@@ -38,8 +38,8 @@ class DialogService {
         title: '確認',
         content: '$nextRound回戦に進みますか？',
         action: (BuildContext dialogContext) async {
-          await handleActionAndError(
-              context, dialogContext, '結果の保存中にエラーが発生しました', () async {
+          await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
+              () async {
             await ref.read(sessionProvider.notifier).addSession();
             await ref.read(sessionProvider.notifier).updateRound();
             await ref.read(resultProvider.notifier).addOrUpdateResult();
@@ -53,8 +53,8 @@ class DialogService {
         title: '確認',
         content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
         action: (BuildContext dialogContext) async {
-          await handleActionAndError(
-              context, dialogContext, '結果の保存中にエラーが発生しました', () async {
+          await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
+              () async {
             await ref.read(sessionProvider.notifier).updateEndTime();
             ref.read(sessionProvider.notifier).disposeSession();
             ref.read(playerProvider.notifier).resetOrder();
@@ -139,11 +139,8 @@ class DialogService {
     );
   }
 
-  Future<void> handleActionAndError(
-      BuildContext context,
-      BuildContext dialogContext,
-      String? errorReason,
-      Future<void> Function() action) async {
+  Future<void> handleActionAndError(BuildContext dialogContext,
+      String? errorReason, Future<void> Function() action) async {
     try {
       await action();
     } catch (e) {
