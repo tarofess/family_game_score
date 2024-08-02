@@ -40,13 +40,16 @@ class PlayerDetailViewModel {
     return totalScore;
   }
 
-  Future<void> savePlayer(Player? player, GlobalKey<FormState> formKey,
+  Future<bool> savePlayer(Player? player, GlobalKey<FormState> formKey,
       String name, String? imagePath, WidgetRef ref) async {
     try {
       if (formKey.currentState!.validate()) {
         await saveImage(player, name, imagePath, ref);
         await saveName(player, name, imagePath, ref);
         ref.invalidate(resultHistoryProvider);
+        return true;
+      } else {
+        return false;
       }
     } catch (e) {
       rethrow;
