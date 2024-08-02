@@ -26,7 +26,7 @@ class ScoringViewModel {
       try {
         return onShowFinishGameDialog;
       } catch (e) {
-        throw Exception('予期せぬエラーがは発生しました');
+        throw Exception('予期せぬエラーが発生しました');
       }
     }
     return null;
@@ -38,7 +38,7 @@ class ScoringViewModel {
       try {
         return onShowMoveToNextRoundDialog;
       } catch (e) {
-        throw Exception('予期せぬエラーがは発生しました');
+        throw Exception('予期せぬエラーが発生しました');
       }
     }
     return null;
