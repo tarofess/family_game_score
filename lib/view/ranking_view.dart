@@ -10,7 +10,7 @@ import 'package:family_game_score/viewmodel/ranking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class RankingView extends HookConsumerWidget {
+class RankingView extends ConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
 
   RankingView({super.key});

@@ -60,7 +60,7 @@ class SettingDetailView extends HookConsumerWidget {
       ValueNotifier<String?> imagePath,
       TextEditingController nameTextEditingController,
       ValueNotifier<String> playerName,
-      PlayerDetailViewModel vm) {
+      SettingDetailViewModel vm) {
     return AppBar(
       title: Text(player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
       centerTitle: true,
@@ -88,7 +88,7 @@ class SettingDetailView extends HookConsumerWidget {
   }
 
   Widget buildImageCircle(BuildContext context,
-      ValueNotifier<String?> imagePath, PlayerDetailViewModel vm) {
+      ValueNotifier<String?> imagePath, SettingDetailViewModel vm) {
     return GestureDetector(
       child: Container(
         width: 240,
@@ -114,7 +114,7 @@ class SettingDetailView extends HookConsumerWidget {
   }
 
   Widget buildNameWidget(TextEditingController nameTextEditingController,
-      PlayerDetailViewModel vm) {
+      SettingDetailViewModel vm) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -155,7 +155,7 @@ class SettingDetailView extends HookConsumerWidget {
     );
   }
 
-  Widget buildTotalScoreWidget(PlayerDetailViewModel vm, Player? player) {
+  Widget buildTotalScoreWidget(SettingDetailViewModel vm, Player? player) {
     return player == null
         ? const SizedBox()
         : Row(
@@ -172,7 +172,7 @@ class SettingDetailView extends HookConsumerWidget {
   }
 
   void showActionSheet(BuildContext context, ValueNotifier<String?> imagePath,
-      PlayerDetailViewModel vm) {
+      SettingDetailViewModel vm) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

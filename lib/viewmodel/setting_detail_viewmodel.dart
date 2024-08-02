@@ -9,11 +9,11 @@ import 'package:family_game_score/viewmodel/provider/result_history_provider.dar
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PlayerDetailViewModel {
+class SettingDetailViewModel {
   Ref ref;
   final CameraService cameraService = getIt<CameraService>();
 
-  PlayerDetailViewModel(this.ref);
+  SettingDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
@@ -124,6 +124,6 @@ class PlayerDetailViewModel {
   }
 }
 
-final playerDetailViewmodelProvider = Provider<PlayerDetailViewModel>((ref) {
-  return PlayerDetailViewModel(ref);
+final playerDetailViewmodelProvider = Provider<SettingDetailViewModel>((ref) {
+  return SettingDetailViewModel(ref);
 });
