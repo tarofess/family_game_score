@@ -5,7 +5,6 @@ import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
-import 'package:family_game_score/view/widget/sakura_animation.dart';
 import 'package:family_game_score/viewmodel/ranking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,11 +48,7 @@ class RankingView extends ConsumerWidget {
               CommonAsyncWidgets.showDataFetchErrorMessage(
                   context, ref, resultProvider, error),
         ),
-        const Positioned.fill(
-          child: IgnorePointer(
-            child: SakuraAnimation(),
-          ),
-        ),
+        vm.getSakuraAnimation(),
       ],
     );
   }
