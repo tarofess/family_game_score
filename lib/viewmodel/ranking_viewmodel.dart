@@ -1,6 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/view/widget/sakura_animation.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -25,6 +26,16 @@ class RankingViewModel {
         ? IconButton(
             icon: const Icon(Icons.check),
             onPressed: onIconButtonPressed,
+          )
+        : const SizedBox();
+  }
+
+  Widget getSakuraAnimation() {
+    return session.value == null
+        ? const Positioned.fill(
+            child: IgnorePointer(
+              child: SakuraAnimation(),
+            ),
           )
         : const SizedBox();
   }
