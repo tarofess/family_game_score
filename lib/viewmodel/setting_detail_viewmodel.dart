@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:family_game_score/main.dart';
@@ -24,6 +25,12 @@ class SettingDetailViewModel {
 
   bool isImageAlreadySet(String? imagePath) {
     return imagePath == null || imagePath.isEmpty ? false : true;
+  }
+
+  bool hasImage(ValueNotifier<String?> imagePath) {
+    return (imagePath.value != null && imagePath.value!.isNotEmpty)
+        ? true
+        : false;
   }
 
   int getTotalScore(Player? player) {
@@ -96,7 +103,7 @@ class SettingDetailViewModel {
 
   Future<void> takePicture(ValueNotifier<String?> imagePath) async {
     try {
-      final String? path = await cameraService.takePictureAndSave();
+      final String? path = await cameraService.takePicture();
       if (path != null) {
         imagePath.value = path;
       }
@@ -107,7 +114,7 @@ class SettingDetailViewModel {
 
   Future<void> pickImageFromGallery(ValueNotifier<String?> imagePath) async {
     try {
-      final String? path = await cameraService.pickImageFromGalleryAndSave();
+      final String? path = await cameraService.pickImageFromGallery();
       if (path != null) {
         imagePath.value = path;
       }
