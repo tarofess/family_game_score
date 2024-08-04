@@ -96,10 +96,12 @@ class SettingDetailView extends HookConsumerWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.grey,
-          image: DecorationImage(
-            image: FileImage(File(imagePath.value ?? '')),
-            fit: BoxFit.cover,
-          ),
+          image: vm.hasImage(imagePath)
+              ? DecorationImage(
+                  image: FileImage(File(imagePath.value!)),
+                  fit: BoxFit.cover,
+                )
+              : null,
         ),
         child: vm.isImageAlreadySet(imagePath.value)
             ? null
