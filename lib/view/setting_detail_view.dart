@@ -102,7 +102,7 @@ class SettingDetailView extends HookConsumerWidget {
           color: Colors.grey,
         ),
         child: FutureBuilder<Image?>(
-          future: playerImage.value != null
+          future: vm.hasAlreadyImage(playerImage.value)
               ? vm.cameraService.getImageFromPath(playerImage.value!.file.path)
               : Future.value(null),
           builder: (context, snapshot) {

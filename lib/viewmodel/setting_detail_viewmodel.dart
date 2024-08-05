@@ -23,12 +23,8 @@ class SettingDetailViewModel {
     return playerName.isEmpty && playerImage == null ? true : false;
   }
 
-  bool isImageAlreadySet(FileImage? playerImage) {
+  bool hasAlreadyImage(FileImage? playerImage) {
     return playerImage == null ? false : true;
-  }
-
-  bool hasImage(FileImage? playerImage) {
-    return playerImage != null ? true : false;
   }
 
   int getTotalScore(Player? player) {
@@ -116,6 +112,7 @@ class SettingDetailViewModel {
 
   void deleteImage(ValueNotifier<FileImage?> playerImage) {
     playerImage.value = null;
+    // player.image = '';
   }
 
   String? handleNameValidation(String? value) {
