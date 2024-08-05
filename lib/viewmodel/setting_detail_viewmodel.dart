@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:family_game_score/main.dart';
@@ -13,24 +12,23 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class SettingDetailViewModel {
   Ref ref;
   final CameraService cameraService = getIt<CameraService>();
+  String? imagePath;
 
   SettingDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
 
-  bool isEmptyBothImageAndName(String playerName, String? imagePath) {
-    return playerName.isEmpty && imagePath == null ? true : false;
+  bool isEmptyBothImageAndName(String playerName, FileImage? playerImage) {
+    return playerName.isEmpty && playerImage == null ? true : false;
   }
 
-  bool isImageAlreadySet(String? imagePath) {
-    return imagePath == null || imagePath.isEmpty ? false : true;
+  bool isImageAlreadySet(FileImage? playerImage) {
+    return playerImage == null ? false : true;
   }
 
-  bool hasImage(ValueNotifier<String?> imagePath) {
-    return (imagePath.value != null && imagePath.value!.isNotEmpty)
-        ? true
-        : false;
+  bool hasImage(FileImage? playerImage) {
+    return playerImage != null ? true : false;
   }
 
   int getTotalScore(Player? player) {
@@ -47,12 +45,12 @@ class SettingDetailViewModel {
     return totalScore;
   }
 
-  Future<bool> savePlayer(Player? player, GlobalKey<FormState> formKey,
-      String name, String? imagePath, WidgetRef ref) async {
+  Future<bool> savePlayer(GlobalKey<FormState> formKey, Player? player,
+      String name, FileImage? playerImage, WidgetRef ref) async {
     try {
       if (formKey.currentState!.validate()) {
-        await saveImage(player, name, imagePath, ref);
-        await saveName(player, name, imagePath, ref);
+        final fileName = await saveImage(player, name, playerImage, ref);
+        await saveName(player, name, fileName, ref);
         ref.invalidate(resultHistoryProvider);
         return true;
       } else {
@@ -63,64 +61,61 @@ class SettingDetailViewModel {
     }
   }
 
-  Future<void> saveImage(
-      Player? player, String name, String? imagePath, WidgetRef ref) async {
-    if (imagePath == null) {
-      return;
-    }
-
-    if (player?.image == imagePath) {
-      return;
+  Future<String> saveImage(Player? player, String name, FileImage? playerImage,
+      WidgetRef ref) async {
+    if (playerImage == null || imagePath == null) {
+      return player?.image ?? '';
     }
 
     try {
-      await cameraService.saveImage(File(imagePath));
+      return await cameraService.saveImage(File(playerImage.file.path));
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> saveName(
-      Player? player, String name, String? imagePath, WidgetRef ref) async {
+      Player? player, String name, String? fileName, WidgetRef ref) async {
     try {
       if (player == null) {
-        await ref
-            .read(playerProvider.notifier)
-            .addPlayer(name, imagePath ?? '');
+        await ref.read(playerProvider.notifier).addPlayer(name, fileName ?? '');
       } else {
         await ref
             .read(playerProvider.notifier)
-            .updatePlayer(player.copyWith(name: name, image: imagePath ?? ''));
+            .updatePlayer(player.copyWith(name: name, image: fileName ?? ''));
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  void deleteImage(ValueNotifier<String?> imagePath) {
-    imagePath.value = null;
-  }
-
-  Future<void> takePicture(ValueNotifier<String?> imagePath) async {
+  Future<void> takePicture(ValueNotifier<FileImage?> playerImage) async {
     try {
       final String? path = await cameraService.takePicture();
       if (path != null) {
-        imagePath.value = path;
+        imagePath = path;
+        playerImage.value = FileImage(File(path));
       }
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> pickImageFromGallery(ValueNotifier<String?> imagePath) async {
+  Future<void> pickImageFromGallery(
+      ValueNotifier<FileImage?> playerImage) async {
     try {
       final String? path = await cameraService.pickImageFromGallery();
       if (path != null) {
-        imagePath.value = path;
+        imagePath = path;
+        playerImage.value = FileImage(File(path));
       }
     } catch (e) {
       rethrow;
     }
+  }
+
+  void deleteImage(ValueNotifier<FileImage?> playerImage) {
+    playerImage.value = null;
   }
 
   String? handleNameValidation(String? value) {
