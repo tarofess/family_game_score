@@ -12,7 +12,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class SettingDetailViewModel {
   Ref ref;
   final CameraService cameraService = getIt<CameraService>();
-  String? imagePath;
 
   SettingDetailViewModel(this.ref);
 
@@ -59,12 +58,13 @@ class SettingDetailViewModel {
 
   Future<String> saveImage(Player? player, String name, FileImage? playerImage,
       WidgetRef ref) async {
-    if (playerImage == null || imagePath == null) {
-      return player?.image ?? '';
+    if (playerImage == null) {
+      await cameraService.deleteImage(player?.image);
+      return '';
     }
 
     try {
-      return await cameraService.saveImage(File(playerImage.file.path));
+      return await cameraService.saveImage(File(playerImage.file.path), player);
     } catch (e) {
       rethrow;
     }
@@ -89,7 +89,6 @@ class SettingDetailViewModel {
     try {
       final String? path = await cameraService.takePicture();
       if (path != null) {
-        imagePath = path;
         playerImage.value = FileImage(File(path));
       }
     } catch (e) {
@@ -102,7 +101,6 @@ class SettingDetailViewModel {
     try {
       final String? path = await cameraService.pickImageFromGallery();
       if (path != null) {
-        imagePath = path;
         playerImage.value = FileImage(File(path));
       }
     } catch (e) {
@@ -112,7 +110,6 @@ class SettingDetailViewModel {
 
   void deleteImage(ValueNotifier<FileImage?> playerImage) {
     playerImage.value = null;
-    // player.image = '';
   }
 
   String? handleNameValidation(String? value) {
