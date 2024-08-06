@@ -103,7 +103,7 @@ class SettingDetailView extends HookConsumerWidget {
         ),
         child: FutureBuilder<Image?>(
           future: vm.hasAlreadyImage(playerImage.value)
-              ? vm.cameraService.getImageFromPath(playerImage.value!.file.path)
+              ? vm.fileService.getImageFromPath(playerImage.value!.file.path)
               : Future.value(null),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -228,7 +228,7 @@ class SettingDetailView extends HookConsumerWidget {
                 leading: const Icon(Icons.cancel),
                 title: const Text('削除する'),
                 onTap: () {
-                  vm.deleteImage(playerImage);
+                  vm.deleteImageFromImageCircle(playerImage);
                   navigationService.pop(context);
                 }),
           ],
