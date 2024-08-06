@@ -151,4 +151,53 @@ class DialogService {
       }
     }
   }
+
+  Future<void> showPermissionDeniedDialog(
+      BuildContext context, String content) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('権限エラー'),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigationService.pop(dialogContext);
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showPermissionPermanentlyDeniedDialog(BuildContext context,
+      String content, VoidCallback onOpenAppSettings) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('権限エラー'),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigationService.pop(dialogContext);
+              },
+              child: const Text('いいえ'),
+            ),
+            TextButton(
+              onPressed: () {
+                onOpenAppSettings();
+                navigationService.pop(dialogContext);
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
