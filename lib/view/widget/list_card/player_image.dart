@@ -1,18 +1,18 @@
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
-import 'package:family_game_score/service/camera_service.dart';
+import 'package:family_game_score/service/file_service.dart';
 import 'package:flutter/material.dart';
 
 class PlayerImage extends StatelessWidget {
   final Player player;
-  final CameraService cameraService = getIt<CameraService>();
+  final FileService fileService = getIt<FileService>();
 
   PlayerImage({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Image?>(
-      future: cameraService.getImageFromPath(player.image),
+      future: fileService.getImageFromPath(player.image),
       builder: (context, snapshot) {
         const double avatarRadius = 18.0;
         const double iconSize = avatarRadius * 2;

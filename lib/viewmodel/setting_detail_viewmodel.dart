@@ -4,6 +4,7 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result_history.dart';
 import 'package:family_game_score/service/camera_service.dart';
+import 'package:family_game_score/service/file_service.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class SettingDetailViewModel {
   Ref ref;
   final CameraService cameraService = getIt<CameraService>();
+  final FileService fileService = getIt<FileService>();
 
   SettingDetailViewModel(this.ref);
 
@@ -41,11 +43,11 @@ class SettingDetailViewModel {
   }
 
   Future<bool> savePlayer(GlobalKey<FormState> formKey, Player? player,
-      String name, FileImage? playerImage, WidgetRef ref) async {
+      String playerName, FileImage? playerImage, WidgetRef ref) async {
     try {
       if (formKey.currentState!.validate()) {
-        final fileName = await saveImage(player, name, playerImage, ref);
-        await saveName(player, name, fileName, ref);
+        final fileName = await saveImage(player, playerImage);
+        await saveName(player, playerName, fileName, ref);
         ref.invalidate(resultHistoryProvider);
         return true;
       } else {
@@ -56,29 +58,29 @@ class SettingDetailViewModel {
     }
   }
 
-  Future<String> saveImage(Player? player, String name, FileImage? playerImage,
-      WidgetRef ref) async {
+  Future<String> saveImage(Player? player, FileImage? playerImage) async {
     if (playerImage == null) {
-      await cameraService.deleteImage(player?.image);
+      await fileService.deleteImage(player?.image);
       return '';
     }
 
     try {
-      return await cameraService.saveImage(File(playerImage.file.path), player);
+      return await fileService.saveImage(File(playerImage.file.path), player);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> saveName(
-      Player? player, String name, String? fileName, WidgetRef ref) async {
+  Future<void> saveName(Player? player, String playerName, String? fileName,
+      WidgetRef ref) async {
     try {
       if (player == null) {
-        await ref.read(playerProvider.notifier).addPlayer(name, fileName ?? '');
-      } else {
         await ref
             .read(playerProvider.notifier)
-            .updatePlayer(player.copyWith(name: name, image: fileName ?? ''));
+            .addPlayer(playerName, fileName ?? '');
+      } else {
+        await ref.read(playerProvider.notifier).updatePlayer(
+            player.copyWith(name: playerName, image: fileName ?? ''));
       }
     } catch (e) {
       rethrow;
@@ -108,7 +110,7 @@ class SettingDetailViewModel {
     }
   }
 
-  void deleteImage(ValueNotifier<FileImage?> playerImage) {
+  void deleteImageFromImageCircle(ValueNotifier<FileImage?> playerImage) {
     playerImage.value = null;
   }
 
