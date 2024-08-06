@@ -46,6 +46,7 @@ dependencies:
   path_provider:
   path:
   get_it:
+  permission_handler:
 
 flutter_icons:
   android: true
