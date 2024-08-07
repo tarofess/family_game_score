@@ -8,7 +8,6 @@ import 'package:family_game_score/viewmodel/setting_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class SettingDetailView extends HookConsumerWidget {
   final Player? player;
@@ -200,34 +199,23 @@ class SettingDetailView extends HookConsumerWidget {
               title: const Text('写真を撮る'),
               onTap: () async {
                 try {
-                  final status = await Permission.camera.request();
-                  switch (status) {
-                    case PermissionStatus.granted:
-                      await vm.takePicture(playerImage);
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    case PermissionStatus.denied:
-                      if (context.mounted) {
+                  await vm.handleCameraAction(
+                    playerImage,
+                    (message) async =>
                         await dialogService.showPermissionDeniedDialog(
-                            context, 'カメラ権限が許可されていないので写真を撮影できません');
-                      }
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    case PermissionStatus.permanentlyDenied:
-                      if (context.mounted) {
-                        await dialogService
-                            .showPermissionPermanentlyDeniedDialog(
-                          context,
-                          'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください',
-                          () => openAppSettings(),
-                        );
-                      }
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    default:
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                  }
+                      context,
+                      message,
+                    ),
+                    (message, action) async => await dialogService
+                        .showPermissionPermanentlyDeniedDialog(
+                      context,
+                      message,
+                      action,
+                    ),
+                    (error) async =>
+                        await dialogService.showErrorDialog(context, error),
+                    () => navigationService.pop(context),
+                  );
                 } catch (e) {
                   if (context.mounted) {
                     navigationService.pop(context);
@@ -241,42 +229,23 @@ class SettingDetailView extends HookConsumerWidget {
               title: const Text('フォトライブラリから選択'),
               onTap: () async {
                 try {
-                  final status = await Permission.photos.request();
-                  switch (status) {
-                    case PermissionStatus.granted:
-                    case PermissionStatus.limited:
-                      await vm.pickImageFromGallery(playerImage);
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    case PermissionStatus.denied:
-                      if (context.mounted) {
+                  await vm.handleGalleryAction(
+                    playerImage,
+                    (message) async =>
                         await dialogService.showPermissionDeniedDialog(
-                            context, 'フォトライブラリへのアクセスが許可されていないので写真を選択できません');
-                      }
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    case PermissionStatus.permanentlyDenied:
-                      if (context.mounted) {
-                        await dialogService
-                            .showPermissionPermanentlyDeniedDialog(
-                          context,
-                          'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません\n設定からアクセス権限を許可してください',
-                          () => openAppSettings(),
-                        );
-                      }
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    case PermissionStatus.restricted:
-                      if (context.mounted) {
-                        await dialogService.showPermissionDeniedDialog(
-                            context, 'フォトライブラリへのアクセスが制限されているので写真を選択できません');
-                      }
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                    default:
-                      if (context.mounted) navigationService.pop(context);
-                      break;
-                  }
+                      context,
+                      message,
+                    ),
+                    (message, action) async => await dialogService
+                        .showPermissionPermanentlyDeniedDialog(
+                      context,
+                      message,
+                      action,
+                    ),
+                    (error) async =>
+                        await dialogService.showErrorDialog(context, error),
+                    () => navigationService.pop(context),
+                  );
                 } catch (e) {
                   if (context.mounted) {
                     navigationService.pop(context);
