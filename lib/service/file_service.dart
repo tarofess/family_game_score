@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -15,6 +16,7 @@ class FileService {
       final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
       final String filePath = path.join(appDir.path, fileName);
       await imageFile.copy(filePath);
+      await compressImage(fileName);
       return fileName;
     } catch (e) {
       throw Exception('画像の保存中にエラーが発生しました');
@@ -61,6 +63,25 @@ class FileService {
       return file;
     } catch (e) {
       throw Exception('画像の取得中にエラーが発生しました');
+    }
+  }
+
+  Future<void> compressImage(String fileName) async {
+    try {
+      final File file = await getImageFileFromDocumentsDirectory(fileName);
+      final result = await FlutterImageCompress.compressWithFile(
+        file.absolute.path,
+        format: CompressFormat.webp,
+        quality: 90,
+      );
+
+      if (result == null) {
+        throw Exception('画像の圧縮中にエラーが発生しました');
+      }
+
+      await file.writeAsBytes(result);
+    } catch (e) {
+      throw Exception('画像の圧縮中にエラーが発生しました');
     }
   }
 }
