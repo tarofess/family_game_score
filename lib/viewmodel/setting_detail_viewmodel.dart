@@ -9,6 +9,7 @@ import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingDetailViewModel {
   Ref ref;
@@ -84,6 +85,79 @@ class SettingDetailViewModel {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<void> handleCameraAction(
+    ValueNotifier<FileImage?> playerImage,
+    Function(String) showPermissionDeniedDialog,
+    Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
+    Function(dynamic) showErrorDialog,
+    VoidCallback closeDialog,
+  ) async {
+    try {
+      final status = await Permission.camera.request();
+      switch (status) {
+        case PermissionStatus.granted:
+          await takePicture(playerImage);
+          closeDialog();
+          break;
+        case PermissionStatus.denied:
+          await showPermissionDeniedDialog('カメラ権限が許可されていないので写真を撮影できません');
+          closeDialog();
+          break;
+        case PermissionStatus.permanentlyDenied:
+          await showPermissionPermanentlyDeniedDialog(
+            'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください',
+            openAppSettings,
+          );
+          closeDialog();
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      throw Exception('写真の撮影で予期せぬエラーが発生しました');
+    }
+  }
+
+  Future<void> handleGalleryAction(
+    ValueNotifier<FileImage?> playerImage,
+    Function(String) showPermissionDeniedDialog,
+    Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
+    Function(dynamic) showErrorDialog,
+    VoidCallback closeDialog,
+  ) async {
+    try {
+      final status = await Permission.photos.request();
+      switch (status) {
+        case PermissionStatus.granted:
+        case PermissionStatus.limited:
+          await pickImageFromGallery(playerImage);
+          closeDialog();
+          break;
+        case PermissionStatus.denied:
+          await showPermissionDeniedDialog(
+              'フォトライブラリへのアクセスが許可されていないので写真を選択できません');
+          closeDialog();
+          break;
+        case PermissionStatus.permanentlyDenied:
+          await showPermissionPermanentlyDeniedDialog(
+            'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません\n設定からアクセス権限を許可してください',
+            openAppSettings,
+          );
+          closeDialog();
+          break;
+        case PermissionStatus.restricted:
+          await showPermissionDeniedDialog(
+              'フォトライブラリへのアクセスが制限されているので写真を選択できません');
+          closeDialog();
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+      throw Exception('写真の選択で予期せぬエラーが発生しました');
     }
   }
 
