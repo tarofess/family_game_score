@@ -24,32 +24,35 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
 
     return Scaffold(
       body: vm.resultHistories.when(
-        data: (_) => TableCalendar(
-          firstDay: DateTime.utc(2024, 1, 1),
-          lastDay: DateTime.utc(2123, 12, 31),
-          focusedDay: focusedDay.value,
-          headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
-          ),
-          locale: 'ja_JP',
-          eventLoader: (day) => vm.events[day] ?? [],
-          onDaySelected: (tappedDay, focused) {
-            vm.handleOnDaySelected(
-              tappedDay,
-              focused,
-              selectedDay,
-              focusedDay,
-              (filteredResultHistoryies) => navigationService.push(
-                context,
-                ResultHistoryDetailView(
-                  filteredResultHistories: filteredResultHistoryies,
+        data: (_) => SingleChildScrollView(
+          child: TableCalendar(
+            availableGestures: AvailableGestures.none,
+            firstDay: DateTime.utc(2024, 1, 1),
+            lastDay: DateTime.utc(2123, 12, 31),
+            focusedDay: focusedDay.value,
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+            ),
+            locale: 'ja_JP',
+            eventLoader: (day) => vm.events[day] ?? [],
+            onDaySelected: (tappedDay, focused) {
+              vm.handleOnDaySelected(
+                tappedDay,
+                focused,
+                selectedDay,
+                focusedDay,
+                (filteredResultHistoryies) => navigationService.push(
+                  context,
+                  ResultHistoryDetailView(
+                    filteredResultHistories: filteredResultHistoryies,
+                  ),
                 ),
-              ),
-            );
-          },
-          selectedDayPredicate: (day) {
-            return isSameDay(selectedDay.value, day);
-          },
+              );
+            },
+            selectedDayPredicate: (day) {
+              return isSameDay(selectedDay.value, day);
+            },
+          ),
         ),
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>

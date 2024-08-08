@@ -45,14 +45,19 @@ class SettingDetailView extends HookConsumerWidget {
     return Scaffold(
       appBar: buildAppBar(
           context, ref, playerImage, nameTextEditingController, playerName, vm),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            buildImageCircle(context, playerImage, vm),
-            buildNameWidget(nameTextEditingController, vm),
-            buildTotalScoreWidget(vm, player),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 50),
+              buildImageCircle(context, playerImage, vm),
+              const SizedBox(height: 60),
+              buildNameWidget(nameTextEditingController, vm),
+              const SizedBox(height: 60),
+              buildTotalScoreWidget(vm, player),
+              const SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
     );
