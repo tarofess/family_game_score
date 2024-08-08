@@ -47,7 +47,6 @@ dependencies:
   path:
   get_it:
   permission_handler:
-  flutter_image_compress:
 
 flutter_icons:
   android: true
