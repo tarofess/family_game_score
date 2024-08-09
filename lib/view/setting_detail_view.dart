@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
@@ -36,7 +37,6 @@ class SettingDetailView extends HookConsumerWidget {
       }
 
       nameTextEditingController.addListener(listener);
-
       return () {
         nameTextEditingController.removeListener(listener);
       };
@@ -106,7 +106,7 @@ class SettingDetailView extends HookConsumerWidget {
           shape: BoxShape.circle,
           color: Colors.grey,
         ),
-        child: FutureBuilder<Image?>(
+        child: FutureBuilder<Uint8List?>(
           future: vm.hasAlreadyImage(playerImage.value)
               ? vm.fileService.getImageFromPath(playerImage.value!.file.path)
               : Future.value(null),
@@ -117,7 +117,9 @@ class SettingDetailView extends HookConsumerWidget {
               return ClipOval(
                 child: FittedBox(
                   fit: BoxFit.cover,
-                  child: snapshot.data!,
+                  child: Image(
+                    image: MemoryImage(snapshot.data!),
+                  ),
                 ),
               );
             } else {
