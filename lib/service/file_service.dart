@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -25,11 +25,11 @@ class FileService {
     }
   }
 
-  Future<Image?> getImageFromPath(String fileName) async {
+  Future<Uint8List?> getImageFromPath(String fileName) async {
     try {
       final File file = await getImageFileFromDocumentsDirectory(fileName);
       if (await file.exists()) {
-        return Image.file(file);
+        return await file.readAsBytes();
       }
       return null;
     } catch (e) {
