@@ -47,8 +47,8 @@ class SettingDetailViewModel {
       String playerName, FileImage? playerImage, WidgetRef ref) async {
     try {
       if (formKey.currentState!.validate()) {
-        final fileName = await saveImage(player, playerImage);
-        await saveName(player, playerName, fileName, ref);
+        final fileName = await saveName(player, playerName, playerImage, ref);
+        await saveImage(player, fileName, playerImage);
         ref.invalidate(resultHistoryProvider);
         return true;
       } else {
@@ -59,30 +59,45 @@ class SettingDetailViewModel {
     }
   }
 
-  Future<String> saveImage(Player? player, FileImage? playerImage) async {
-    if (playerImage == null) {
-      await fileService.deleteImage(player?.image);
-      return '';
-    }
-
+  Future<String> saveName(Player? player, String playerName,
+      FileImage? playerImage, WidgetRef ref) async {
+    final fileName = getFileName(player, playerImage);
     try {
-      return await fileService.saveImage(File(playerImage.file.path), player);
+      if (player == null) {
+        await ref.read(playerProvider.notifier).addPlayer(playerName, fileName);
+      } else {
+        await ref
+            .read(playerProvider.notifier)
+            .updatePlayer(player.copyWith(name: playerName, image: fileName));
+      }
+      return fileName;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> saveName(Player? player, String playerName, String? fileName,
-      WidgetRef ref) async {
+  String getFileName(Player? player, FileImage? playerImage) {
+    if (playerImage == null) {
+      return '';
+    }
+
+    if (player == null) {
+      final playerMaxId = ref.read(playerProvider).value!.length + 1;
+      return '$playerMaxId.jpg';
+    } else {
+      return '${player.id}.jpg';
+    }
+  }
+
+  Future<void> saveImage(
+      Player? player, String fileName, FileImage? playerImage) async {
+    if (playerImage == null) {
+      await fileService.deleteImage(player?.image);
+      return;
+    }
+
     try {
-      if (player == null) {
-        await ref
-            .read(playerProvider.notifier)
-            .addPlayer(playerName, fileName ?? '');
-      } else {
-        await ref.read(playerProvider.notifier).updatePlayer(
-            player.copyWith(name: playerName, image: fileName ?? ''));
-      }
+      await fileService.saveImage(File(playerImage.file.path), fileName);
     } catch (e) {
       rethrow;
     }

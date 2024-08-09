@@ -1,21 +1,14 @@
 import 'dart:io';
-import 'package:family_game_score/model/entity/player.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class FileService {
-  Future<String> saveImage(File imageFile, Player? player) async {
+  Future<void> saveImage(File imageFile, String fileName) async {
     try {
-      if (await isImageExists(player?.image)) {
-        return player!.image;
-      }
-
       final Directory appDir = await getApplicationDocumentsDirectory();
-      final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
       final String filePath = path.join(appDir.path, fileName);
       await imageFile.copy(filePath);
-      return fileName;
     } catch (e) {
       throw Exception('画像の保存中にエラーが発生しました');
     }
