@@ -26,7 +26,10 @@ class PlayerListCard extends StatelessWidget {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         leading: PlayerImage(player: player),
-        title: Text(player.name),
+        title: Text(
+          player.name,
+          overflow: TextOverflow.ellipsis,
+        ),
         onTap: () => navigationService.push(
           context,
           SettingDetailView(player: player),

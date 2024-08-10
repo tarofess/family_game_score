@@ -37,7 +37,7 @@ class SettingDetailView extends HookConsumerWidget {
       return () {
         nameTextEditingController.removeListener(listener);
       };
-    }, [nameTextEditingController]);
+    }, []);
 
     return Scaffold(
       appBar: buildAppBar(
@@ -105,7 +105,8 @@ class SettingDetailView extends HookConsumerWidget {
         ),
         child: FutureBuilder<Uint8List?>(
           future: vm.hasAlreadyImage(playerImage.value)
-              ? vm.fileService.getImageFromPath(playerImage.value!.file.path)
+              ? vm.fileService
+                  .getByteImageFromPath(playerImage.value!.file.path)
               : Future.value(null),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {

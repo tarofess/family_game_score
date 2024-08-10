@@ -25,7 +25,7 @@ class FileService {
     }
   }
 
-  Future<Uint8List?> getImageFromPath(String fileName) async {
+  Future<Uint8List?> getByteImageFromPath(String fileName) async {
     try {
       final File file = await getImageFileFromDocumentsDirectory(fileName);
       if (await file.exists()) {

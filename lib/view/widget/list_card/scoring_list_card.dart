@@ -19,12 +19,21 @@ class ScoringListCard extends StatelessWidget {
       elevation: 4.0,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: ListTile(
-        leading: Text('${index + 1}位', style: const TextStyle(fontSize: 16)),
+        leading: Text(
+          '${index + 1}位',
+          style: const TextStyle(fontSize: 16),
+        ),
         title: Row(
           children: [
             PlayerImage(player: players[index]),
             const SizedBox(width: 12),
-            Text(players[index].name, style: const TextStyle(fontSize: 18)),
+            Expanded(
+              child: Text(
+                players[index].name,
+                style: const TextStyle(fontSize: 18),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         trailing: ReorderableDragStartListener(

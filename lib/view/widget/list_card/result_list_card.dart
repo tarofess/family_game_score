@@ -25,7 +25,12 @@ class ResultListCard extends StatelessWidget {
           children: [
             PlayerImage(player: player),
             const SizedBox(width: 12),
-            Text(player.name),
+            Expanded(
+              child: Text(
+                player.name,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
         trailing: Text(

@@ -14,7 +14,7 @@ class PlayerImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Uint8List?>(
-      future: fileService.getImageFromPath(player.image),
+      future: fileService.getByteImageFromPath(player.image),
       builder: (context, snapshot) {
         const double avatarRadius = 18.0;
         const double iconSize = avatarRadius * 2;

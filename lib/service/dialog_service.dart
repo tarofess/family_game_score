@@ -57,7 +57,6 @@ class DialogService {
               () async {
             await ref.read(sessionProvider.notifier).updateEndTime();
             ref.read(sessionProvider.notifier).disposeSession();
-            ref.read(playerProvider.notifier).resetOrder();
           });
 
           if (context.mounted) {
@@ -79,6 +78,7 @@ class DialogService {
               onPressed: () {
                 ref.invalidate(resultProvider);
                 ref.invalidate(resultHistoryProvider);
+                ref.read(playerProvider.notifier).resetOrder();
                 navigationService.pop(dialogContext);
                 navigationService.pushReplacement(context, const MyApp());
               },
