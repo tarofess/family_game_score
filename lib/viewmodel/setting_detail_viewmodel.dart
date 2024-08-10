@@ -61,7 +61,7 @@ class SettingDetailViewModel {
 
   Future<String> saveName(Player? player, String playerName,
       FileImage? playerImage, WidgetRef ref) async {
-    final fileName = getFileName(player, playerImage);
+    final fileName = await getFileName(player, playerImage);
     try {
       if (player == null) {
         await ref.read(playerProvider.notifier).addPlayer(playerName, fileName);
@@ -76,13 +76,14 @@ class SettingDetailViewModel {
     }
   }
 
-  String getFileName(Player? player, FileImage? playerImage) {
+  Future<String> getFileName(Player? player, FileImage? playerImage) async {
     if (playerImage == null) {
       return '';
     }
 
     if (player == null) {
-      final playerMaxId = ref.read(playerProvider).value!.length + 1;
+      final playerMaxId =
+          await ref.read(playerProvider.notifier).getPlayersMaxID() + 1;
       return '$playerMaxId.jpg';
     } else {
       return '${player.id}.jpg';

@@ -77,6 +77,10 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     players.sort((a, b) => a.id.compareTo(b.id));
     state = AsyncData(players);
   }
+
+  Future<int> getPlayersMaxID() async {
+    return await playerRepository.getPlayersMaxID();
+  }
 }
 
 final playerProvider = AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {

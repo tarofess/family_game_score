@@ -31,4 +31,10 @@ class PlayerRepository {
     await database
         .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [player.id]);
   }
+
+  Future<int> getPlayersMaxID() async {
+    final List<Map<String, dynamic>> response =
+        await database.rawQuery('SELECT MAX(id) as max_id FROM Player');
+    return response.first['max_id'] ?? 0;
+  }
 }
