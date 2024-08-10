@@ -62,4 +62,10 @@ class FileService {
     final String filePath = path.join(appDir.path, fileName);
     return filePath;
   }
+
+  Future<void> clearCache(String fileName) async {
+    final filePath = await getFullPathOfImage(fileName);
+    final image = FileImage(File(filePath));
+    imageCache.evict(image);
+  }
 }

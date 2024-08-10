@@ -81,13 +81,11 @@ class SettingDetailViewModel {
       return '';
     }
 
-    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-
     if (player == null) {
       final playerMaxId = ref.read(playerProvider).value!.length + 1;
-      return '$playerMaxId-$timestamp.jpg';
+      return '$playerMaxId.jpg';
     } else {
-      return '${player.id}-$timestamp.jpg';
+      return '${player.id}.jpg';
     }
   }
 
@@ -100,6 +98,7 @@ class SettingDetailViewModel {
 
     try {
       await fileService.saveImage(File(playerImage.file.path), fileName);
+      await fileService.clearCache(fileName);
     } catch (e) {
       rethrow;
     }
