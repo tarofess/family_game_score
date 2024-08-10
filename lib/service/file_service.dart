@@ -56,4 +56,10 @@ class FileService {
       throw Exception('画像の取得中にエラーが発生しました');
     }
   }
+
+  Future<String> getFullPathOfImage(String fileName) async {
+    final Directory appDir = await getApplicationDocumentsDirectory();
+    final String filePath = path.join(appDir.path, fileName);
+    return filePath;
+  }
 }

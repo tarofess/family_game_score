@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:family_game_score/main.dart';
@@ -25,13 +24,11 @@ class SettingDetailView extends HookConsumerWidget {
     final nameTextEditingController =
         useTextEditingController(text: player?.name ?? '');
     final playerName = useState(nameTextEditingController.text);
-    final playerImage = useState<FileImage?>(
-      player?.image != null && player!.image.isNotEmpty
-          ? FileImage(File(player!.image))
-          : null,
-    );
+    final playerImage = useState<FileImage?>(null);
 
     useEffect(() {
+      vm.setPlayerImagePath(player, playerImage);
+
       void listener() {
         playerName.value = nameTextEditingController.text;
       }

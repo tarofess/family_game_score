@@ -209,6 +209,16 @@ class SettingDetailViewModel {
     }
     return null;
   }
+
+  void setPlayerImagePath(
+      Player? player, ValueNotifier<FileImage?> playerImage) async {
+    if (player?.image != null && player!.image.isNotEmpty) {
+      final fullPath = await fileService.getFullPathOfImage(player.image);
+      playerImage.value = FileImage(File(fullPath));
+    } else {
+      playerImage.value = null;
+    }
+  }
 }
 
 final playerDetailViewmodelProvider = Provider<SettingDetailViewModel>((ref) {
