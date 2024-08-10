@@ -81,11 +81,13 @@ class SettingDetailViewModel {
       return '';
     }
 
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+
     if (player == null) {
       final playerMaxId = ref.read(playerProvider).value!.length + 1;
-      return '$playerMaxId.jpg';
+      return '$playerMaxId-$timestamp.jpg';
     } else {
-      return '${player.id}.jpg';
+      return '${player.id}-$timestamp.jpg';
     }
   }
 

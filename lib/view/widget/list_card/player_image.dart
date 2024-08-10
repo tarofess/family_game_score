@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/file_service.dart';
@@ -13,15 +11,15 @@ class PlayerImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Uint8List?>(
-      future: fileService.getByteImageFromPath(player.image),
+    return FutureBuilder<FileImage?>(
+      future: fileService.getFileImageFromPath(player.image),
       builder: (context, snapshot) {
         const double avatarRadius = 18.0;
         const double iconSize = avatarRadius * 2;
 
         if (snapshot.hasData) {
           return CircleAvatar(
-            backgroundImage: MemoryImage(snapshot.data!),
+            backgroundImage: snapshot.data!,
             radius: avatarRadius,
           );
         } else {

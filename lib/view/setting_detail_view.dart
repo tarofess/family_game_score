@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/dialog_service.dart';
@@ -103,32 +101,18 @@ class SettingDetailView extends HookConsumerWidget {
           shape: BoxShape.circle,
           color: Colors.grey,
         ),
-        child: FutureBuilder<Uint8List?>(
-          future: vm.hasAlreadyImage(playerImage.value)
-              ? vm.fileService
-                  .getByteImageFromPath(playerImage.value!.file.path)
-              : Future.value(null),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasData && snapshot.data != null) {
-              return ClipOval(
+        child: vm.hasAlreadyImage(playerImage.value)
+            ? ClipOval(
                 child: FittedBox(
                   fit: BoxFit.cover,
-                  child: Image(
-                    image: MemoryImage(snapshot.data!),
-                  ),
+                  child: Image(image: playerImage.value!),
                 ),
-              );
-            } else {
-              return const Icon(
+              )
+            : const Icon(
                 Icons.camera_alt,
                 color: Colors.white,
                 size: 50,
-              );
-            }
-          },
-        ),
+              ),
       ),
       onTap: () => showActionSheet(context, playerImage, vm),
     );

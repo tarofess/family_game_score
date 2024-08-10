@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -17,7 +17,7 @@ class FileService {
   Future<void> deleteImage(String? fileName) async {
     try {
       if (await isImageExists(fileName)) {
-        final File file = await getImageFileFromDocumentsDirectory(fileName);
+        final File file = await getImageFromDocumentsDirectory(fileName);
         await file.delete();
       }
     } catch (e) {
@@ -25,11 +25,11 @@ class FileService {
     }
   }
 
-  Future<Uint8List?> getByteImageFromPath(String fileName) async {
+  Future<FileImage?> getFileImageFromPath(String fileName) async {
     try {
-      final File file = await getImageFileFromDocumentsDirectory(fileName);
+      final File file = await getImageFromDocumentsDirectory(fileName);
       if (await file.exists()) {
-        return await file.readAsBytes();
+        return FileImage(File(file.path));
       }
       return null;
     } catch (e) {
@@ -39,14 +39,14 @@ class FileService {
 
   Future<bool> isImageExists(String? fileName) async {
     try {
-      final File file = await getImageFileFromDocumentsDirectory(fileName);
+      final File file = await getImageFromDocumentsDirectory(fileName);
       return await file.exists();
     } catch (e) {
       throw Exception('画像の存在確認中にエラーが発生しました');
     }
   }
 
-  Future<File> getImageFileFromDocumentsDirectory(String? fileName) async {
+  Future<File> getImageFromDocumentsDirectory(String? fileName) async {
     try {
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String filePath = path.join(appDir.path, fileName);
