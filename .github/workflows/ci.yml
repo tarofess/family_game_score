@@ -42,5 +42,14 @@ jobs:
     - name: Flutter analyze
       run: flutter analyze
 
+    - name: Install Firebase CLI
+      run: npm install -g firebase-tools
+
+    - name: Install FlutterFire CLI
+      run: dart pub global activate flutterfire_cli
+
+    - name: Configure FlutterFire
+      run: flutterfire configure
+
     - name: Build iOS
       run: flutter build ios --release --no-codesign
