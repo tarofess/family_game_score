@@ -15,7 +15,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:family_game_score/view/setting_view.dart';
+import 'package:family_game_score/view/player_setting_view.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 
@@ -107,7 +107,7 @@ class MyTabView extends StatelessWidget {
             tabs: [
               Tab(text: 'ホーム'),
               Tab(text: '過去の成績'),
-              Tab(text: '設定'),
+              Tab(text: 'プレイヤー'),
             ],
           ),
         ),
@@ -115,7 +115,7 @@ class MyTabView extends StatelessWidget {
           children: [
             HomeView(),
             ResultHistoryCalendarView(),
-            SettingView(),
+            PlayerSettingView(),
           ],
         ),
       ),

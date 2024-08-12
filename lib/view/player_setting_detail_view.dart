@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class SettingDetailView extends HookConsumerWidget {
+class PlayerSettingDetailView extends HookConsumerWidget {
   final Player? player;
   final NavigationService navigationService = getIt<NavigationService>();
   final DialogService dialogService = getIt<DialogService>();
 
   final formKey = GlobalKey<FormState>();
 
-  SettingDetailView({super.key, required this.player});
+  PlayerSettingDetailView({super.key, required this.player});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

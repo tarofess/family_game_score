@@ -3,7 +3,7 @@ import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/setting_detail_view.dart';
+import 'package:family_game_score/view/player_setting_detail_view.dart';
 import 'package:family_game_score/view/widget/list_card/player_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -32,7 +32,7 @@ class PlayerListCard extends StatelessWidget {
         ),
         onTap: () => navigationService.push(
           context,
-          SettingDetailView(player: player),
+          PlayerSettingDetailView(player: player),
         ),
         onLongPress: () async {
           try {
