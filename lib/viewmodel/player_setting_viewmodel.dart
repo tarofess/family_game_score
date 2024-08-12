@@ -5,10 +5,10 @@ import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class SettingViewModel {
+class PlayerSettingViewModel {
   final Ref ref;
 
-  SettingViewModel(this.ref);
+  PlayerSettingViewModel(this.ref);
 
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
@@ -28,4 +28,4 @@ class SettingViewModel {
   }
 }
 
-final settingViewModelProvider = Provider((ref) => SettingViewModel(ref));
+final settingViewModelProvider = Provider((ref) => PlayerSettingViewModel(ref));

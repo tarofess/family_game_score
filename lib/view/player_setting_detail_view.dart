@@ -3,7 +3,7 @@ import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/widget/loading_overlay.dart';
-import 'package:family_game_score/viewmodel/setting_detail_viewmodel.dart';
+import 'package:family_game_score/viewmodel/player_setting_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -65,7 +65,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       ValueNotifier<FileImage?> playerImage,
       TextEditingController nameTextEditingController,
       ValueNotifier<String> playerName,
-      SettingDetailViewModel vm) {
+      PlayerSettingDetailViewModel vm) {
     final loadingOverlay = LoadingOverlay.of(context);
     return AppBar(
       title: Text(player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
@@ -96,7 +96,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   }
 
   Widget buildImageCircle(BuildContext context,
-      ValueNotifier<FileImage?> playerImage, SettingDetailViewModel vm) {
+      ValueNotifier<FileImage?> playerImage, PlayerSettingDetailViewModel vm) {
     return GestureDetector(
       child: Container(
         width: 240,
@@ -123,7 +123,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   }
 
   Widget buildNameWidget(TextEditingController nameTextEditingController,
-      SettingDetailViewModel vm) {
+      PlayerSettingDetailViewModel vm) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -164,7 +164,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     );
   }
 
-  Widget buildTotalScoreWidget(SettingDetailViewModel vm, Player? player) {
+  Widget buildTotalScoreWidget(
+      PlayerSettingDetailViewModel vm, Player? player) {
     return player == null
         ? const SizedBox()
         : Row(
@@ -181,7 +182,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   }
 
   void showActionSheet(BuildContext context,
-      ValueNotifier<FileImage?> playerImage, SettingDetailViewModel vm) {
+      ValueNotifier<FileImage?> playerImage, PlayerSettingDetailViewModel vm) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {

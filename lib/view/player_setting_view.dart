@@ -7,7 +7,7 @@ import 'package:family_game_score/view/widget/list_card/player_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
-import 'package:family_game_score/viewmodel/setting_viewmodel.dart';
+import 'package:family_game_score/viewmodel/player_setting_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -27,7 +27,8 @@ class PlayerSettingView extends ConsumerWidget {
     );
   }
 
-  Widget buildBody(BuildContext context, WidgetRef ref, SettingViewModel vm) {
+  Widget buildBody(
+      BuildContext context, WidgetRef ref, PlayerSettingViewModel vm) {
     return Center(
       child: vm.session.when(
         data: (data) => data == null
@@ -42,7 +43,7 @@ class PlayerSettingView extends ConsumerWidget {
   }
 
   Widget buildFloatingActionButton(
-      BuildContext context, WidgetRef ref, SettingViewModel vm) {
+      BuildContext context, WidgetRef ref, PlayerSettingViewModel vm) {
     return FloatingActionButton(
       onPressed: vm.getFloatingActionButtonCallback(
         ref,
@@ -55,7 +56,7 @@ class PlayerSettingView extends ConsumerWidget {
   }
 
   Widget buildPlayers(
-      BuildContext context, WidgetRef ref, SettingViewModel vm) {
+      BuildContext context, WidgetRef ref, PlayerSettingViewModel vm) {
     return vm.players.when(
       data: (data) => data.isEmpty
           ? buildPlayerNotRegisteredMessage(context)

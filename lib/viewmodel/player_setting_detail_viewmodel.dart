@@ -11,12 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class SettingDetailViewModel {
+class PlayerSettingDetailViewModel {
   Ref ref;
   final CameraService cameraService = getIt<CameraService>();
   final FileService fileService = getIt<FileService>();
 
-  SettingDetailViewModel(this.ref);
+  PlayerSettingDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
@@ -223,6 +223,7 @@ class SettingDetailViewModel {
   }
 }
 
-final playerDetailViewmodelProvider = Provider<SettingDetailViewModel>((ref) {
-  return SettingDetailViewModel(ref);
+final playerDetailViewmodelProvider =
+    Provider<PlayerSettingDetailViewModel>((ref) {
+  return PlayerSettingDetailViewModel(ref);
 });

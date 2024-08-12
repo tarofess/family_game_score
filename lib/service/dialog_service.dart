@@ -93,6 +93,7 @@ class DialogService {
                 ref.invalidate(resultHistoryProvider);
                 ref.read(playerProvider.notifier).resetOrder();
                 ref.read(sessionProvider.notifier).disposeSession();
+                navigationService.pop(dialogContext);
                 navigationService.pushReplacement(context, const MyApp());
               },
               child: const Text('はい'),
