@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:family_game_score/model/entity/result_history.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -20,7 +21,7 @@ class ResultHistoryCalendarViewModel {
   Map<DateTime, List<int>> get eventSessions {
     Map<DateTime, Set<int>> tempResult = {};
     for (var resultHistory in resultHistories.value ?? []) {
-      var date = DateTime.parse(resultHistory.session.begTime);
+      var date = DateTime.parse(resultHistory.session.endTime);
       date = DateTime(date.year, date.month, date.day);
 
       tempResult.putIfAbsent(date, () => <int>{}).add(resultHistory.session.id);
@@ -44,22 +45,57 @@ class ResultHistoryCalendarViewModel {
     DateTime focused,
     ValueNotifier<DateTime> selectedDay,
     ValueNotifier<DateTime> focusedDay,
-    Function(List<ResultHistory>) onShowResultHistoryDetailView,
+    Function(List<ResultHistorySection>) onShowResultHistoryDetailView,
   ) {
     selectedDay.value = tappedDay;
     focusedDay.value = focused;
 
     if (resultHistories.value != null) {
       final filteredResultHistoryies = resultHistories.value!.where((element) {
-        final elementDate = DateTime.parse(element.session.begTime);
+        final elementDate = DateTime.parse(element.session.endTime!);
         return isSameDay(elementDate, tappedDay);
       }).toList();
 
       if (filteredResultHistoryies.isNotEmpty) {
-        onShowResultHistoryDetailView(filteredResultHistoryies);
+        final convertedResultHistorySection =
+            convertToResultHistorySection(filteredResultHistoryies);
+        onShowResultHistoryDetailView(convertedResultHistorySection);
       }
     }
   }
+}
+
+List<ResultHistorySection> convertToResultHistorySection(
+    List<ResultHistory> resultHistories) {
+  Map<int, List<ResultHistoryItems>> sessionItemsMap = {};
+
+  for (var resultHistory in resultHistories) {
+    int sessionId = resultHistory.session.id;
+    if (!sessionItemsMap.containsKey(sessionId)) {
+      sessionItemsMap[sessionId] = [];
+    }
+    sessionItemsMap[sessionId]!.add(ResultHistoryItems(
+      player: resultHistory.player,
+      result: resultHistory.result,
+    ));
+  }
+
+  List<ResultHistorySection> sessionResultHistories = [];
+  for (var entry in sessionItemsMap.entries) {
+    int sessionId = entry.key;
+    List<ResultHistoryItems> items = entry.value;
+
+    Session session = resultHistories
+        .firstWhere((history) => history.session.id == sessionId)
+        .session;
+
+    sessionResultHistories.add(ResultHistorySection(
+      session: session,
+      items: items,
+    ));
+  }
+
+  return sessionResultHistories;
 }
 
 final resultHistoryCalendarViewModelProvider =

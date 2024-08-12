@@ -4,13 +4,12 @@ import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/result_history_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:grouped_list/grouped_list.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
-  final List<ResultHistory> filteredResultHistories;
+  final List<ResultHistorySection> resultHistorySections;
 
   const ResultHistoryDetailView(
-      {super.key, required this.filteredResultHistories});
+      {super.key, required this.resultHistorySections});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,24 +29,25 @@ class ResultHistoryDetailView extends ConsumerWidget {
   }
 
   Widget buildBody(BuildContext context, ResultHistoryDetailViewModel vm) {
-    return GroupedListView<dynamic, String>(
-      elements: filteredResultHistories,
-      groupBy: (element) => element.session.begTime,
-      groupComparator: (value1, value2) => value2.compareTo(value1),
-      itemComparator: (item1, item2) =>
-          item1.result.rank.compareTo(item2.result.rank),
-      groupSeparatorBuilder: (String value) =>
-          buildGroupedListSeparator(context, value),
-      itemBuilder: (context, dynamic element) => element.player.status == 0
-          ? ResultListCard(player: element.player, result: element.result)
-          : buildPlayerHasBeenDeletedCard(context),
+    return ListView.builder(
+      itemCount: resultHistorySections.length,
+      itemBuilder: (context, index) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            buildSectionHeader(index),
+            buildSectionItems(index),
+          ],
+        );
+      },
     );
   }
 
-  Widget buildGroupedListSeparator(BuildContext context, String value) {
+  Widget buildSectionHeader(int index) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
@@ -62,16 +62,33 @@ class ResultHistoryDetailView extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            '日時  ${value.getFormatBegTime()}',
+            '日時  ${resultHistorySections[index].session.endTime!.getFormatBegTime()}',
             textAlign: TextAlign.center,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Gill Sans'),
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Gill Sans',
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget buildSectionItems(int index) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: resultHistorySections[index].items.length,
+      itemBuilder: (context, itemIndex) {
+        return resultHistorySections[index].items[itemIndex].player.status == 0
+            ? ResultListCard(
+                player: resultHistorySections[index].items[itemIndex].player,
+                result: resultHistorySections[index].items[itemIndex].result,
+              )
+            : buildPlayerHasBeenDeletedCard(context);
+      },
     );
   }
 

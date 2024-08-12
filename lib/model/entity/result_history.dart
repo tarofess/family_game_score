@@ -37,3 +37,19 @@ class ResultHistory with _$ResultHistory {
     );
   }
 }
+
+@freezed
+class ResultHistorySection with _$ResultHistorySection {
+  const factory ResultHistorySection({
+    required Session session,
+    required List<ResultHistoryItems> items,
+  }) = _ResultHistorySection;
+}
+
+@freezed
+class ResultHistoryItems with _$ResultHistoryItems {
+  const factory ResultHistoryItems({
+    required Player player,
+    required Result result,
+  }) = _ResultHistoryItems;
+}

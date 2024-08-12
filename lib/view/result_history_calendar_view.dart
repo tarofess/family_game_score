@@ -44,7 +44,7 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
                 (filteredResultHistoryies) => navigationService.push(
                   context,
                   ResultHistoryDetailView(
-                    filteredResultHistories: filteredResultHistoryies,
+                    resultHistorySections: filteredResultHistoryies,
                   ),
                 ),
               );
