@@ -46,8 +46,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
     <key>NSCameraUsageDescription</key>
-    <string>カメラへのアクセスが必要です</string>
+    <string>プロフィール写真の撮影およびアプリ内での設定にカメラへのアクセスが必要です</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>写真ライブラリへのアクセスが必要です</string>
+    <string>プロフィール写真をアプリ内で設定するために写真ライブラリへのアクセスが必要です</string>
 </dict>
 </plist>
