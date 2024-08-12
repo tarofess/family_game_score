@@ -78,8 +78,14 @@ class RankingView extends ConsumerWidget {
       BuildContext context, WidgetRef ref) {
     return FloatingActionButton(
       onPressed: () async {
-        await dialogService.showAddGameTypeDialog(context, ref);
-        // ボタンを無効化にする処理
+        try {
+          await dialogService.showAddGameTypeDialog(context, ref);
+          // ボタンを無効化にする処理
+        } catch (e) {
+          if (context.mounted) {
+            await dialogService.showErrorDialog(context, e.toString());
+          }
+        }
       },
       child: const Icon(Icons.add),
     );

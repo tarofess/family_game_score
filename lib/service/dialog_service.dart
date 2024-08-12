@@ -240,24 +240,34 @@ class DialogService {
     await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: TextField(
-              onChanged: (value) {
-                inputText = value;
-              },
-              decoration: InputDecoration(hintText: hintText)),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(dialogContext);
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(title),
+              content: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    inputText = value;
+                  });
                 },
-                child: Text(cancelText)),
-            TextButton(
-              onPressed: () => action(inputText, dialogContext),
-              child: Text(confirmText),
-            ),
-          ],
+                decoration: InputDecoration(hintText: hintText),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    navigationService.pop(dialogContext);
+                  },
+                  child: Text(cancelText),
+                ),
+                TextButton(
+                  onPressed: inputText.trim().isEmpty
+                      ? null
+                      : () => action(inputText, dialogContext),
+                  child: Text(confirmText),
+                ),
+              ],
+            );
+          },
         );
       },
     );
