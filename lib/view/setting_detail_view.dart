@@ -2,6 +2,7 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
+import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/setting_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -65,6 +66,7 @@ class SettingDetailView extends HookConsumerWidget {
       TextEditingController nameTextEditingController,
       ValueNotifier<String> playerName,
       SettingDetailViewModel vm) {
+    final loadingOverlay = LoadingOverlay.of(context);
     return AppBar(
       title: Text(player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
       centerTitle: true,
@@ -75,6 +77,7 @@ class SettingDetailView extends HookConsumerWidget {
                 child: const Text('保存'),
                 onPressed: () async {
                   try {
+                    loadingOverlay.show();
                     final isSuccess = await vm.savePlayer(formKey, player,
                         nameTextEditingController.text, playerImage.value, ref);
                     if (isSuccess && context.mounted) {
@@ -82,9 +85,10 @@ class SettingDetailView extends HookConsumerWidget {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      dialogService.showErrorDialog(context, e);
+                      await dialogService.showErrorDialog(context, e);
                     }
                   }
+                  loadingOverlay.hide();
                 },
               ),
       ],

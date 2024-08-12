@@ -3,6 +3,7 @@ import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/ranking_view.dart';
+import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
@@ -240,8 +241,9 @@ class DialogService {
     required String content,
     required Function(BuildContext dialogContext) action,
   }) async {
+    final loadingOverlay = LoadingOverlay.of(context);
     try {
-      await showDialog(
+      final result = await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           return AlertDialog(
@@ -254,13 +256,18 @@ class DialogService {
                   },
                   child: const Text('いいえ')),
               TextButton(
-                onPressed: () async => await action(dialogContext),
+                onPressed: () async {
+                  loadingOverlay.show();
+                  await action(dialogContext);
+                  loadingOverlay.hide();
+                },
                 child: const Text('はい'),
               )
             ],
           );
         },
       );
+      return result ?? false;
     } catch (e) {
       rethrow;
     }
@@ -273,8 +280,9 @@ class DialogService {
     required Function(String, BuildContext) action,
     String inputText = '',
   }) async {
+    final loadingOverlay = LoadingOverlay.of(context);
     try {
-      return await showDialog(
+      final result = await showDialog(
         context: context,
         builder: (BuildContext dialogContext) {
           return StatefulBuilder(
@@ -300,11 +308,9 @@ class DialogService {
                     onPressed: inputText.trim().isEmpty
                         ? null
                         : () async {
-                            try {
-                              await action(inputText, dialogContext);
-                            } catch (e) {
-                              rethrow;
-                            }
+                            loadingOverlay.show();
+                            await action(inputText, dialogContext);
+                            loadingOverlay.hide();
                           },
                     child: const Text('登録'),
                   ),
@@ -314,6 +320,7 @@ class DialogService {
           );
         },
       );
+      return result ?? false;
     } catch (e) {
       rethrow;
     }
