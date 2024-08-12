@@ -15,54 +15,66 @@ class DialogService {
 
   Future<void> showDeletePlayerDialog(
       BuildContext context, WidgetRef ref, Player player) async {
-    await showConfimationDialog(
-        context: context,
-        title: '${player.name}を削除しますか？',
-        content: '削除すると元に戻せませんが、本当に削除しますか？',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(dialogContext, 'プレイヤーの削除中にエラーが発生しました',
-              () async {
-            await ref.read(playerProvider.notifier).deletePlayer(player);
-            ref.invalidate(resultHistoryProvider);
+    try {
+      await showConfimationBaseDialog(
+          context: context,
+          title: '${player.name}を削除しますか？',
+          content: '削除すると元に戻せませんが、本当に削除しますか？',
+          action: (BuildContext dialogContext) async {
+            await handleActionAndError(dialogContext, 'プレイヤーの削除中にエラーが発生しました',
+                () async {
+              await ref.read(playerProvider.notifier).deletePlayer(player);
+              ref.invalidate(resultHistoryProvider);
+            });
           });
-        });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> showMoveToNextRoundDialog(
       BuildContext context, WidgetRef ref) async {
-    final session = ref.read(sessionProvider);
-    final nextRound =
-        session.value != null ? (session.value!.round + 1).toString() : '2';
+    try {
+      final session = ref.read(sessionProvider);
+      final nextRound =
+          session.value != null ? (session.value!.round + 1).toString() : '2';
 
-    await showConfimationDialog(
-        context: context,
-        title: '確認',
-        content: '$nextRound回戦に進みますか？',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
-              () async {
-            await ref.read(sessionProvider.notifier).addSession();
-            await ref.read(sessionProvider.notifier).updateRound();
-            await ref.read(resultProvider.notifier).addOrUpdateResult();
+      await showConfimationBaseDialog(
+          context: context,
+          title: '確認',
+          content: '$nextRound回戦に進みますか？',
+          action: (BuildContext dialogContext) async {
+            await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
+                () async {
+              await ref.read(sessionProvider.notifier).addSession();
+              await ref.read(sessionProvider.notifier).updateRound();
+              await ref.read(resultProvider.notifier).addOrUpdateResult();
+            });
           });
-        });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
-    await showConfimationDialog(
-        context: context,
-        title: '確認',
-        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
-        action: (BuildContext dialogContext) async {
-          await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
-              () async {
-            await ref.read(sessionProvider.notifier).updateEndTime();
-          });
+    try {
+      await showConfimationBaseDialog(
+          context: context,
+          title: '確認',
+          content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
+          action: (BuildContext dialogContext) async {
+            await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
+                () async {
+              await ref.read(sessionProvider.notifier).updateEndTime();
+            });
 
-          if (context.mounted) {
-            navigationService.pushAndRemoveUntil(context, RankingView());
-          }
-        });
+            if (context.mounted) {
+              navigationService.pushAndRemoveUntil(context, RankingView());
+            }
+          });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> showReturnToHomeDialog(
@@ -108,48 +120,6 @@ class DialogService {
         );
       },
     );
-  }
-
-  Future<void> showConfimationDialog(
-      {required BuildContext context,
-      required String title,
-      required String content,
-      required Function(BuildContext dialogContext) action,
-      String confirmText = '確認',
-      String cancelText = 'キャンセル'}) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  navigationService.pop(dialogContext);
-                },
-                child: const Text('いいえ')),
-            TextButton(
-              onPressed: () async => await action(dialogContext),
-              child: const Text('はい'),
-            )
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> handleActionAndError(BuildContext dialogContext,
-      String? errorReason, Future<void> Function() action) async {
-    try {
-      await action();
-    } catch (e) {
-      throw Exception(errorReason);
-    } finally {
-      if (dialogContext.mounted) {
-        navigationService.pop(dialogContext);
-      }
-    }
   }
 
   Future<void> showPermissionDeniedDialog(
@@ -201,75 +171,163 @@ class DialogService {
     );
   }
 
-  Future<void> showAddGameTypeDialog(BuildContext context, WidgetRef ref) {
-    return showInputDialog(
-        context: context,
-        title: '遊んだゲームの種類を記録できます',
-        hintText: '例：大富豪',
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, 'ゲーム種類の記録中にエラーが発生しました', () async {
-            await ref.read(sessionProvider.notifier).addGameType(inputText);
+  Future<bool> showAddGameTypeDialog(
+      BuildContext context, WidgetRef ref) async {
+    try {
+      return await showInputBaseDialog(
+          context: context,
+          title: '遊んだゲームの種類を記録できます',
+          hintText: '例：大富豪',
+          action: (String inputText, BuildContext dialogContext) async {
+            await handleActionAndError(dialogContext, 'ゲーム種類の記録中にエラーが発生しました',
+                () async {
+              await ref.read(sessionProvider.notifier).addGameType(inputText);
+            });
           });
-        });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> showEditGameTypeDialog(
-      BuildContext context, WidgetRef ref, Session session) {
-    return showInputDialog(
-        context: context,
-        title: '遊んだゲームの種類を編集できます',
-        hintText: '例：大富豪',
-        action: (String inputText, BuildContext dialogContext) async {
-          await handleActionAndError(context, 'ゲーム種類の編集中にエラーが発生しました', () async {
-            await ref
-                .read(resultHistoryProvider.notifier)
-                .updateSessionGameType(session, inputText);
+      BuildContext context, WidgetRef ref, Session session) async {
+    try {
+      await showInputBaseDialog(
+          context: context,
+          title: '遊んだゲームの種類を編集できます',
+          hintText: '例：大富豪',
+          action: (String inputText, BuildContext dialogContext) async {
+            await handleActionAndError(dialogContext, 'ゲーム種類の編集中にエラーが発生しました',
+                () async {
+              await ref
+                  .read(resultHistoryProvider.notifier)
+                  .updateSessionGameType(session, inputText);
+            });
           });
-        });
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<void> showInputDialog({
+  Future<void> showMessageDialog(
+      BuildContext context, String title, String content) async {
+    try {
+      await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  navigationService.pop(dialogContext);
+                },
+                child: const Text('はい'),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> showConfimationBaseDialog({
+    required BuildContext context,
+    required String title,
+    required String content,
+    required Function(BuildContext dialogContext) action,
+  }) async {
+    try {
+      await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    navigationService.pop(dialogContext);
+                  },
+                  child: const Text('いいえ')),
+              TextButton(
+                onPressed: () async => await action(dialogContext),
+                child: const Text('はい'),
+              )
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> showInputBaseDialog({
     required BuildContext context,
     required String title,
     required String hintText,
     required Function(String, BuildContext) action,
-    String confirmText = '登録',
-    String cancelText = 'キャンセル',
     String inputText = '',
   }) async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(title),
-              content: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    inputText = value;
-                  });
-                },
-                decoration: InputDecoration(hintText: hintText),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    navigationService.pop(dialogContext);
+    try {
+      return await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text(title),
+                content: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      inputText = value;
+                    });
                   },
-                  child: Text(cancelText),
+                  decoration: InputDecoration(hintText: hintText),
                 ),
-                TextButton(
-                  onPressed: inputText.trim().isEmpty
-                      ? null
-                      : () => action(inputText, dialogContext),
-                  child: Text(confirmText),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop(false);
+                    },
+                    child: const Text('キャンセル'),
+                  ),
+                  TextButton(
+                    onPressed: inputText.trim().isEmpty
+                        ? null
+                        : () async {
+                            try {
+                              await action(inputText, dialogContext);
+                            } catch (e) {
+                              rethrow;
+                            }
+                          },
+                    child: const Text('登録'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> handleActionAndError(BuildContext dialogContext,
+      String? errorReason, Future<void> Function() action) async {
+    try {
+      await action();
+      if (dialogContext.mounted) {
+        Navigator.of(dialogContext).pop(true);
+      }
+    } catch (e) {
+      throw Exception(errorReason);
+    }
   }
 }
