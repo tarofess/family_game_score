@@ -22,7 +22,8 @@ class ResultHistoryRepository {
             Session.id as sessionId,
             Session.round,
             Session.begTime,
-            Session.endTime
+            Session.endTime,
+            Session.gameType
           FROM Result
           INNER JOIN Session ON Result.sessionId = Session.id
           INNER JOIN Player ON Result.playerId = Player.id

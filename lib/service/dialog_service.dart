@@ -1,5 +1,6 @@
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
+import 'package:family_game_score/model/entity/session.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/ranking_view.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
@@ -56,7 +57,6 @@ class DialogService {
           await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
               () async {
             await ref.read(sessionProvider.notifier).updateEndTime();
-            ref.read(sessionProvider.notifier).disposeSession();
           });
 
           if (context.mounted) {
@@ -79,7 +79,7 @@ class DialogService {
                 ref.invalidate(resultProvider);
                 ref.invalidate(resultHistoryProvider);
                 ref.read(playerProvider.notifier).resetOrder();
-                navigationService.pop(dialogContext);
+                ref.read(sessionProvider.notifier).disposeSession();
                 navigationService.pushReplacement(context, const MyApp());
               },
               child: const Text('はい'),
@@ -194,6 +194,68 @@ class DialogService {
                 navigationService.pop(dialogContext);
               },
               child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showAddGameTypeDialog(BuildContext context, WidgetRef ref) {
+    return showInputDialog(
+        context: context,
+        title: '遊んだゲームの種類を記録できます',
+        hintText: '例：大富豪',
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, 'ゲーム種類の記録中にエラーが発生しました', () async {
+            await ref.read(sessionProvider.notifier).addGameType(inputText);
+          });
+        });
+  }
+
+  Future<void> showEditGameTypeDialog(
+      BuildContext context, WidgetRef ref, Session session) {
+    return showInputDialog(
+        context: context,
+        title: '遊んだゲームの種類を編集できます',
+        hintText: '例：大富豪',
+        action: (String inputText, BuildContext dialogContext) async {
+          await handleActionAndError(context, 'ゲーム種類の編集中にエラーが発生しました', () async {
+            await ref
+                .read(resultHistoryProvider.notifier)
+                .updateSessionGameType(session, inputText);
+          });
+        });
+  }
+
+  Future<void> showInputDialog({
+    required BuildContext context,
+    required String title,
+    required String hintText,
+    required Function(String, BuildContext) action,
+    String confirmText = '登録',
+    String cancelText = 'キャンセル',
+    String inputText = '',
+  }) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: TextField(
+              onChanged: (value) {
+                inputText = value;
+              },
+              decoration: InputDecoration(hintText: hintText)),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  navigationService.pop(dialogContext);
+                },
+                child: Text(cancelText)),
+            TextButton(
+              onPressed: () => action(inputText, dialogContext),
+              child: Text(confirmText),
             ),
           ],
         );

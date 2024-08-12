@@ -36,6 +36,18 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     });
   }
 
+  Future<void> addGameType(String gameType) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      if (state.value == null) {
+        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
+      }
+      final session = state.value!;
+      await sessionRepository.updateGameType(session, gameType);
+      return session;
+    });
+  }
+
   Future<void> getSession() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -48,7 +60,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       if (state.value == null) {
-        throw Exception('Session is null');
+        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
       }
       final updatedSession = await sessionRepository.updateRound(state.value!);
       return updatedSession;
@@ -59,7 +71,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       if (state.value == null) {
-        throw Exception('Session is null');
+        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
       }
       final updatedSession =
           await sessionRepository.updateEndTime(state.value!);

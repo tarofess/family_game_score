@@ -18,7 +18,7 @@ class DatabaseHelper {
             'CREATE TABLE Player(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, image TEXT, status INTEGER)',
           );
           await db.execute(
-            'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT)',
+            'CREATE TABLE Session(id INTEGER PRIMARY KEY AUTOINCREMENT, round INTEGER, begTime TEXT, endTime TEXT, gameType TEXT)',
           );
           await db.execute(
             'CREATE TABLE Result(id INTEGER PRIMARY KEY AUTOINCREMENT, playerId INTEGER, sessionId INTEGER, score INTEGER, rank INTEGER)',

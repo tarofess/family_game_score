@@ -21,6 +21,9 @@ class RankingView extends ConsumerWidget {
     return Scaffold(
       appBar: buildAppBar(context, ref, vm),
       body: buildBody(context, ref, vm),
+      floatingActionButton: vm.session.value?.endTime == null
+          ? null
+          : buildFloatingActionButton(context, ref),
     );
   }
 
@@ -68,6 +71,17 @@ class RankingView extends ConsumerWidget {
       error: (error, stackTrace) =>
           CommonAsyncWidgets.showDataFetchErrorMessage(
               context, ref, playerProvider, error),
+    );
+  }
+
+  FloatingActionButton buildFloatingActionButton(
+      BuildContext context, WidgetRef ref) {
+    return FloatingActionButton(
+      onPressed: () async {
+        await dialogService.showAddGameTypeDialog(context, ref);
+        // ボタンを無効化にする処理
+      },
+      child: const Icon(Icons.add),
     );
   }
 }

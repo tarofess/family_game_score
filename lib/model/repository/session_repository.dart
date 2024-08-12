@@ -48,4 +48,9 @@ class SessionRepository {
 
     return updatedSession;
   }
+
+  Future<void> updateGameType(Session session, String gameType) async {
+    await database.rawUpdate(
+        'UPDATE Session SET gameType = ? WHERE id = ?', [gameType, session.id]);
+  }
 }

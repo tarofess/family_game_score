@@ -26,6 +26,7 @@ class ResultHistory with _$ResultHistory {
         round: json['round'] as int,
         begTime: json['begTime'] as String,
         endTime: json['endTime'] as String?,
+        gameType: json['gameType'] as String?,
       ),
       result: Result(
         id: json['resultId'] as int,

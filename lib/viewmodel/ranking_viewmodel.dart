@@ -18,26 +18,28 @@ class RankingViewModel {
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
   Widget getAppBarTitle() {
-    return session.value == null ? const Text('結果発表') : const Text('現在の順位');
+    return session.value?.endTime == null
+        ? const Text('現在の順位')
+        : const Text('結果発表');
   }
 
   Widget getIconButton(VoidCallback onIconButtonPressed) {
-    return session.value == null
-        ? IconButton(
-            icon: const Icon(Icons.check),
+    return session.value?.endTime == null
+        ? const SizedBox()
+        : IconButton(
+            icon: const Icon(Icons.home),
             onPressed: onIconButtonPressed,
-          )
-        : const SizedBox();
+          );
   }
 
   Widget getSakuraAnimation() {
-    return session.value == null
-        ? const Positioned.fill(
+    return session.value?.endTime == null
+        ? const SizedBox()
+        : const Positioned.fill(
             child: IgnorePointer(
               child: SakuraAnimation(),
             ),
-          )
-        : const SizedBox();
+          );
   }
 }
 

@@ -12,6 +12,7 @@ _$SessionImpl _$$SessionImplFromJson(Map<String, dynamic> json) =>
       round: (json['round'] as num).toInt(),
       begTime: json['begTime'] as String,
       endTime: json['endTime'] as String?,
+      gameType: json['gameType'] as String?,
     );
 
 Map<String, dynamic> _$$SessionImplToJson(_$SessionImpl instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$$SessionImplToJson(_$SessionImpl instance) =>
       'round': instance.round,
       'begTime': instance.begTime,
       'endTime': instance.endTime,
+      'gameType': instance.gameType,
     };

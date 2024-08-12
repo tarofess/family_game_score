@@ -30,12 +30,12 @@ class SakuraAnimation extends HookConsumerWidget {
       return () => animationController.removeListener(listener);
     }, [animationController]);
 
-    return session == null
-        ? CustomPaint(
+    return session?.endTime == null
+        ? const SizedBox()
+        : CustomPaint(
             painter: SakuraPainter(petals.value),
             child: Container(),
-          )
-        : const SizedBox();
+          );
   }
 }
 

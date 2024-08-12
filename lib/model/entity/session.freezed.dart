@@ -24,6 +24,7 @@ mixin _$Session {
   int get round => throw _privateConstructorUsedError;
   String get begTime => throw _privateConstructorUsedError;
   String? get endTime => throw _privateConstructorUsedError;
+  String? get gameType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,8 @@ abstract class $SessionCopyWith<$Res> {
   factory $SessionCopyWith(Session value, $Res Function(Session) then) =
       _$SessionCopyWithImpl<$Res, Session>;
   @useResult
-  $Res call({int id, int round, String begTime, String? endTime});
+  $Res call(
+      {int id, int round, String begTime, String? endTime, String? gameType});
 }
 
 /// @nodoc
@@ -55,6 +57,7 @@ class _$SessionCopyWithImpl<$Res, $Val extends Session>
     Object? round = null,
     Object? begTime = null,
     Object? endTime = freezed,
+    Object? gameType = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -73,6 +76,10 @@ class _$SessionCopyWithImpl<$Res, $Val extends Session>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as String?,
+      gameType: freezed == gameType
+          ? _value.gameType
+          : gameType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -84,7 +91,8 @@ abstract class _$$SessionImplCopyWith<$Res> implements $SessionCopyWith<$Res> {
       __$$SessionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int round, String begTime, String? endTime});
+  $Res call(
+      {int id, int round, String begTime, String? endTime, String? gameType});
 }
 
 /// @nodoc
@@ -102,6 +110,7 @@ class __$$SessionImplCopyWithImpl<$Res>
     Object? round = null,
     Object? begTime = null,
     Object? endTime = freezed,
+    Object? gameType = freezed,
   }) {
     return _then(_$SessionImpl(
       id: null == id
@@ -120,6 +129,10 @@ class __$$SessionImplCopyWithImpl<$Res>
           ? _value.endTime
           : endTime // ignore: cast_nullable_to_non_nullable
               as String?,
+      gameType: freezed == gameType
+          ? _value.gameType
+          : gameType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -131,7 +144,8 @@ class _$SessionImpl implements _Session {
       {required this.id,
       required this.round,
       required this.begTime,
-      this.endTime});
+      this.endTime,
+      this.gameType});
 
   factory _$SessionImpl.fromJson(Map<String, dynamic> json) =>
       _$$SessionImplFromJson(json);
@@ -144,10 +158,12 @@ class _$SessionImpl implements _Session {
   final String begTime;
   @override
   final String? endTime;
+  @override
+  final String? gameType;
 
   @override
   String toString() {
-    return 'Session(id: $id, round: $round, begTime: $begTime, endTime: $endTime)';
+    return 'Session(id: $id, round: $round, begTime: $begTime, endTime: $endTime, gameType: $gameType)';
   }
 
   @override
@@ -158,12 +174,15 @@ class _$SessionImpl implements _Session {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.round, round) || other.round == round) &&
             (identical(other.begTime, begTime) || other.begTime == begTime) &&
-            (identical(other.endTime, endTime) || other.endTime == endTime));
+            (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.gameType, gameType) ||
+                other.gameType == gameType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, round, begTime, endTime);
+  int get hashCode =>
+      Object.hash(runtimeType, id, round, begTime, endTime, gameType);
 
   @JsonKey(ignore: true)
   @override
@@ -184,7 +203,8 @@ abstract class _Session implements Session {
       {required final int id,
       required final int round,
       required final String begTime,
-      final String? endTime}) = _$SessionImpl;
+      final String? endTime,
+      final String? gameType}) = _$SessionImpl;
 
   factory _Session.fromJson(Map<String, dynamic> json) = _$SessionImpl.fromJson;
 
@@ -196,6 +216,8 @@ abstract class _Session implements Session {
   String get begTime;
   @override
   String? get endTime;
+  @override
+  String? get gameType;
   @override
   @JsonKey(ignore: true)
   _$$SessionImplCopyWith<_$SessionImpl> get copyWith =>

@@ -36,18 +36,10 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
             locale: 'ja_JP',
             eventLoader: (day) => vm.events[day] ?? [],
             onDaySelected: (tappedDay, focused) {
-              vm.handleOnDaySelected(
-                tappedDay,
-                focused,
-                selectedDay,
-                focusedDay,
-                (filteredResultHistoryies) => navigationService.push(
-                  context,
-                  ResultHistoryDetailView(
-                    resultHistorySections: filteredResultHistoryies,
-                  ),
-                ),
-              );
+              selectedDay.value = tappedDay;
+              focusedDay.value = focused;
+              navigationService.push(context,
+                  ResultHistoryDetailView(selectedDay: selectedDay.value));
             },
             selectedDayPredicate: (day) {
               return isSameDay(selectedDay.value, day);
