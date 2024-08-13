@@ -45,35 +45,27 @@ class PlayerSettingDetailViewModel {
 
   Future<bool> savePlayer(GlobalKey<FormState> formKey, Player? player,
       String playerName, FileImage? playerImage, WidgetRef ref) async {
-    try {
-      if (formKey.currentState!.validate()) {
-        final fileName = await saveName(player, playerName, playerImage, ref);
-        await saveImage(player, fileName, playerImage);
-        ref.invalidate(resultHistoryProvider);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      rethrow;
+    if (formKey.currentState!.validate()) {
+      final fileName = await saveName(player, playerName, playerImage, ref);
+      await saveImage(player, fileName, playerImage);
+      ref.invalidate(resultHistoryProvider);
+      return true;
+    } else {
+      return false;
     }
   }
 
   Future<String> saveName(Player? player, String playerName,
       FileImage? playerImage, WidgetRef ref) async {
     final fileName = await getFileName(player, playerImage);
-    try {
-      if (player == null) {
-        await ref.read(playerProvider.notifier).addPlayer(playerName, fileName);
-      } else {
-        await ref
-            .read(playerProvider.notifier)
-            .updatePlayer(player.copyWith(name: playerName, image: fileName));
-      }
-      return fileName;
-    } catch (e) {
-      rethrow;
+    if (player == null) {
+      await ref.read(playerProvider.notifier).addPlayer(playerName, fileName);
+    } else {
+      await ref
+          .read(playerProvider.notifier)
+          .updatePlayer(player.copyWith(name: playerName, image: fileName));
     }
+    return fileName;
   }
 
   Future<String> getFileName(Player? player, FileImage? playerImage) async {
@@ -97,12 +89,8 @@ class PlayerSettingDetailViewModel {
       return;
     }
 
-    try {
-      await fileService.saveImage(File(playerImage.file.path), fileName);
-      await fileService.clearCache(fileName);
-    } catch (e) {
-      rethrow;
-    }
+    await fileService.saveImage(File(playerImage.file.path), fileName);
+    await fileService.clearCache(fileName);
   }
 
   Future<void> handleCameraAction(
@@ -111,29 +99,25 @@ class PlayerSettingDetailViewModel {
     Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
     VoidCallback closeDialog,
   ) async {
-    try {
-      final status = await Permission.camera.request();
-      switch (status) {
-        case PermissionStatus.granted:
-          await takePicture(playerImage);
-          closeDialog();
-          break;
-        case PermissionStatus.denied:
-          await showPermissionDeniedDialog('カメラ権限が許可されていないので写真を撮影できません');
-          closeDialog();
-          break;
-        case PermissionStatus.permanentlyDenied:
-          await showPermissionPermanentlyDeniedDialog(
-            'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください',
-            openAppSettings,
-          );
-          closeDialog();
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      throw Exception('写真の撮影で予期せぬエラーが発生しました');
+    final status = await Permission.camera.request();
+    switch (status) {
+      case PermissionStatus.granted:
+        await takePicture(playerImage);
+        closeDialog();
+        break;
+      case PermissionStatus.denied:
+        await showPermissionDeniedDialog('カメラ権限が許可されていないので写真を撮影できません');
+        closeDialog();
+        break;
+      case PermissionStatus.permanentlyDenied:
+        await showPermissionPermanentlyDeniedDialog(
+          'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください',
+          openAppSettings,
+        );
+        closeDialog();
+        break;
+      default:
+        break;
     }
   }
 
@@ -143,59 +127,45 @@ class PlayerSettingDetailViewModel {
     Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
     VoidCallback closeDialog,
   ) async {
-    try {
-      final status = await Permission.photos.request();
-      switch (status) {
-        case PermissionStatus.granted:
-        case PermissionStatus.limited:
-          await pickImageFromGallery(playerImage);
-          closeDialog();
-          break;
-        case PermissionStatus.denied:
-          await showPermissionDeniedDialog(
-              'フォトライブラリへのアクセスが許可されていないので写真を選択できません');
-          closeDialog();
-          break;
-        case PermissionStatus.permanentlyDenied:
-          await showPermissionPermanentlyDeniedDialog(
-            'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません\n設定からアクセス権限を許可してください',
-            openAppSettings,
-          );
-          closeDialog();
-          break;
-        case PermissionStatus.restricted:
-          await showPermissionDeniedDialog(
-              'フォトライブラリへのアクセスが制限されているので写真を選択できません');
-          closeDialog();
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-      throw Exception('写真の選択で予期せぬエラーが発生しました');
+    final status = await Permission.photos.request();
+    switch (status) {
+      case PermissionStatus.granted:
+      case PermissionStatus.limited:
+        await pickImageFromGallery(playerImage);
+        closeDialog();
+        break;
+      case PermissionStatus.denied:
+        await showPermissionDeniedDialog('フォトライブラリへのアクセスが許可されていないので写真を選択できません');
+        closeDialog();
+        break;
+      case PermissionStatus.permanentlyDenied:
+        await showPermissionPermanentlyDeniedDialog(
+          'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません\n設定からアクセス権限を許可してください',
+          openAppSettings,
+        );
+        closeDialog();
+        break;
+      case PermissionStatus.restricted:
+        await showPermissionDeniedDialog('フォトライブラリへのアクセスが制限されているので写真を選択できません');
+        closeDialog();
+        break;
+      default:
+        break;
     }
   }
 
   Future<void> takePicture(ValueNotifier<FileImage?> playerImage) async {
-    try {
-      final String? path = await cameraService.takePicture();
-      if (path != null) {
-        playerImage.value = FileImage(File(path));
-      }
-    } catch (e) {
-      rethrow;
+    final String? path = await cameraService.takePicture();
+    if (path != null) {
+      playerImage.value = FileImage(File(path));
     }
   }
 
   Future<void> pickImageFromGallery(
       ValueNotifier<FileImage?> playerImage) async {
-    try {
-      final String? path = await cameraService.pickImageFromGallery();
-      if (path != null) {
-        playerImage.value = FileImage(File(path));
-      }
-    } catch (e) {
-      rethrow;
+    final String? path = await cameraService.pickImageFromGallery();
+    if (path != null) {
+      playerImage.value = FileImage(File(path));
     }
   }
 

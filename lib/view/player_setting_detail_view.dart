@@ -196,17 +196,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 try {
                   await vm.handleCameraAction(
                     playerImage,
-                    (message) async =>
-                        await dialogService.showPermissionDeniedDialog(
-                      context,
-                      message,
-                    ),
-                    (message, action) async => await dialogService
-                        .showPermissionPermanentlyDeniedDialog(
-                      context,
-                      message,
-                      action,
-                    ),
+                    (message) => dialogService.showPermissionDeniedDialog(
+                        context, message),
+                    (message, action) =>
+                        dialogService.showPermissionPermanentlyDeniedDialog(
+                            context, message, action),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {
@@ -224,17 +218,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 try {
                   await vm.handleGalleryAction(
                     playerImage,
-                    (message) async =>
-                        await dialogService.showPermissionDeniedDialog(
-                      context,
-                      message,
-                    ),
-                    (message, action) async => await dialogService
-                        .showPermissionPermanentlyDeniedDialog(
-                      context,
-                      message,
-                      action,
-                    ),
+                    (message) => dialogService.showPermissionDeniedDialog(
+                        context, message),
+                    (message, action) =>
+                        dialogService.showPermissionPermanentlyDeniedDialog(
+                            context, message, action),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {

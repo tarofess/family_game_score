@@ -10,7 +10,7 @@ class FileService {
       final String filePath = path.join(appDir.path, fileName);
       await imageFile.copy(filePath);
     } catch (e) {
-      throw Exception('画像の保存中にエラーが発生しました');
+      throw Exception('写真の保存中にエラーが発生しました');
     }
   }
 
@@ -21,7 +21,7 @@ class FileService {
         await file.delete();
       }
     } catch (e) {
-      throw Exception('画像の削除中にエラーが発生しました');
+      throw Exception('写真の削除中にエラーが発生しました');
     }
   }
 
@@ -33,17 +33,13 @@ class FileService {
       }
       return null;
     } catch (e) {
-      throw Exception('画像の取得中にエラーが発生しました');
+      throw Exception('写真の取得中にエラーが発生しました');
     }
   }
 
   Future<bool> isImageExists(String? fileName) async {
-    try {
-      final File file = await getImageFromDocumentsDirectory(fileName);
-      return await file.exists();
-    } catch (e) {
-      throw Exception('画像の存在確認中にエラーが発生しました');
-    }
+    final File file = await getImageFromDocumentsDirectory(fileName);
+    return await file.exists();
   }
 
   Future<File> getImageFromDocumentsDirectory(String? fileName) async {
@@ -53,7 +49,7 @@ class FileService {
       final File file = File(filePath);
       return file;
     } catch (e) {
-      throw Exception('画像の取得中にエラーが発生しました');
+      throw Exception('写真の取得中にエラーが発生しました');
     }
   }
 
@@ -64,8 +60,12 @@ class FileService {
   }
 
   Future<void> clearCache(String fileName) async {
-    final filePath = await getFullPathOfImage(fileName);
-    final image = FileImage(File(filePath));
-    imageCache.evict(image);
+    try {
+      final filePath = await getFullPathOfImage(fileName);
+      final image = FileImage(File(filePath));
+      imageCache.evict(image);
+    } catch (e) {
+      throw Exception('キャッシュのクリア中にエラーが発生しました');
+    }
   }
 }
