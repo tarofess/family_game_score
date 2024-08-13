@@ -104,7 +104,7 @@ class RankingView extends HookConsumerWidget {
             }
           } catch (e) {
             if (context.mounted) {
-              await dialogService.showErrorDialog(context, e.toString());
+              dialogService.showErrorDialog(context, e.toString());
             }
           }
         },

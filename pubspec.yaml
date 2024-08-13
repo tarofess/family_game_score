@@ -38,6 +38,7 @@ dependencies:
   sqflite:
   flutter_launcher_icons:
   table_calendar:
+  intl:
   firebase_core:
   firebase_crashlytics:
   image_picker:

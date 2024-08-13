@@ -109,7 +109,6 @@ class PlayerSettingDetailViewModel {
     ValueNotifier<FileImage?> playerImage,
     Function(String) showPermissionDeniedDialog,
     Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
-    Function(dynamic) showErrorDialog,
     VoidCallback closeDialog,
   ) async {
     try {
@@ -142,7 +141,6 @@ class PlayerSettingDetailViewModel {
     ValueNotifier<FileImage?> playerImage,
     Function(String) showPermissionDeniedDialog,
     Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
-    Function(dynamic) showErrorDialog,
     VoidCallback closeDialog,
   ) async {
     try {

@@ -85,10 +85,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     }
                   } catch (e) {
                     if (context.mounted) {
-                      await dialogService.showErrorDialog(context, e);
+                      dialogService.showErrorDialog(context, e);
                     }
+                  } finally {
+                    loadingOverlay.hide();
                   }
-                  loadingOverlay.hide();
                 },
               ),
       ],
@@ -206,14 +207,12 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                       message,
                       action,
                     ),
-                    (error) async =>
-                        await dialogService.showErrorDialog(context, error),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {
                   if (context.mounted) {
                     navigationService.pop(context);
-                    await dialogService.showErrorDialog(context, e);
+                    dialogService.showErrorDialog(context, e);
                   }
                 }
               },
@@ -236,8 +235,6 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                       message,
                       action,
                     ),
-                    (error) async =>
-                        await dialogService.showErrorDialog(context, error),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {

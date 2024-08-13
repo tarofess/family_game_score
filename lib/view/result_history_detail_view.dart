@@ -53,7 +53,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
               context, ref, vm.resultHistorySections[index].session);
         } catch (e) {
           if (context.mounted) {
-            await dialogService.showErrorDialog(context, e.toString());
+            dialogService.showErrorDialog(context, e.toString());
           }
         }
       },
