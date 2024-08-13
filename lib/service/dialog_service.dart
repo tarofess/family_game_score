@@ -78,7 +78,7 @@ class DialogService {
                 ref.read(sessionProvider.notifier).disposeSession();
                 Navigator.of(dialogContext).pop(true);
               },
-              child: const Text('はい'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -233,11 +233,11 @@ class DialogService {
                 loadingOverlay.show();
                 try {
                   await action(dialogContext);
-                  if (context.mounted) {
+                  if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(true);
                   }
                 } catch (e) {
-                  if (context.mounted) {
+                  if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(false);
                   }
                   throw Exception('エラーが発生しました');
@@ -291,11 +291,11 @@ class DialogService {
                           loadingOverlay.show();
                           try {
                             await action(inputText, dialogContext);
-                            if (context.mounted) {
+                            if (dialogContext.mounted) {
                               Navigator.of(dialogContext).pop(true);
                             }
                           } catch (e) {
-                            if (context.mounted) {
+                            if (dialogContext.mounted) {
                               Navigator.of(dialogContext).pop(false);
                             }
                             throw Exception('エラーが発生しました');

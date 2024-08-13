@@ -15,11 +15,20 @@ class LoadingOverlay {
     if (!_isLoading) {
       _isLoading = true;
       _overlay = OverlayEntry(
-        builder: (context) => ColoredBox(
-          color: Colors.black.withOpacity(0.5),
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+        builder: (context) => Stack(
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                color: Colors.transparent,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ],
         ),
       );
       Overlay.of(_context).insert(_overlay!);
