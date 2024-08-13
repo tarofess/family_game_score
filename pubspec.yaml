@@ -36,7 +36,6 @@ dependencies:
   freezed_annotation:
   json_serializable:
   sqflite:
-  intl:
   flutter_launcher_icons:
   table_calendar:
   firebase_core:

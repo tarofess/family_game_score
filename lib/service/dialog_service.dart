@@ -213,27 +213,23 @@ class DialogService {
 
   Future<void> showMessageDialog(
       BuildContext context, String title, String content) async {
-    try {
-      await showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  navigationService.pop(dialogContext);
-                },
-                child: const Text('はい'),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                navigationService.pop(dialogContext);
+              },
+              child: const Text('はい'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> showConfimationBaseDialog({
@@ -260,7 +256,6 @@ class DialogService {
                 onPressed: () async {
                   loadingOverlay.show();
                   await action(dialogContext);
-                  loadingOverlay.hide();
                 },
                 child: const Text('はい'),
               )
@@ -271,6 +266,8 @@ class DialogService {
       return result ?? false;
     } catch (e) {
       rethrow;
+    } finally {
+      loadingOverlay.hide();
     }
   }
 
@@ -311,7 +308,6 @@ class DialogService {
                         : () async {
                             loadingOverlay.show();
                             await action(inputText, dialogContext);
-                            loadingOverlay.hide();
                           },
                     child: const Text('登録'),
                   ),
@@ -324,6 +320,8 @@ class DialogService {
       return result ?? false;
     } catch (e) {
       rethrow;
+    } finally {
+      loadingOverlay.hide();
     }
   }
 
