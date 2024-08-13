@@ -8,6 +8,13 @@ class FileService {
     try {
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String filePath = path.join(appDir.path, fileName);
+
+      // Androidの場合同じファイルパスに保存しようとすると画像が0KBで保存されるため
+      // 既に同じファイルパスに画像が保存されている場合は保存処理をスキップする
+      if (filePath == imageFile.path) {
+        return;
+      }
+
       await imageFile.copy(filePath);
     } catch (e) {
       throw Exception('写真の保存中にエラーが発生しました');
