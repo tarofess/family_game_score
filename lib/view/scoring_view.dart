@@ -39,7 +39,13 @@ class ScoringView extends ConsumerWidget {
         onPressed: vm.getExitButtonCallback(
           () async {
             try {
-              await dialogService.showFinishGameDialog(context, ref);
+              final isSuccess =
+                  await dialogService.showFinishGameDialog(context, ref);
+              if (isSuccess) {
+                if (context.mounted) {
+                  navigationService.pushAndRemoveUntil(context, RankingView());
+                }
+              }
             } catch (e) {
               if (context.mounted) {
                 dialogService.showErrorDialog(context, e.toString());

@@ -1,6 +1,7 @@
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/service/dialog_service.dart';
+import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
@@ -12,6 +13,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RankingView extends HookConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
+  final NavigationService navigationService = getIt<NavigationService>();
 
   RankingView({super.key});
 
@@ -35,7 +37,15 @@ class RankingView extends HookConsumerWidget {
       title: vm.getAppBarTitle(),
       actions: [
         vm.getIconButton(
-          () async => await dialogService.showReturnToHomeDialog(context, ref),
+          () async {
+            final isSuccess =
+                await dialogService.showReturnToHomeDialog(context, ref);
+            if (isSuccess) {
+              if (context.mounted) {
+                navigationService.pushReplacement(context, const MyApp());
+              }
+            }
+          },
         )
       ],
     );
@@ -88,7 +98,7 @@ class RankingView extends HookConsumerWidget {
             if (isSuccess) {
               if (context.mounted) {
                 await dialogService.showMessageDialog(
-                    context, '', 'ゲームの種類を記録しました！');
+                    context, 'ゲームの種類を記録しました！');
               }
               isVisibleFloatingActionButton.value = false;
             }

@@ -1,8 +1,5 @@
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
-import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/ranking_view.dart';
 import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
@@ -12,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DialogService {
-  final NavigationService navigationService = getIt<NavigationService>();
-
   Future<void> showDeletePlayerDialog(
       BuildContext context, WidgetRef ref, Player player) async {
     try {
@@ -22,14 +17,11 @@ class DialogService {
           title: '${player.name}を削除しますか？',
           content: '削除すると元に戻せませんが、本当に削除しますか？',
           action: (BuildContext dialogContext) async {
-            await handleActionAndError(dialogContext, 'プレイヤーの削除中にエラーが発生しました',
-                () async {
-              await ref.read(playerProvider.notifier).deletePlayer(player);
-              ref.invalidate(resultHistoryProvider);
-            });
+            await ref.read(playerProvider.notifier).deletePlayer(player);
+            ref.invalidate(resultHistoryProvider);
           });
     } catch (e) {
-      rethrow;
+      throw Exception('プレイヤーの削除中にエラーが発生しました');
     }
   }
 
@@ -45,42 +37,33 @@ class DialogService {
           title: '確認',
           content: '$nextRound回戦に進みますか？',
           action: (BuildContext dialogContext) async {
-            await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
-                () async {
-              await ref.read(sessionProvider.notifier).addSession();
-              await ref.read(sessionProvider.notifier).updateRound();
-              await ref.read(resultProvider.notifier).addOrUpdateResult();
-            });
+            await ref.read(sessionProvider.notifier).addSession();
+            await ref.read(sessionProvider.notifier).updateRound();
+            await ref.read(resultProvider.notifier).addOrUpdateResult();
           });
     } catch (e) {
-      rethrow;
+      throw Exception('結果の保存中にエラーが発生しました');
     }
   }
 
-  Future<void> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
+  Future<bool> showFinishGameDialog(BuildContext context, WidgetRef ref) async {
     try {
-      await showConfimationBaseDialog(
+      final result = await showConfimationBaseDialog(
           context: context,
           title: '確認',
           content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
           action: (BuildContext dialogContext) async {
-            await handleActionAndError(dialogContext, '結果の保存中にエラーが発生しました',
-                () async {
-              await ref.read(sessionProvider.notifier).updateEndTime();
-            });
-
-            if (context.mounted) {
-              navigationService.pushAndRemoveUntil(context, RankingView());
-            }
+            await ref.read(sessionProvider.notifier).updateEndTime();
           });
+      return result ?? false;
     } catch (e) {
-      rethrow;
+      throw Exception('結果の保存中にエラーが発生しました');
     }
   }
 
-  Future<void> showReturnToHomeDialog(
+  Future<bool> showReturnToHomeDialog(
       BuildContext context, WidgetRef ref) async {
-    await showDialog(
+    final result = await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -93,8 +76,7 @@ class DialogService {
                 ref.invalidate(resultHistoryProvider);
                 ref.read(playerProvider.notifier).resetOrder();
                 ref.read(sessionProvider.notifier).disposeSession();
-                navigationService.pop(dialogContext);
-                navigationService.pushReplacement(context, const MyApp());
+                Navigator.of(dialogContext).pop(true);
               },
               child: const Text('はい'),
             ),
@@ -102,6 +84,7 @@ class DialogService {
         );
       },
     );
+    return result ?? false;
   }
 
   Future<void> showErrorDialog(BuildContext context, dynamic error) async {
@@ -114,7 +97,7 @@ class DialogService {
           actions: [
             TextButton(
               onPressed: () {
-                navigationService.pop(dialogContext);
+                Navigator.of(dialogContext).pop();
               },
               child: const Text('はい'),
             ),
@@ -135,7 +118,7 @@ class DialogService {
           actions: [
             TextButton(
               onPressed: () {
-                navigationService.pop(dialogContext);
+                Navigator.of(dialogContext).pop();
               },
               child: const Text('はい'),
             ),
@@ -156,14 +139,14 @@ class DialogService {
           actions: [
             TextButton(
               onPressed: () {
-                navigationService.pop(dialogContext);
+                Navigator.of(dialogContext).pop();
               },
               child: const Text('いいえ'),
             ),
             TextButton(
               onPressed: () {
                 onOpenAppSettings();
-                navigationService.pop(dialogContext);
+                Navigator.of(dialogContext).pop();
               },
               child: const Text('はい'),
             ),
@@ -181,13 +164,10 @@ class DialogService {
           title: '遊んだゲームの種類を記録できます',
           hintText: '例：大富豪',
           action: (String inputText, BuildContext dialogContext) async {
-            await handleActionAndError(dialogContext, 'ゲーム種類の記録中にエラーが発生しました',
-                () async {
-              await ref.read(sessionProvider.notifier).addGameType(inputText);
-            });
+            await ref.read(sessionProvider.notifier).addGameType(inputText);
           });
     } catch (e) {
-      rethrow;
+      throw Exception('ゲーム種類の記録中にエラーが発生しました');
     }
   }
 
@@ -199,30 +179,26 @@ class DialogService {
           title: '遊んだゲームの種類を編集できます',
           hintText: '例：大富豪',
           action: (String inputText, BuildContext dialogContext) async {
-            await handleActionAndError(dialogContext, 'ゲーム種類の編集中にエラーが発生しました',
-                () async {
-              await ref
-                  .read(resultHistoryProvider.notifier)
-                  .updateSessionGameType(session, inputText);
-            });
+            await ref
+                .read(resultHistoryProvider.notifier)
+                .updateSessionGameType(session, inputText);
           });
     } catch (e) {
-      rethrow;
+      throw Exception('ゲーム種類の編集中にエラーが発生しました');
     }
   }
 
-  Future<void> showMessageDialog(
-      BuildContext context, String title, String content) async {
+  Future<void> showMessageDialog(BuildContext context, String content) async {
     await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(title),
+          title: const Text(''),
           content: Text(content),
           actions: [
             TextButton(
               onPressed: () {
-                navigationService.pop(dialogContext);
+                Navigator.of(dialogContext).pop();
               },
               child: const Text('はい'),
             ),
@@ -232,43 +208,49 @@ class DialogService {
     );
   }
 
-  Future<void> showConfimationBaseDialog({
+  Future<bool?> showConfimationBaseDialog({
     required BuildContext context,
     required String title,
     required String content,
     required Function(BuildContext dialogContext) action,
   }) async {
-    final loadingOverlay = LoadingOverlay.of(context);
-    try {
-      final result = await showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    navigationService.pop(dialogContext);
-                  },
-                  child: const Text('いいえ')),
-              TextButton(
-                onPressed: () async {
-                  loadingOverlay.show();
-                  await action(dialogContext);
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(dialogContext).pop(false);
                 },
-                child: const Text('はい'),
-              )
-            ],
-          );
-        },
-      );
-      return result ?? false;
-    } catch (e) {
-      rethrow;
-    } finally {
-      loadingOverlay.hide();
-    }
+                child: const Text('いいえ')),
+            TextButton(
+              onPressed: () async {
+                final loadingOverlay = LoadingOverlay.of(context);
+                loadingOverlay.show();
+                try {
+                  await action(dialogContext);
+                  if (context.mounted) {
+                    Navigator.of(dialogContext).pop(true);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.of(dialogContext).pop(false);
+                  }
+                  throw Exception('エラーが発生しました');
+                } finally {
+                  loadingOverlay.hide();
+                }
+              },
+              child: const Text('はい'),
+            )
+          ],
+        );
+      },
+    );
+    return result ?? false;
   }
 
   Future<bool> showInputBaseDialog({
@@ -278,62 +260,56 @@ class DialogService {
     required Function(String, BuildContext) action,
     String inputText = '',
   }) async {
-    final loadingOverlay = LoadingOverlay.of(context);
-    try {
-      final result = await showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return AlertDialog(
-                title: Text(title),
-                content: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      inputText = value;
-                    });
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(title),
+              content: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    inputText = value;
+                  });
+                },
+                decoration: InputDecoration(hintText: hintText),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop(false);
                   },
-                  decoration: InputDecoration(hintText: hintText),
+                  child: const Text('キャンセル'),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(dialogContext).pop(false);
-                    },
-                    child: const Text('キャンセル'),
-                  ),
-                  TextButton(
-                    onPressed: inputText.trim().isEmpty
-                        ? null
-                        : () async {
-                            loadingOverlay.show();
+                TextButton(
+                  onPressed: inputText.trim().isEmpty
+                      ? null
+                      : () async {
+                          final loadingOverlay = LoadingOverlay.of(context);
+                          loadingOverlay.show();
+                          try {
                             await action(inputText, dialogContext);
-                          },
-                    child: const Text('登録'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      );
-      return result ?? false;
-    } catch (e) {
-      rethrow;
-    } finally {
-      loadingOverlay.hide();
-    }
-  }
-
-  Future<void> handleActionAndError(BuildContext dialogContext,
-      String? errorReason, Future<void> Function() action) async {
-    try {
-      await action();
-      if (dialogContext.mounted) {
-        Navigator.of(dialogContext).pop(true);
-      }
-    } catch (e) {
-      throw Exception(errorReason);
-    }
+                            if (context.mounted) {
+                              Navigator.of(dialogContext).pop(true);
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              Navigator.of(dialogContext).pop(false);
+                            }
+                            throw Exception('エラーが発生しました');
+                          } finally {
+                            loadingOverlay.hide();
+                          }
+                        },
+                  child: const Text('登録'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    return result ?? false;
   }
 }
