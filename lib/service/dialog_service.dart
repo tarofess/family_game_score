@@ -159,13 +159,14 @@ class DialogService {
   Future<bool> showAddGameTypeDialog(
       BuildContext context, WidgetRef ref) async {
     try {
-      return await showInputBaseDialog(
+      final result = await showInputBaseDialog(
           context: context,
           title: '遊んだゲームの種類を記録できます',
           hintText: '例：大富豪',
           action: (String inputText, BuildContext dialogContext) async {
             await ref.read(sessionProvider.notifier).addGameType(inputText);
           });
+      return result ?? false;
     } catch (e) {
       throw Exception('ゲーム種類の記録中にエラーが発生しました');
     }
@@ -253,7 +254,7 @@ class DialogService {
     return result ?? false;
   }
 
-  Future<bool> showInputBaseDialog({
+  Future<bool?> showInputBaseDialog({
     required BuildContext context,
     required String title,
     required String hintText,
