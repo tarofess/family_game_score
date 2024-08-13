@@ -37,6 +37,10 @@ class ResultHistoryCalendarViewModel {
       hashCode: getHashCode,
     )..addAll(eventSessions);
   }
+
+  bool hasDataInTappedDay(DateTime tappedDay) {
+    return events[tappedDay] != null;
+  }
 }
 
 final resultHistoryCalendarViewModelProvider =
