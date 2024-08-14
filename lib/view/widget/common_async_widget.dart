@@ -15,15 +15,24 @@ class CommonAsyncWidgets {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('エラーが発生しました\n再度お試しください'),
-                const SizedBox(height: 12),
-                Text(error.toString()),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('エラーが発生しました'),
+                  const Text('再度お試しください'),
+                  const SizedBox(height: 40),
+                  Text(
+                    error.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
           ),
+          const SizedBox(height: 40),
           ElevatedButton(
             onPressed: () {
               // ignore: unused_result

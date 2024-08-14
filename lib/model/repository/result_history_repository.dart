@@ -33,7 +33,7 @@ class ResultHistoryRepository {
       final results = response.map((e) => ResultHistory.fromJson(e)).toList();
       return results;
     } catch (e) {
-      rethrow;
+      throw Exception('過去の履歴の取得中にエラーが発生しました');
     }
   }
 }
