@@ -131,7 +131,7 @@ class _$PlayerImpl implements _Player {
       {required this.id,
       required this.name,
       required this.image,
-      this.status = 0});
+      this.status = 1});
 
   factory _$PlayerImpl.fromJson(Map<String, dynamic> json) =>
       _$$PlayerImplFromJson(json);

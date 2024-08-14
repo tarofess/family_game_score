@@ -108,7 +108,7 @@ class ScoringView extends ConsumerWidget {
 
   Widget buildPlayers(
       BuildContext context, WidgetRef ref, ScoringViewModel vm) {
-    return vm.players.when(
+    return vm.activePlayers.when(
       data: (data) => buildScoringList(data, ref),
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>

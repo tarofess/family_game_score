@@ -13,8 +13,8 @@ class RankingViewModel {
 
   RankingViewModel(this.ref);
 
+  AsyncValue<List<Player>> get activePlayers => ref.watch(playerProvider);
   AsyncValue<List<Result>> get results => ref.watch(resultProvider);
-  AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
   Widget getAppBarTitle() {

@@ -19,6 +19,8 @@ class ScoringListCard extends StatelessWidget {
       elevation: 4.0,
       margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: ListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
         leading: Text(
           '${index + 1}位',
           style: const TextStyle(fontSize: 16),

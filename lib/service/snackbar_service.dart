@@ -11,7 +11,7 @@ class SnackbarService {
     ScaffoldMessenger.of(context)
         .showSnackBar(
           const SnackBar(
-            content: Text('プレイヤーが2名以上登録されていません\n設定画面でプレイヤーを追加してください',
+            content: Text('有効なプレイヤーが2名以上登録されていません\nプレイヤー設定画面でプレイヤーを登録してください',
                 style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         )

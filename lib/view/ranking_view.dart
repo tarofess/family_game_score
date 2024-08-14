@@ -70,7 +70,7 @@ class RankingView extends HookConsumerWidget {
 
   Widget buildRankingList(List<Result> results, RankingViewModel vm,
       BuildContext context, WidgetRef ref) {
-    return vm.players.when(
+    return vm.activePlayers.when(
       data: (data) => ListView.builder(
         itemCount: results.length,
         itemBuilder: (context, index) {

@@ -10,7 +10,7 @@ _$PlayerImpl _$$PlayerImplFromJson(Map<String, dynamic> json) => _$PlayerImpl(
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       image: json['image'] as String,
-      status: (json['status'] as num?)?.toInt() ?? 0,
+      status: (json['status'] as num?)?.toInt() ?? 1,
     );
 
 Map<String, dynamic> _$$PlayerImplToJson(_$PlayerImpl instance) =>

@@ -9,7 +9,7 @@ class Player with _$Player {
     required int id,
     required String name,
     required String image,
-    @Default(0) int status,
+    @Default(1) int status,
   }) = _Player;
 
   factory Player.fromJson(Map<String, dynamic> json) => _$PlayerFromJson(json);

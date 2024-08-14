@@ -75,11 +75,11 @@ class DialogService {
               onPressed: () {
                 ref.invalidate(resultProvider);
                 ref.invalidate(resultHistoryProvider);
-                ref.read(playerProvider.notifier).resetOrder();
+                ref.invalidate(playerProvider);
                 ref.read(sessionProvider.notifier).disposeSession();
                 Navigator.of(dialogContext).pop(true);
               },
-              child: const Text('OK'),
+              child: const Text('はい'),
             ),
           ],
         );

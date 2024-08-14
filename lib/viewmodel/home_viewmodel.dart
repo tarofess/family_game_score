@@ -19,7 +19,8 @@ class HomeViewModel {
     return canStartGame() ? onStartGame : onShowSnackbar;
   }
 
-  bool canStartGame() => players.value!.length >= 2;
+  bool canStartGame() =>
+      players.value!.where((player) => player.status == 1).length >= 2;
 
   String getButtonText() {
     return session.value == null ? 'ゲームスタート！' : 'ゲーム再開！';

@@ -16,6 +16,13 @@ class PlayerRepository {
 
   Future<List<Player>> getPlayer() async {
     final List<Map<String, dynamic>> response =
+        await database.rawQuery('SELECT * FROM Player WHERE status >= 0');
+    final players = response.map((map) => Player.fromJson(map)).toList();
+    return players;
+  }
+
+  Future<List<Player>> getActivePlayer() async {
+    final List<Map<String, dynamic>> response =
         await database.rawQuery('SELECT * FROM Player WHERE status = 1');
     final players = response.map((map) => Player.fromJson(map)).toList();
     return players;
