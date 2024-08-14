@@ -1,4 +1,5 @@
 import 'package:family_game_score/main.dart';
+import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/result_history_detail_viewmodel.dart';
@@ -37,7 +38,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             buildSectionHeader(context, index, vm, ref),
-            buildSectionItems(index, vm),
+            buildSectionItems(index, vm, ref),
           ],
         );
       },
@@ -92,30 +93,33 @@ class ResultHistoryDetailView extends ConsumerWidget {
     );
   }
 
-  Widget buildSectionItems(int index, ResultHistoryDetailViewModel vm) {
+  Widget buildSectionItems(
+      int index, ResultHistoryDetailViewModel vm, WidgetRef ref) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: vm.resultHistorySections[index].items.length,
       itemBuilder: (context, itemIndex) {
         return vm.resultHistorySections[index].items[itemIndex].player.status ==
-                0
-            ? ResultListCard(
+                -1
+            ? buildPlayerHasBeenDeletedCard(
+                vm.resultHistorySections[index].items[itemIndex].player)
+            : ResultListCard(
                 player: vm.resultHistorySections[index].items[itemIndex].player,
                 result: vm.resultHistorySections[index].items[itemIndex].result,
-              )
-            : buildPlayerHasBeenDeletedCard(context);
+              );
       },
     );
   }
 
-  Widget buildPlayerHasBeenDeletedCard(BuildContext context) {
-    return const Card(
-      elevation: 8.0,
-      margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+  Widget buildPlayerHasBeenDeletedCard(Player player) {
+    return Card(
+      elevation: 2.0,
+      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        title: Text('プレイヤーは削除されました'),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        title: Text('プレイヤー：${player.name}は削除されました'),
       ),
     );
   }

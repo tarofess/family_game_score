@@ -51,6 +51,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               buildNameWidget(nameTextEditingController, vm),
               const SizedBox(height: 60),
               buildTotalScoreWidget(vm, player),
+              const SizedBox(height: 150),
+              buildDeletePlayerButton(context, ref, player),
               const SizedBox(height: 50),
             ],
           ),
@@ -179,6 +181,34 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 style: const TextStyle(fontSize: 20),
               ),
             ],
+          );
+  }
+
+  Widget buildDeletePlayerButton(
+      BuildContext context, WidgetRef ref, Player? player) {
+    return player == null
+        ? const SizedBox()
+        : ElevatedButton(
+            onPressed: () async {
+              try {
+                final isSuccess = await dialogService.showDeletePlayerDialog(
+                    context, ref, player);
+                if (isSuccess) {
+                  if (context.mounted) navigationService.pop(context);
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  dialogService.showErrorDialog(context, e);
+                }
+              }
+            },
+            child: const Text(
+              'プレイヤーを削除する',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           );
   }
 

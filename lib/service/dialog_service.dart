@@ -9,17 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DialogService {
-  Future<void> showDeletePlayerDialog(
+  Future<bool> showDeletePlayerDialog(
       BuildContext context, WidgetRef ref, Player player) async {
     try {
-      await showConfimationBaseDialog(
+      final result = await showConfimationBaseDialog(
           context: context,
-          title: '${player.name}を削除しますか？',
+          title: 'プレイヤー：${player.name}を削除しますか？',
           content: '削除すると元に戻せませんが、本当に削除しますか？',
           action: (BuildContext dialogContext) async {
             await ref.read(playerProvider.notifier).deletePlayer(player);
             ref.invalidate(resultHistoryProvider);
           });
+      return result ?? false;
     } catch (e) {
       throw Exception('プレイヤーの削除中にエラーが発生しました');
     }

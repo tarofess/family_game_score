@@ -65,6 +65,36 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     });
   }
 
+  Future<void> activatePlayer(Player player) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await playerRepository.activatePlayer(player);
+
+      if (state.value != null) {
+        return state.value!.map((p) => p.id == player.id ? player : p).toList();
+      } else {
+        return [];
+      }
+    });
+  }
+
+  Future<void> deactivatePlayer(Player player) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await playerRepository.deactivatePlayer(player);
+
+      if (state.value != null) {
+        return state.value!.where((p) => p.id != player.id).toList();
+      } else {
+        return [];
+      }
+    });
+  }
+
+  Future<int> getPlayersMaxID() async {
+    return await playerRepository.getPlayersMaxID();
+  }
+
   void reorderPlayer(int oldIndex, int newIndex) {
     final List<Player> players = state.value ?? [];
     final playerToMove = players.removeAt(oldIndex);
@@ -76,10 +106,6 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
     final List<Player> players = state.value ?? [];
     players.sort((a, b) => a.id.compareTo(b.id));
     state = AsyncData(players);
-  }
-
-  Future<int> getPlayersMaxID() async {
-    return await playerRepository.getPlayersMaxID();
   }
 }
 

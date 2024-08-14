@@ -8,7 +8,7 @@ class PlayerRepository {
 
   Future<Player> addPlayer(String name, String image) async {
     int id = await database.rawInsert(
-        'INSERT INTO Player(name, image, status) VALUES(?, ?, 0)',
+        'INSERT INTO Player(name, image, status) VALUES(?, ?, 1)',
         [name, image]);
     final newPlayer = Player(id: id, name: name, image: image);
     return newPlayer;
@@ -16,7 +16,7 @@ class PlayerRepository {
 
   Future<List<Player>> getPlayer() async {
     final List<Map<String, dynamic>> response =
-        await database.rawQuery('SELECT * FROM Player WHERE status = 0');
+        await database.rawQuery('SELECT * FROM Player WHERE status = 1');
     final players = response.map((map) => Player.fromJson(map)).toList();
     return players;
   }
@@ -30,6 +30,16 @@ class PlayerRepository {
   Future<void> deletePlayer(Player player) async {
     await database
         .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [player.id]);
+  }
+
+  Future<void> deactivatePlayer(Player player) async {
+    await database
+        .rawUpdate('UPDATE Player SET status = 0 WHERE id = ?', [player.id]);
+  }
+
+  Future<void> activatePlayer(Player player) async {
+    await database
+        .rawUpdate('UPDATE Player SET status = 1 WHERE id = ?', [player.id]);
   }
 
   Future<int> getPlayersMaxID() async {
