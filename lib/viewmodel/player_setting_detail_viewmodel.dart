@@ -21,6 +21,10 @@ class PlayerSettingDetailViewModel {
   AsyncValue<List<ResultHistory>> get resultHistories =>
       ref.watch(resultHistoryProvider);
 
+  bool isPlayerNull(Player? player) {
+    return player == null ? true : false;
+  }
+
   bool isEmptyBothImageAndName(String playerName, FileImage? playerImage) {
     return playerName.isEmpty && playerImage == null ? true : false;
   }

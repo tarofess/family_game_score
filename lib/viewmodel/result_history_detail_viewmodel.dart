@@ -37,6 +37,12 @@ class ResultHistoryDetailViewModel {
     return session.gameType == null ? true : false;
   }
 
+  bool isPlayerHasBeenDeleted(int index, int itemIndex) {
+    return resultHistorySections[index].items[itemIndex].player.status == -1
+        ? true
+        : false;
+  }
+
   List<ResultHistorySection> convertToResultHistorySection(
       List<ResultHistory> resultHistories) {
     Map<int, List<ResultHistoryItems>> sessionItemsMap = {};

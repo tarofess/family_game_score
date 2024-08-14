@@ -2,7 +2,6 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
-import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
@@ -20,8 +19,7 @@ class RankingView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(rankingViewModelProvider);
-    final isVisibleFloatingActionButton =
-        useState(vm.session.value?.endTime == null ? false : true);
+    final isVisibleFloatingActionButton = useState(vm.isEndTimeNull());
 
     return Scaffold(
       appBar: buildAppBar(context, ref, vm),
@@ -73,11 +71,8 @@ class RankingView extends HookConsumerWidget {
     return vm.activePlayers.when(
       data: (data) => ListView.builder(
         itemCount: results.length,
-        itemBuilder: (context, index) {
-          final result = results[index];
-          final player = data.firstWhere((p) => p.id == result.playerId);
-          return ResultListCard(player: player, result: result);
-        },
+        itemBuilder: (context, index) =>
+            vm.getResultListCard(index, results, data),
       ),
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>

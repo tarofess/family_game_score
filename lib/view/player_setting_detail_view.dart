@@ -52,7 +52,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               const SizedBox(height: 60),
               buildTotalScoreWidget(vm, player),
               const SizedBox(height: 150),
-              buildDeletePlayerButton(context, ref, player),
+              buildDeletePlayerButton(context, ref, player, vm),
               const SizedBox(height: 50),
             ],
           ),
@@ -70,7 +70,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       PlayerSettingDetailViewModel vm) {
     final loadingOverlay = LoadingOverlay.of(context);
     return AppBar(
-      title: Text(player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
+      title: Text(vm.isPlayerNull(player) ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
       centerTitle: true,
       actions: [
         vm.isEmptyBothImageAndName(playerName.value, playerImage.value)
@@ -169,7 +169,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
 
   Widget buildTotalScoreWidget(
       PlayerSettingDetailViewModel vm, Player? player) {
-    return player == null
+    return vm.isPlayerNull(player)
         ? const SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -184,15 +184,15 @@ class PlayerSettingDetailView extends HookConsumerWidget {
           );
   }
 
-  Widget buildDeletePlayerButton(
-      BuildContext context, WidgetRef ref, Player? player) {
-    return player == null
+  Widget buildDeletePlayerButton(BuildContext context, WidgetRef ref,
+      Player? player, PlayerSettingDetailViewModel vm) {
+    return vm.isPlayerNull(player)
         ? const SizedBox()
         : ElevatedButton(
             onPressed: () async {
               try {
                 final isSuccess = await dialogService.showDeletePlayerDialog(
-                    context, ref, player);
+                    context, ref, player!);
                 if (isSuccess) {
                   if (context.mounted) {
                     await dialogService.showMessageDialog(

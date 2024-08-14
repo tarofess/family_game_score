@@ -13,6 +13,10 @@ class PlayerSettingViewModel {
   AsyncValue<List<Player>> get players => ref.watch(playerProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
+  bool isSessionNull() {
+    return session.value == null;
+  }
+
   VoidCallback? getFloatingActionButtonCallback(
       WidgetRef ref, VoidCallback onShowAddPlayerDialog) {
     if (players.hasValue && session.hasValue && session.value == null) {

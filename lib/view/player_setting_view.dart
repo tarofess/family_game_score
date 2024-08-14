@@ -31,7 +31,7 @@ class PlayerSettingView extends ConsumerWidget {
       BuildContext context, WidgetRef ref, PlayerSettingViewModel vm) {
     return Center(
       child: vm.session.when(
-        data: (data) => data == null
+        data: (data) => vm.isSessionNull()
             ? buildPlayers(context, ref, vm)
             : buildUnableToEditPlayerText(context),
         loading: () => CommonAsyncWidgets.showLoading(),

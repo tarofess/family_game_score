@@ -1,6 +1,7 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/result.dart';
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/view/widget/sakura_animation.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
@@ -16,6 +17,10 @@ class RankingViewModel {
   AsyncValue<List<Player>> get activePlayers => ref.watch(playerProvider);
   AsyncValue<List<Result>> get results => ref.watch(resultProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
+
+  bool isEndTimeNull() {
+    return session.value?.endTime == null ? false : true;
+  }
 
   Widget getAppBarTitle() {
     return session.value?.endTime == null
@@ -40,6 +45,13 @@ class RankingViewModel {
               child: SakuraAnimation(),
             ),
           );
+  }
+
+  Widget getResultListCard(
+      int index, List<Result> results, List<Player> players) {
+    final result = results[index];
+    final player = players.firstWhere((p) => p.id == result.playerId);
+    return ResultListCard(player: player, result: result);
   }
 }
 

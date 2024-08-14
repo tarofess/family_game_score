@@ -100,8 +100,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: vm.resultHistorySections[index].items.length,
       itemBuilder: (context, itemIndex) {
-        return vm.resultHistorySections[index].items[itemIndex].player.status ==
-                -1
+        return vm.isPlayerHasBeenDeleted(index, itemIndex)
             ? buildPlayerHasBeenDeletedCard(
                 vm.resultHistorySections[index].items[itemIndex].player)
             : ResultListCard(
