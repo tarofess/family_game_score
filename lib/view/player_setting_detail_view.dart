@@ -51,8 +51,12 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               buildNameWidget(nameTextEditingController, vm),
               const SizedBox(height: 60),
               buildTotalScoreWidget(vm, player),
-              const SizedBox(height: 150),
-              buildDeletePlayerButton(context, ref, player, vm),
+              vm.isPlayerNull(player)
+                  ? const SizedBox()
+                  : const SizedBox(height: 150),
+              vm.isPlayerNull(player)
+                  ? const SizedBox()
+                  : buildDeletePlayerButton(context, ref, player, vm),
               const SizedBox(height: 50),
             ],
           ),
@@ -188,28 +192,25 @@ class PlayerSettingDetailView extends HookConsumerWidget {
 
   Widget buildDeletePlayerButton(BuildContext context, WidgetRef ref,
       Player? player, PlayerSettingDetailViewModel vm) {
-    return vm.isPlayerNull(player)
-        ? const SizedBox()
-        : ElevatedButton(
-            onPressed: () async {
-              final isSuccess = await dialogService.showDeletePlayerDialog(
-                  context, ref, player!);
-              if (isSuccess) {
-                if (context.mounted) {
-                  await dialogService.showMessageDialog(
-                      context, 'プレイヤーの削除が完了しました');
-                }
-                if (context.mounted) navigationService.pop(context);
-              }
-            },
-            child: const Text(
-              'プレイヤーを削除する',
-              style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          );
+    return ElevatedButton(
+      onPressed: () async {
+        final isSuccess =
+            await dialogService.showDeletePlayerDialog(context, ref, player!);
+        if (isSuccess) {
+          if (context.mounted) {
+            await dialogService.showMessageDialog(context, 'プレイヤーの削除が完了しました');
+          }
+          if (context.mounted) navigationService.pop(context);
+        }
+      },
+      child: const Text(
+        'プレイヤーを削除する',
+        style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   void showActionSheet(BuildContext context,
