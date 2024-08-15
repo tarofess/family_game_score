@@ -20,11 +20,11 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
   runApp(const ProviderScope(child: MyApp()));
 }
 
 final initializationProvider = FutureProvider<void>((ref) async {
-  setupLocator();
   await initializeDateFormatting('ja_JP');
   await setupFirebaseCrashlytics();
   await DatabaseHelper.instance.initDatabase();
@@ -79,7 +79,15 @@ class ErrorScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('アプリの初期化に失敗しました'),
-            if (error != null) Text('Error: $error'),
+            const SizedBox(height: 16),
+            if (error != null)
+              Text(
+                '$error',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: retry,
               child: const Text('リトライ'),

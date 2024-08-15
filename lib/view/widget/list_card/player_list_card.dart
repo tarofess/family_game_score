@@ -40,19 +40,13 @@ class PlayerListCard extends HookWidget {
           activeTrackColor: Colors.green[100],
           onChanged: (value) async {
             switchValue.value = value;
-            try {
-              value
-                  ? await ref
-                      .read(playerProvider.notifier)
-                      .activatePlayer(player.copyWith(status: 1))
-                  : await ref
-                      .read(playerProvider.notifier)
-                      .deactivatePlayer(player.copyWith(status: 0));
-            } catch (e) {
-              if (context.mounted) {
-                dialogService.showErrorDialog(context, e.toString());
-              }
-            }
+            value
+                ? await ref
+                    .read(playerProvider.notifier)
+                    .activatePlayer(player.copyWith(status: 1))
+                : await ref
+                    .read(playerProvider.notifier)
+                    .deactivatePlayer(player.copyWith(status: 0));
           },
         ),
         onTap: () => navigationService.push(

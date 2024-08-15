@@ -12,91 +12,68 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
   @override
   Future<List<Player>> build() async {
-    try {
-      playerRepository = PlayerRepository(database);
-      final players = await playerRepository.getPlayer();
-      state = AsyncData(players);
-      return players;
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      rethrow;
-    }
+    playerRepository = PlayerRepository(database);
+    final players = await playerRepository.getPlayer();
+    state = AsyncData(players);
+    return players;
   }
 
   Future<void> addPlayer(String inputText, String image) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final newPlayer = await playerRepository.addPlayer(inputText, image);
-      return [...state.value ?? [], newPlayer];
-    });
+    final newPlayer = await playerRepository.addPlayer(inputText, image);
+    state = AsyncData([...state.value ?? [], newPlayer]);
   }
 
   Future<void> getPlayer() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final players = await playerRepository.getPlayer();
-      return players;
-    });
+    final players = await playerRepository.getPlayer();
+    state = AsyncData(players);
   }
 
   Future<void> getActivePlayer() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final players = await playerRepository.getActivePlayer();
-      return players;
-    });
+    final players = await playerRepository.getActivePlayer();
+    state = AsyncData(players);
   }
 
   Future<void> updatePlayer(Player player) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await playerRepository.updatePlayer(player);
+    await playerRepository.updatePlayer(player);
 
-      if (state.value != null) {
-        return state.value!.map((p) => p.id == player.id ? player : p).toList();
-      } else {
-        return [];
-      }
-    });
+    if (state.value != null) {
+      state = AsyncData(
+          state.value!.map((p) => p.id == player.id ? player : p).toList());
+    } else {
+      state = const AsyncData([]);
+    }
   }
 
   Future<void> deletePlayer(Player player) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await playerRepository.deletePlayer(player);
+    await playerRepository.deletePlayer(player);
 
-      if (state.value != null) {
-        return state.value!.where((p) => p.id != player.id).toList();
-      } else {
-        return [];
-      }
-    });
+    if (state.value != null) {
+      state = AsyncData(state.value!.where((p) => p.id != player.id).toList());
+    } else {
+      state = const AsyncData([]);
+    }
   }
 
   Future<void> activatePlayer(Player player) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await playerRepository.activatePlayer(player);
+    await playerRepository.activatePlayer(player);
 
-      if (state.value != null) {
-        return state.value!.map((p) => p.id == player.id ? player : p).toList();
-      } else {
-        return [];
-      }
-    });
+    if (state.value != null) {
+      state = AsyncData(
+          state.value!.map((p) => p.id == player.id ? player : p).toList());
+    } else {
+      state = const AsyncData([]);
+    }
   }
 
   Future<void> deactivatePlayer(Player player) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await playerRepository.deactivatePlayer(player);
+    await playerRepository.deactivatePlayer(player);
 
-      if (state.value != null) {
-        return state.value!.map((p) => p.id == player.id ? player : p).toList();
-      } else {
-        return [];
-      }
-    });
+    if (state.value != null) {
+      state = AsyncData(
+          state.value!.map((p) => p.id == player.id ? player : p).toList());
+    } else {
+      state = const AsyncData([]);
+    }
   }
 
   Future<int> getPlayersMaxID() async {

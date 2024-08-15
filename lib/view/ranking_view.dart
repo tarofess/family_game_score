@@ -87,20 +87,13 @@ class RankingView extends HookConsumerWidget {
       visible: isVisibleFloatingActionButton.value,
       child: FloatingActionButton(
         onPressed: () async {
-          try {
-            final isSuccess =
-                await dialogService.showAddGameTypeDialog(context, ref);
-            if (isSuccess) {
-              if (context.mounted) {
-                await dialogService.showMessageDialog(
-                    context, 'ゲームの種類を記録しました！');
-              }
-              isVisibleFloatingActionButton.value = false;
-            }
-          } catch (e) {
+          final isSuccess =
+              await dialogService.showAddGameTypeDialog(context, ref);
+          if (isSuccess) {
             if (context.mounted) {
-              dialogService.showErrorDialog(context, e.toString());
+              await dialogService.showMessageDialog(context, 'ゲームの種類を記録しました！');
             }
+            isVisibleFloatingActionButton.value = false;
           }
         },
         child: const Icon(Icons.mode_edit),

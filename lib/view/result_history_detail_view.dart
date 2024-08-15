@@ -48,16 +48,8 @@ class ResultHistoryDetailView extends ConsumerWidget {
   Widget buildSectionHeader(BuildContext context, int index,
       ResultHistoryDetailViewModel vm, WidgetRef ref) {
     return GestureDetector(
-      onTap: () async {
-        try {
-          await dialogService.showEditGameTypeDialog(
-              context, ref, vm.resultHistorySections[index].session);
-        } catch (e) {
-          if (context.mounted) {
-            dialogService.showErrorDialog(context, e.toString());
-          }
-        }
-      },
+      onTap: () async => await dialogService.showEditGameTypeDialog(
+          context, ref, vm.resultHistorySections[index].session),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

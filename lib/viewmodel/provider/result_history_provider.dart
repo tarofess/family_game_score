@@ -14,30 +14,24 @@ class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
 
   @override
   Future<List<ResultHistory>> build() async {
-    try {
-      resultHistoryRepository = ResultHistoryRepository(database);
-      final resultHistory = await resultHistoryRepository.getResultHistory();
-      state = AsyncData(resultHistory);
-      return resultHistory;
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      rethrow;
-    }
+    resultHistoryRepository = ResultHistoryRepository(database);
+    final resultHistory = await resultHistoryRepository.getResultHistory();
+    state = AsyncData(resultHistory);
+    return resultHistory;
   }
 
   Future<void> updateSessionGameType(Session session, String gameType) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final sessionRepository = SessionRepository(database);
-      await sessionRepository.updateGameType(session, gameType);
+    final sessionRepository = SessionRepository(database);
+    await sessionRepository.updateGameType(session, gameType);
 
-      return state.value!.map((e) {
-        if (e.session.id == session.id) {
-          return e.copyWith(session: e.session.copyWith(gameType: gameType));
-        }
-        return e;
-      }).toList();
-    });
+    final updatedSession = state.value!.map((e) {
+      if (e.session.id == session.id) {
+        return e.copyWith(session: e.session.copyWith(gameType: gameType));
+      }
+      return e;
+    }).toList();
+
+    state = AsyncData(updatedSession);
   }
 }
 

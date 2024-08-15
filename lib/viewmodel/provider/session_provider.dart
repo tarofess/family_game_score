@@ -12,71 +12,50 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   @override
   Future<Session?> build() async {
-    try {
-      sessionRepository = SessionRepository(database);
-      final session = await sessionRepository.getSession();
-      state = AsyncData(session);
-      return session;
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      rethrow;
-    }
+    sessionRepository = SessionRepository(database);
+    final session = await sessionRepository.getSession();
+    state = AsyncData(session);
+    return session;
   }
 
   Future<void> addSession() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (state.value == null) {
-        final maxID = await sessionRepository.getMaxID();
-        final newSession = await sessionRepository.addSession(maxID);
-        return newSession;
-      } else {
-        return state.value;
-      }
-    });
+    if (state.value == null) {
+      final maxID = await sessionRepository.getMaxID();
+      final newSession = await sessionRepository.addSession(maxID);
+      state = AsyncData(newSession);
+    } else {
+      state = AsyncData(state.value);
+    }
   }
 
   Future<void> addGameType(String gameType) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (state.value == null) {
-        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
-      }
-      final session = state.value!;
-      await sessionRepository.updateGameType(session, gameType);
-      return session;
-    });
+    if (state.value == null) {
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+    }
+    final session = state.value!;
+    await sessionRepository.updateGameType(session, gameType);
+    state = AsyncData(session);
   }
 
   Future<void> getSession() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final session = await sessionRepository.getSession();
-      return session;
-    });
+    final session = await sessionRepository.getSession();
+    state = AsyncData(session);
   }
 
   Future<void> updateRound() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (state.value == null) {
-        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
-      }
-      final updatedSession = await sessionRepository.updateRound(state.value!);
-      return updatedSession;
-    });
+    if (state.value == null) {
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+    }
+    final updatedSession = await sessionRepository.updateRound(state.value!);
+    state = AsyncData(updatedSession);
   }
 
   Future<void> updateEndTime() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      if (state.value == null) {
-        throw Exception('ゲームは既に終了しており、予期せぬエラーが発生しました');
-      }
-      final updatedSession =
-          await sessionRepository.updateEndTime(state.value!);
-      return updatedSession;
-    });
+    if (state.value == null) {
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+    }
+    final updatedSession = await sessionRepository.updateEndTime(state.value!);
+    state = AsyncData(updatedSession);
   }
 
   void disposeSession() {

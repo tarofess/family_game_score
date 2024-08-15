@@ -38,17 +38,11 @@ class ScoringView extends ConsumerWidget {
         icon: const Icon(Icons.exit_to_app),
         onPressed: vm.getExitButtonCallback(
           () async {
-            try {
-              final isSuccess =
-                  await dialogService.showFinishGameDialog(context, ref);
-              if (isSuccess) {
-                if (context.mounted) {
-                  navigationService.pushAndRemoveUntil(context, RankingView());
-                }
-              }
-            } catch (e) {
+            final isSuccess =
+                await dialogService.showFinishGameDialog(context, ref);
+            if (isSuccess) {
               if (context.mounted) {
-                dialogService.showErrorDialog(context, e.toString());
+                navigationService.pushAndRemoveUntil(context, RankingView());
               }
             }
           },
@@ -56,17 +50,8 @@ class ScoringView extends ConsumerWidget {
       ),
       actions: [
         IconButton(
-          onPressed: vm.getCheckButtonCallback(
-            () async {
-              try {
-                await dialogService.showMoveToNextRoundDialog(context, ref);
-              } catch (e) {
-                if (context.mounted) {
-                  dialogService.showErrorDialog(context, e.toString());
-                }
-              }
-            },
-          ),
+          onPressed: vm.getCheckButtonCallback(() async =>
+              await dialogService.showMoveToNextRoundDialog(context, ref)),
           icon: const Icon(Icons.check_circle_outline),
         ),
       ],

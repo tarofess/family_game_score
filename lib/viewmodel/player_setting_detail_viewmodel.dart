@@ -33,6 +33,10 @@ class PlayerSettingDetailViewModel {
     return playerImage == null ? false : true;
   }
 
+  String getAppBarTitle(Player? player) {
+    return isPlayerNull(player) ? 'プレイヤーの追加' : 'プレイヤーの詳細';
+  }
+
   int getTotalScore(Player? player) {
     int totalScore = 0;
 

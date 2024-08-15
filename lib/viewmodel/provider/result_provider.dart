@@ -16,41 +16,35 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
 
   @override
   Future<List<Result>> build() async {
-    try {
-      resultRepository = ResultRepository(database);
-      final session = ref.read(sessionProvider).valueOrNull;
+    resultRepository = ResultRepository(database);
+    final session = ref.read(sessionProvider).valueOrNull;
 
-      if (session == null) {
-        state = const AsyncData([]);
-        return [];
-      } else {
-        final results = await resultRepository.getResult(session);
-        state = AsyncData(results);
-        return results;
-      }
-    } catch (e) {
-      state = AsyncError(e, StackTrace.current);
-      rethrow;
+    if (session == null) {
+      state = const AsyncData([]);
+      return [];
+    } else {
+      final results = await resultRepository.getResult(session);
+      state = AsyncData(results);
+      return results;
     }
   }
 
   Future<void> addOrUpdateResult() async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final players = ref.read(playerProvider).valueOrNull;
-      final session = ref.read(sessionProvider).valueOrNull;
+    final players = ref.read(playerProvider).valueOrNull;
+    final session = ref.read(sessionProvider).valueOrNull;
 
-      if (players == null || session == null) {
-        throw Exception('Required value (Players or Session) is null');
-      }
+    if (players == null || session == null) {
+      throw Exception('プレイヤーまたはセッションが取得できませんでした');
+    }
 
-      if (state.value?.isEmpty ?? true) {
-        await addResult(players, session);
-      } else {
-        await updateResult(players, session);
-      }
-      return await resultRepository.getResult(session);
-    });
+    if (state.value?.isEmpty ?? true) {
+      await addResult(players, session);
+    } else {
+      await updateResult(players, session);
+    }
+
+    final results = await resultRepository.getResult(session);
+    state = AsyncData(results);
   }
 
   Future<void> addResult(List<Player> players, Session session) async {
