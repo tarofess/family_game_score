@@ -9,6 +9,7 @@ import 'package:family_game_score/viewmodel/ranking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class RankingView extends HookConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
@@ -20,6 +21,19 @@ class RankingView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(rankingViewModelProvider);
     final isVisibleFloatingActionButton = useState(vm.isEndTimeNull());
+
+    useEffect(() {
+      Future.microtask(() async {
+        try {
+          final InAppReview inAppReview = InAppReview.instance;
+          if (vm.session.value?.id == 3 && await inAppReview.isAvailable()) {
+            await inAppReview.requestReview();
+          }
+          // ignore: empty_catches
+        } catch (e) {}
+      });
+      return null;
+    }, []);
 
     return Scaffold(
       appBar: buildAppBar(context, ref, vm),
