@@ -7,6 +7,7 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DialogService {
   Future<bool> showDeletePlayerDialog(
@@ -117,8 +118,8 @@ class DialogService {
     );
   }
 
-  Future<void> showPermissionPermanentlyDeniedDialog(BuildContext context,
-      String content, VoidCallback onOpenAppSettings) async {
+  Future<void> showPermissionPermanentlyDeniedDialog(
+      BuildContext context, String content) async {
     await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -134,7 +135,7 @@ class DialogService {
             ),
             TextButton(
               onPressed: () {
-                onOpenAppSettings();
+                openAppSettings();
                 Navigator.of(dialogContext).pop();
               },
               child: const Text('はい'),
@@ -210,16 +211,13 @@ class DialogService {
                 child: const Text('いいえ')),
             TextButton(
               onPressed: () async {
-                final loadingOverlay = LoadingOverlay.of(context);
-                loadingOverlay.show();
                 try {
-                  await action(dialogContext);
-                  loadingOverlay.hide();
+                  await LoadingOverlay.of(context)
+                      .during(() => action(dialogContext));
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(true);
                   }
                 } catch (e) {
-                  loadingOverlay.hide();
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(false);
                   }
@@ -280,16 +278,13 @@ class DialogService {
         onPressed: inputText.trim().isEmpty
             ? null
             : () async {
-                final loadingOverlay = LoadingOverlay.of(context);
-                loadingOverlay.show();
                 try {
-                  await action(inputText, dialogContext);
-                  loadingOverlay.hide();
+                  await LoadingOverlay.of(context)
+                      .during(() => action(inputText, dialogContext));
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(true);
                   }
                 } catch (e) {
-                  loadingOverlay.hide();
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(false);
                   }

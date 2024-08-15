@@ -68,7 +68,6 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       TextEditingController nameTextEditingController,
       ValueNotifier<String> playerName,
       PlayerSettingDetailViewModel vm) {
-    final loadingOverlay = LoadingOverlay.of(context);
     return AppBar(
       title: Text(vm.getAppBarTitle(player)),
       centerTitle: true,
@@ -79,9 +78,14 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 child: const Text('保存'),
                 onPressed: () async {
                   try {
-                    loadingOverlay.show();
-                    final isSuccess = await vm.savePlayer(formKey, player,
-                        nameTextEditingController.text, playerImage.value, ref);
+                    final isSuccess = await LoadingOverlay.of(context).during(
+                      () => vm.savePlayer(
+                          formKey,
+                          player,
+                          nameTextEditingController.text,
+                          playerImage.value,
+                          ref),
+                    );
                     if (isSuccess && context.mounted) {
                       navigationService.pop(context);
                     }
@@ -89,8 +93,6 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     if (context.mounted) {
                       dialogService.showErrorDialog(context, e);
                     }
-                  } finally {
-                    loadingOverlay.hide();
                   }
                 },
               ),
@@ -226,9 +228,9 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     playerImage,
                     (message) => dialogService.showPermissionDeniedDialog(
                         context, message),
-                    (message, action) =>
+                    (message) =>
                         dialogService.showPermissionPermanentlyDeniedDialog(
-                            context, message, action),
+                            context, message),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {
@@ -250,7 +252,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                         context, message),
                     (message, action) =>
                         dialogService.showPermissionPermanentlyDeniedDialog(
-                            context, message, action),
+                            context, message),
                     () => navigationService.pop(context),
                   );
                 } catch (e) {

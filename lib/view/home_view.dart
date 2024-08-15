@@ -3,6 +3,7 @@ import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/service/snackbar_service.dart';
 import 'package:family_game_score/view/scoring_view.dart';
+import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
@@ -55,7 +56,8 @@ class HomeView extends ConsumerWidget {
       onPressed: vm.handleButtonPress(
         onStartGame: () async {
           try {
-            await ref.read(playerProvider.notifier).getActivePlayer();
+            await LoadingOverlay.of(context).during(
+                () => ref.read(playerProvider.notifier).getActivePlayer());
             if (context.mounted) {
               navigationService.pushReplacementWithAnimationFromBottom(
                   context, ScoringView());

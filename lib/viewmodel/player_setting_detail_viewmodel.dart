@@ -58,9 +58,9 @@ class PlayerSettingDetailViewModel {
       await saveImage(player, fileName, playerImage);
       ref.invalidate(resultHistoryProvider);
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   }
 
   Future<String> saveName(Player? player, String playerName,
@@ -104,7 +104,7 @@ class PlayerSettingDetailViewModel {
   Future<void> handleCameraAction(
     ValueNotifier<FileImage?> playerImage,
     Function(String) showPermissionDeniedDialog,
-    Function(String, VoidCallback) showPermissionPermanentlyDeniedDialog,
+    Function(String) showPermissionPermanentlyDeniedDialog,
     VoidCallback closeDialog,
   ) async {
     final status = await Permission.camera.request();
@@ -119,9 +119,7 @@ class PlayerSettingDetailViewModel {
         break;
       case PermissionStatus.permanentlyDenied:
         await showPermissionPermanentlyDeniedDialog(
-          'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください',
-          openAppSettings,
-        );
+            'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください');
         closeDialog();
         break;
       default:
