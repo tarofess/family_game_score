@@ -8,6 +8,7 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class RankingViewModel {
   final Ref ref;
@@ -18,33 +19,39 @@ class RankingViewModel {
   AsyncValue<List<Result>> get results => ref.watch(resultProvider);
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
 
-  bool isEndTimeNull() {
+  bool isFinishedGame() {
     return session.value?.endTime == null ? false : true;
   }
 
+  Future<bool> shouldShowInAppReview(InAppReview inAppReview) async {
+    return session.value?.id == 3 &&
+            session.value?.endTime != null &&
+            await inAppReview.isAvailable()
+        ? true
+        : false;
+  }
+
   Widget getAppBarTitle() {
-    return session.value?.endTime == null
-        ? const Text('現在の順位')
-        : const Text('結果発表');
+    return isFinishedGame() ? const Text('結果発表') : const Text('現在の順位');
   }
 
   Widget getIconButton(VoidCallback onIconButtonPressed) {
-    return session.value?.endTime == null
-        ? const SizedBox()
-        : IconButton(
+    return isFinishedGame()
+        ? IconButton(
             icon: const Icon(Icons.home),
             onPressed: onIconButtonPressed,
-          );
+          )
+        : const SizedBox();
   }
 
   Widget getSakuraAnimation() {
-    return session.value?.endTime == null
-        ? const SizedBox()
-        : const Positioned.fill(
+    return isFinishedGame()
+        ? const Positioned.fill(
             child: IgnorePointer(
               child: SakuraAnimation(),
             ),
-          );
+          )
+        : const SizedBox();
   }
 
   Widget getResultListCard(

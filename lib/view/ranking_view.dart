@@ -20,13 +20,13 @@ class RankingView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final vm = ref.watch(rankingViewModelProvider);
-    final isVisibleFloatingActionButton = useState(vm.isEndTimeNull());
+    final isVisibleFloatingActionButton = useState(vm.isFinishedGame());
 
     useEffect(() {
       Future.microtask(() async {
         try {
           final InAppReview inAppReview = InAppReview.instance;
-          if (vm.session.value?.id == 3 && await inAppReview.isAvailable()) {
+          if (await vm.shouldShowInAppReview(inAppReview)) {
             await inAppReview.requestReview();
           }
           // ignore: empty_catches
