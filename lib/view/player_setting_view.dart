@@ -94,7 +94,11 @@ class PlayerSettingView extends ConsumerWidget {
     return ListView.builder(
       itemCount: players.length,
       itemBuilder: (BuildContext context, int index) {
-        return PlayerListCard(player: players[index], ref: ref);
+        return PlayerListCard(
+          player: players[index],
+          ref: ref,
+          key: ValueKey(players[index].id),
+        );
       },
     );
   }

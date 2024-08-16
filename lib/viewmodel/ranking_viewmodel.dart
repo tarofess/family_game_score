@@ -58,7 +58,11 @@ class RankingViewModel {
       int index, List<Result> results, List<Player> players) {
     final result = results[index];
     final player = players.firstWhere((p) => p.id == result.playerId);
-    return ResultListCard(player: player, result: result);
+    return ResultListCard(
+      key: ValueKey(player.id),
+      player: player,
+      result: result,
+    );
   }
 }
 

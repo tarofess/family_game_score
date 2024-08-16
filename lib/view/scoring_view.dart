@@ -112,9 +112,10 @@ class ScoringView extends ConsumerWidget {
     return ReorderableListView.builder(
       itemCount: players.length,
       itemBuilder: (context, index) => ScoringListCard(
-          key: Key(players[index].id.toString()),
-          players: players,
-          index: index),
+        key: ValueKey(players[index].id),
+        players: players,
+        index: index,
+      ),
       onReorder: (oldIndex, newIndex) {
         if (oldIndex < newIndex) {
           newIndex -= 1;
