@@ -1,5 +1,6 @@
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/model/entity/session.dart';
+import 'package:family_game_score/model/repository/database_helper.dart';
 import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_history_provider.dart';
@@ -25,18 +26,22 @@ class DialogService {
 
   Future<void> showMoveToNextRoundDialog(
       BuildContext context, WidgetRef ref) async {
-    final session = ref.read(sessionProvider);
-    final nextRound =
-        session.value != null ? (session.value!.round + 1).toString() : '2';
+    final session = ref.read(sessionProvider).value;
+    final nextRound = session != null ? (session.round + 1).toString() : '2';
 
     await showConfimationBaseDialog(
         context: context,
         title: '確認',
         content: '$nextRound回戦に進みますか？',
         action: (BuildContext dialogContext) async {
-          await ref.read(sessionProvider.notifier).addSession();
-          await ref.read(sessionProvider.notifier).updateRound();
-          await ref.read(resultProvider.notifier).addOrUpdateResult();
+          await DatabaseHelper.instance.database.transaction((txc) async {
+            await ref.read(sessionProvider.notifier).addSession(txc);
+            await ref.read(sessionProvider.notifier).updateRound(txc);
+            await ref.read(resultProvider.notifier).addOrUpdateResult(txc);
+          });
+        },
+        onRollBack: () async {
+          await ref.read(sessionProvider.notifier).getSession();
         });
   }
 
@@ -196,6 +201,7 @@ class DialogService {
     required String title,
     required String content,
     required Function(BuildContext dialogContext) action,
+    VoidCallback? onRollBack,
   }) async {
     final result = await showDialog(
       context: context,
@@ -221,6 +227,7 @@ class DialogService {
                   if (dialogContext.mounted) {
                     Navigator.of(dialogContext).pop(false);
                   }
+                  if (onRollBack != null) onRollBack();
                   if (context.mounted) await showErrorDialog(context, e);
                 }
               },

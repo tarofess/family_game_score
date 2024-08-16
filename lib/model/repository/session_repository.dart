@@ -6,11 +6,11 @@ class SessionRepository {
 
   SessionRepository(this.database);
 
-  Future<Session> addSession(int id) async {
+  Future<Session> addSession(int id, Transaction txc) async {
     try {
       final newSession =
           Session(id: id, round: 1, begTime: DateTime.now().toString());
-      await database.rawInsert(
+      await txc.rawInsert(
           'INSERT INTO Session(id, round, begTime) VALUES(?, ?, ?)',
           [newSession.id, newSession.round, newSession.begTime]);
       return newSession;
@@ -30,10 +30,10 @@ class SessionRepository {
     }
   }
 
-  Future<int> getMaxID() async {
+  Future<int> getMaxID(Transaction txc) async {
     try {
       final List<Map<String, dynamic>> maxIdResponse =
-          await database.rawQuery('SELECT MAX(id) as maxId FROM Session');
+          await txc.rawQuery('SELECT MAX(id) as maxId FROM Session');
       return maxIdResponse.first['maxId'] == null
           ? 1
           : maxIdResponse.first['maxId'] + 1;
@@ -42,10 +42,10 @@ class SessionRepository {
     }
   }
 
-  Future<Session> updateRound(Session session) async {
+  Future<Session> updateRound(Session session, Transaction txc) async {
     try {
       final updatedSession = session.copyWith(round: session.round + 1);
-      await database.rawUpdate('UPDATE Session SET round = ? WHERE id = ?',
+      await txc.rawUpdate('UPDATE Session SET round = ? WHERE id = ?',
           [updatedSession.round, updatedSession.id]);
       return updatedSession;
     } catch (e) {

@@ -55,7 +55,12 @@ class PlayerSettingDetailViewModel {
       String playerName, FileImage? playerImage, WidgetRef ref) async {
     if (formKey.currentState!.validate()) {
       final fileName = await saveName(player, playerName, playerImage, ref);
-      await saveImage(player, fileName, playerImage);
+      try {
+        await saveImage(player, fileName, playerImage);
+      } catch (e) {
+        rollbackSaveName(player, ref);
+        rethrow;
+      }
       ref.invalidate(resultHistoryProvider);
       return true;
     }
@@ -66,13 +71,15 @@ class PlayerSettingDetailViewModel {
   Future<String> saveName(Player? player, String playerName,
       FileImage? playerImage, WidgetRef ref) async {
     final fileName = await getFileName(player, playerImage);
-    if (player == null) {
-      await ref.read(playerProvider.notifier).addPlayer(playerName, fileName);
-    } else {
-      await ref
-          .read(playerProvider.notifier)
-          .updatePlayer(player.copyWith(name: playerName, image: fileName));
-    }
+    player == null
+        ? await ref.read(playerProvider.notifier).addPlayer(
+              playerName,
+              fileName,
+            )
+        : await ref.read(playerProvider.notifier).updatePlayer(
+              player.copyWith(name: playerName, image: fileName),
+            );
+
     return fileName;
   }
 
@@ -99,6 +106,14 @@ class PlayerSettingDetailViewModel {
 
     await fileService.saveImage(File(playerImage.file.path), fileName);
     await fileService.clearCache(fileName);
+  }
+
+  Future<void> rollbackSaveName(Player? player, WidgetRef ref) async {
+    player == null
+        ? await ref
+            .read(playerProvider.notifier)
+            .deletePlayer(ref.read(playerProvider).value!.last)
+        : await ref.read(playerProvider.notifier).updatePlayer(player);
   }
 
   Future<void> handleCameraAction(

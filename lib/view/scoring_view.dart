@@ -50,8 +50,9 @@ class ScoringView extends ConsumerWidget {
       ),
       actions: [
         IconButton(
-          onPressed: vm.getCheckButtonCallback(() async =>
-              await dialogService.showMoveToNextRoundDialog(context, ref)),
+          onPressed: vm.getCheckButtonCallback(() async {
+            await dialogService.showMoveToNextRoundDialog(context, ref);
+          }),
           icon: const Icon(Icons.check_circle_outline),
         ),
       ],

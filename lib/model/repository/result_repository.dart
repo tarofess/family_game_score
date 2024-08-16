@@ -8,12 +8,13 @@ class ResultRepository {
 
   ResultRepository(this.database);
 
-  Future<void> addResult(List<Player> players, Session session) async {
+  Future<void> addResult(
+      List<Player> players, Session session, Transaction txc) async {
     try {
       int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
       for (final player in players) {
-        await database.rawInsert(
+        await txc.rawInsert(
             'INSERT INTO Result(playerId, sessionId, score, rank) VALUES(?, ?, ?, 1)',
             [player.id, session.id, x * 10]);
 
@@ -24,11 +25,16 @@ class ResultRepository {
     }
   }
 
-  Future<List<Result>> getResult(Session session) async {
+  Future<List<Result>> getResult(Session session, Transaction? txc) async {
     try {
-      final List<Map<String, dynamic>> results = await database.rawQuery(
-          'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
-          [session.id]);
+      List<Map<String, dynamic>> results;
+      txc == null
+          ? results = await database.rawQuery(
+              'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
+              [session.id])
+          : results = await txc.rawQuery(
+              'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
+              [session.id]);
       return results.map((e) => Result.fromJson(e)).toList();
     } catch (e) {
       throw Exception('結果の取得中にエラーが発生しました');
@@ -47,16 +53,17 @@ class ResultRepository {
     }
   }
 
-  Future<void> updateResult(List<Player> players, Session session) async {
+  Future<void> updateResult(
+      List<Player> players, Session session, Transaction txc) async {
     try {
       int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
       for (final player in players) {
-        final response = await database.rawQuery(
+        final response = await txc.rawQuery(
             'SELECT * FROM Result WHERE playerId = ? AND sessionId = ?',
             [player.id, session.id]);
         final results = response.map((e) => Result.fromJson(e)).toList();
-        await database.rawUpdate(
+        await txc.rawUpdate(
             'UPDATE Result SET score = ? WHERE playerId = ? AND sessionId = ?',
             [results.first.score + x * 10, player.id, session.id]);
 
@@ -67,21 +74,21 @@ class ResultRepository {
     }
   }
 
-  Future<void> updateRank(Session session) async {
+  Future<void> updateRank(Session session, Transaction txc) async {
     try {
       int rank = 1;
 
-      final resultsForRank = await getResult(session);
+      final resultsForRank = await getResult(session, txc);
 
       for (int index = 0; index < resultsForRank.length; index++) {
         if (index >= 1 &&
             resultsForRank[index].score == resultsForRank[index - 1].score) {
           // 同じスコアの場合は同じ順位にする
-          await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
+          await txc.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
               [rank, resultsForRank[index].id]);
         } else {
           rank = index + 1;
-          await database.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
+          await txc.rawUpdate('UPDATE Result SET rank = ? WHERE id = ?',
               [rank, resultsForRank[index].id]);
         }
       }

@@ -18,10 +18,10 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     return session;
   }
 
-  Future<void> addSession() async {
+  Future<void> addSession(Transaction txc) async {
     if (state.value == null) {
-      final maxID = await sessionRepository.getMaxID();
-      final newSession = await sessionRepository.addSession(maxID);
+      final maxID = await sessionRepository.getMaxID(txc);
+      final newSession = await sessionRepository.addSession(maxID, txc);
       state = AsyncData(newSession);
     } else {
       state = AsyncData(state.value);
@@ -42,11 +42,12 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     state = AsyncData(session);
   }
 
-  Future<void> updateRound() async {
+  Future<void> updateRound(Transaction txc) async {
     if (state.value == null) {
       throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
     }
-    final updatedSession = await sessionRepository.updateRound(state.value!);
+    final updatedSession =
+        await sessionRepository.updateRound(state.value!, txc);
     state = AsyncData(updatedSession);
   }
 

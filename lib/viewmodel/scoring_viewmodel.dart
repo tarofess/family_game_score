@@ -18,7 +18,8 @@ class ScoringViewModel {
 
   Widget getAppBarTitle() {
     return Text(
-        '${session.value == null ? '1' : session.value!.round.toString()}回戦');
+      '${session.value == null ? '1' : session.value!.round.toString()}回戦',
+    );
   }
 
   VoidCallback? getExitButtonCallback(VoidCallback onShowFinishGameDialog) {

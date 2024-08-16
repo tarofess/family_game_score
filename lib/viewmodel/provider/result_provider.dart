@@ -23,13 +23,13 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
       state = const AsyncData([]);
       return [];
     } else {
-      final results = await resultRepository.getResult(session);
+      final results = await resultRepository.getResult(session, null);
       state = AsyncData(results);
       return results;
     }
   }
 
-  Future<void> addOrUpdateResult() async {
+  Future<void> addOrUpdateResult(Transaction txc) async {
     final players = ref.read(playerProvider).valueOrNull;
     final session = ref.read(sessionProvider).valueOrNull;
 
@@ -38,23 +38,25 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
     }
 
     if (state.value?.isEmpty ?? true) {
-      await addResult(players, session);
+      await addResult(players, session, txc);
     } else {
-      await updateResult(players, session);
+      await updateResult(players, session, txc);
     }
 
-    final results = await resultRepository.getResult(session);
+    final results = await resultRepository.getResult(session, txc);
     state = AsyncData(results);
   }
 
-  Future<void> addResult(List<Player> players, Session session) async {
-    await resultRepository.addResult(players, session);
-    await resultRepository.updateRank(session);
+  Future<void> addResult(
+      List<Player> players, Session session, Transaction txc) async {
+    await resultRepository.addResult(players, session, txc);
+    await resultRepository.updateRank(session, txc);
   }
 
-  Future<void> updateResult(List<Player> players, Session session) async {
-    await resultRepository.updateResult(players, session);
-    await resultRepository.updateRank(session);
+  Future<void> updateResult(
+      List<Player> players, Session session, Transaction txc) async {
+    await resultRepository.updateResult(players, session, txc);
+    await resultRepository.updateRank(session, txc);
   }
 }
 
