@@ -57,7 +57,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [
-                Color.fromARGB(255, 124, 213, 255),
+                Color.fromARGB(255, 139, 218, 255),
                 Color.fromARGB(255, 54, 154, 255),
               ],
               begin: Alignment.centerLeft,

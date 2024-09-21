@@ -5,7 +5,6 @@ import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/player_setting_detail_view.dart';
 import 'package:family_game_score/view/widget/list_card/player_image.dart';
-import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -43,12 +42,12 @@ class PlayerListCard extends HookWidget {
             try {
               switchValue.value = value;
               value
-                  ? await LoadingOverlay.of(context).during(() => ref
-                      .read(playerProvider.notifier)
-                      .activatePlayer(player.copyWith(status: 1)))
-                  : await LoadingOverlay.of(context).during(() => ref
-                      .read(playerProvider.notifier)
-                      .deactivatePlayer(player.copyWith(status: 0)));
+                  ? ref.read(playerProvider.notifier).activatePlayer(
+                        player.copyWith(status: 1),
+                      )
+                  : ref.read(playerProvider.notifier).deactivatePlayer(
+                        player.copyWith(status: 0),
+                      );
             } catch (e) {
               switchValue.value = !value;
               if (context.mounted) {

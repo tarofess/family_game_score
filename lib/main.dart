@@ -7,6 +7,7 @@ import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/service/file_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/service/snackbar_service.dart';
+import 'package:family_game_score/theme.dart';
 import 'package:family_game_score/view/home_view.dart';
 import 'package:family_game_score/view/result_history_calendar_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +39,7 @@ class MyApp extends ConsumerWidget {
     final initialization = ref.watch(initializationProvider);
 
     return MaterialApp(
+      theme: createTheme(),
       debugShowCheckedModeBanner: false,
       home: initialization.when(
         data: (_) => const MyTabView(),

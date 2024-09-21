@@ -161,7 +161,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
-                    color: Colors.green[100]!,
+                    color: Colors.green[200]!,
                     width: 1.0,
                   ),
                 ),
