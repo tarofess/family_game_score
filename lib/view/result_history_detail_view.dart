@@ -76,7 +76,6 @@ class ResultHistoryDetailView extends ConsumerWidget {
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'Gill Sans',
                     ),
                   ),
           ),

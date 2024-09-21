@@ -123,7 +123,7 @@ class MyTabView extends StatelessWidget {
         body: TabBarView(
           children: [
             HomeView(),
-            ResultHistoryCalendarView(),
+            const ResultHistoryCalendarView(),
             PlayerSettingView(),
           ],
         ),
