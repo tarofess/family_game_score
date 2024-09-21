@@ -4,6 +4,7 @@ import 'package:family_game_score/service/camera_service.dart';
 import 'package:family_game_score/service/navigation_service.dart';
 import 'package:family_game_score/view/widget/list_card/player_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ScoringListCard extends StatelessWidget {
   final List<Player> players;
@@ -16,23 +17,19 @@ class ScoringListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      elevation: 4.r,
+      margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
-        leading: Text(
-          '${index + 1}位',
-          style: const TextStyle(fontSize: 16),
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 6.r),
+        leading: Text('${index + 1}位', style: TextStyle(fontSize: 16.sp)),
         title: Row(
           children: [
             PlayerImage(player: players[index]),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.r),
             Expanded(
               child: Text(
                 players[index].name,
-                style: const TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18.sp),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -40,7 +37,7 @@ class ScoringListCard extends StatelessWidget {
         ),
         trailing: ReorderableDragStartListener(
           index: index,
-          child: const Icon(Icons.drag_handle),
+          child: Icon(Icons.drag_handle, size: 24.r),
         ),
       ),
     );

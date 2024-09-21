@@ -13,7 +13,7 @@ class CameraService {
       );
       return photo?.path;
     } catch (e) {
-      throw Exception('写真の撮影中にエラーが発生しました');
+      throw Exception('写真の撮影中にエラーが発生しました。');
     }
   }
 
@@ -27,7 +27,7 @@ class CameraService {
       );
       return image?.path;
     } catch (e) {
-      throw Exception('写真の選択中にエラーが発生しました');
+      throw Exception('写真の選択中にエラーが発生しました。');
     }
   }
 }

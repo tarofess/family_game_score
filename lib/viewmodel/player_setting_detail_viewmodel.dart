@@ -129,12 +129,12 @@ class PlayerSettingDetailViewModel {
         closeDialog();
         break;
       case PermissionStatus.denied:
-        await showPermissionDeniedDialog('カメラ権限が許可されていないので写真を撮影できません');
+        await showPermissionDeniedDialog('カメラ権限が許可されていないので写真を撮影できません。');
         closeDialog();
         break;
       case PermissionStatus.permanentlyDenied:
         await showPermissionPermanentlyDeniedDialog(
-            'カメラ権限が永久に拒否されたため写真を撮影できません\n設定からカメラ権限を許可してください');
+            'カメラ権限が永久に拒否されたため写真を撮影できません。\n設定からカメラ権限を許可してください。');
         closeDialog();
         break;
       default:
@@ -156,18 +156,20 @@ class PlayerSettingDetailViewModel {
         closeDialog();
         break;
       case PermissionStatus.denied:
-        await showPermissionDeniedDialog('フォトライブラリへのアクセスが許可されていないので写真を選択できません');
+        await showPermissionDeniedDialog(
+            'フォトライブラリへのアクセスが許可されていないので写真を選択できません。');
         closeDialog();
         break;
       case PermissionStatus.permanentlyDenied:
         await showPermissionPermanentlyDeniedDialog(
-          'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません\n設定からアクセス権限を許可してください',
+          'フォトライブラリへのアクセスが永久に拒否されたため写真を選択できません。\n'
+          '設定からアクセス権限を許可してください。',
           openAppSettings,
         );
         closeDialog();
         break;
       case PermissionStatus.restricted:
-        await showPermissionDeniedDialog('フォトライブラリへのアクセスが制限されているので写真を選択できません');
+        await showPermissionDeniedDialog('フォトライブラリへのアクセスが制限されているので写真を選択できません。');
         closeDialog();
         break;
       default:

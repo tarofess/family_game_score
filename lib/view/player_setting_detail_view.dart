@@ -6,6 +6,7 @@ import 'package:family_game_score/view/widget/loading_overlay.dart';
 import 'package:family_game_score/viewmodel/player_setting_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
@@ -45,19 +46,19 @@ class PlayerSettingDetailView extends HookConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 50),
+              SizedBox(height: 50.r),
               buildImageCircle(context, playerImage, vm),
-              const SizedBox(height: 60),
+              SizedBox(height: 60.r),
               buildNameWidget(nameTextEditingController, vm),
-              const SizedBox(height: 60),
+              SizedBox(height: 60.r),
               buildTotalScoreWidget(vm, player),
               vm.isPlayerNull(player)
                   ? const SizedBox()
-                  : const SizedBox(height: 150),
+                  : SizedBox(height: 150.r),
               vm.isPlayerNull(player)
                   ? const SizedBox()
                   : buildDeletePlayerButton(context, ref, player, vm),
-              const SizedBox(height: 50),
+              SizedBox(height: 50.r),
             ],
           ),
         ),
@@ -73,13 +74,14 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       ValueNotifier<String> playerName,
       PlayerSettingDetailViewModel vm) {
     return AppBar(
-      title: Text(vm.getAppBarTitle(player)),
+      toolbarHeight: 56.r,
+      title: Text(vm.getAppBarTitle(player), style: TextStyle(fontSize: 20.sp)),
       centerTitle: true,
       actions: [
         vm.isEmptyBothImageAndName(playerName.value, playerImage.value)
             ? const SizedBox()
             : TextButton(
-                child: const Text('保存'),
+                child: Text('保存', style: TextStyle(fontSize: 14.sp)),
                 onPressed: () async {
                   try {
                     final isSuccess = await LoadingOverlay.of(context).during(
@@ -108,8 +110,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       ValueNotifier<FileImage?> playerImage, PlayerSettingDetailViewModel vm) {
     return GestureDetector(
       child: Container(
-        width: 240,
-        height: 240,
+        width: 240.r,
+        height: 240.r,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.grey,
@@ -121,10 +123,10 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                   child: Image(image: playerImage.value!),
                 ),
               )
-            : const Icon(
+            : Icon(
                 Icons.camera_alt,
                 color: Colors.white,
-                size: 50,
+                size: 50.r,
               ),
       ),
       onTap: () => showActionSheet(context, playerImage, vm),
@@ -137,12 +139,12 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 300,
+          width: 300.r,
           child: Form(
             key: formKey,
             child: TextFormField(
               controller: nameTextEditingController,
-              style: const TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20.sp),
               validator: (value) => vm.handleNameValidation(value),
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
@@ -152,12 +154,15 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     width: 2.0,
                   ),
                 ),
+                errorStyle: TextStyle(
+                  fontSize: 14.sp,
+                ),
                 labelStyle: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   color: Colors.grey[700],
                 ),
                 labelText: '名前',
-                floatingLabelStyle: const TextStyle(fontSize: 20),
+                floatingLabelStyle: TextStyle(fontSize: 20.sp),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
@@ -180,11 +185,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('総獲得ポイント数:', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 10),
+              Text('総獲得ポイント数:', style: TextStyle(fontSize: 20.sp)),
+              SizedBox(width: 10.r),
               Text(
                 '${vm.getTotalScore(player)}',
-                style: const TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20.sp),
               ),
             ],
           );
@@ -198,16 +203,17 @@ class PlayerSettingDetailView extends HookConsumerWidget {
             await dialogService.showDeletePlayerDialog(context, ref, player!);
         if (isSuccess) {
           if (context.mounted) {
-            await dialogService.showMessageDialog(context, 'プレイヤーの削除が完了しました');
+            await dialogService.showMessageDialog(context, 'プレイヤーの削除が完了しました。');
           }
           if (context.mounted) navigationService.pop(context);
         }
       },
-      child: const Text(
+      child: Text(
         'プレイヤーを削除する',
         style: TextStyle(
           color: Colors.red,
           fontWeight: FontWeight.bold,
+          fontSize: 14.sp,
         ),
       ),
     );
@@ -221,8 +227,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
         return Wrap(
           children: <Widget>[
             ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('写真を撮る'),
+              leading: Icon(Icons.camera_alt, size: 24.r),
+              title: Text('写真を撮る', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
                 try {
                   await vm.handleCameraAction(
@@ -243,8 +249,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: const Text('フォトライブラリから選択'),
+              leading: Icon(Icons.photo_library, size: 24.r),
+              title: Text('フォトライブラリから選択', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
                 try {
                   await vm.handleGalleryAction(
@@ -265,8 +271,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               },
             ),
             ListTile(
-                leading: const Icon(Icons.cancel),
-                title: const Text('削除する'),
+                leading: Icon(Icons.cancel, size: 24.r),
+                title: Text('削除する', style: TextStyle(fontSize: 14.sp)),
                 onTap: () {
                   vm.deleteImageFromImageCircle(playerImage);
                   navigationService.pop(context);

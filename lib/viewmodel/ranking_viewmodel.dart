@@ -7,6 +7,7 @@ import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
 
@@ -31,14 +32,14 @@ class RankingViewModel {
         : false;
   }
 
-  Widget getAppBarTitle() {
-    return isFinishedGame() ? const Text('結果発表') : const Text('現在の順位');
+  String getAppBarTitle() {
+    return isFinishedGame() ? '結果発表' : '現在の順位';
   }
 
   Widget getIconButton(VoidCallback onIconButtonPressed) {
     return isFinishedGame()
         ? IconButton(
-            icon: const Icon(Icons.home),
+            icon: Icon(Icons.home, size: 24.r),
             onPressed: onIconButtonPressed,
           )
         : const SizedBox();

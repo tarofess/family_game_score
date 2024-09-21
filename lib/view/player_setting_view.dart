@@ -9,6 +9,7 @@ import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/player_setting_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerSettingView extends ConsumerWidget {
@@ -51,7 +52,7 @@ class PlayerSettingView extends ConsumerWidget {
             context, PlayerSettingDetailView(player: null)),
       ),
       backgroundColor: vm.getFloatingActionButtonColor(),
-      child: const Icon(Icons.add),
+      child: Icon(Icons.add, size: 24.r),
     );
   }
 
@@ -69,22 +70,23 @@ class PlayerSettingView extends ConsumerWidget {
   }
 
   Widget buildUnableToEditPlayerText(BuildContext context) {
-    return const Center(
+    return Center(
       child: Text(
-        '現在ゲームが進行中のため\nプレイヤーの編集ができません',
+        '現在ゲームが進行中のため\nプレイヤーの編集ができません。',
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 16.sp),
       ),
     );
   }
 
   Widget buildPlayerNotRegisteredMessage(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Text(
-        'プレイヤーが登録されていません\nゲームを始めるために2名以上追加してください',
+        'プレイヤーが登録されていません。\n'
+        'ゲームを始めるために2名以上追加してください。',
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 16),
+        style: TextStyle(fontSize: 16.sp),
       ),
     );
   }

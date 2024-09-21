@@ -14,7 +14,7 @@ class PlayerRepository {
       final newPlayer = Player(id: id, name: name, image: image);
       return newPlayer;
     } catch (e) {
-      throw Exception('プレイヤーの追加中にエラーが発生しました');
+      throw Exception('プレイヤーの追加中にエラーが発生しました。');
     }
   }
 
@@ -25,7 +25,7 @@ class PlayerRepository {
       final players = response.map((map) => Player.fromJson(map)).toList();
       return players;
     } catch (e) {
-      throw Exception('プレイヤーの取得中にエラーが発生しました');
+      throw Exception('プレイヤーの取得中にエラーが発生しました。');
     }
   }
 
@@ -36,7 +36,7 @@ class PlayerRepository {
       final players = response.map((map) => Player.fromJson(map)).toList();
       return players;
     } catch (e) {
-      throw Exception('有効なプレイヤーの取得中にエラーが発生しました');
+      throw Exception('有効なプレイヤーの取得中にエラーが発生しました。');
     }
   }
 
@@ -46,7 +46,7 @@ class PlayerRepository {
           'UPDATE Player SET name = ?, image = ? WHERE id = ?',
           [player.name, player.image, player.id]);
     } catch (e) {
-      throw Exception('プレイヤーの更新中にエラーが発生しました');
+      throw Exception('プレイヤーの更新中にエラーが発生しました。');
     }
   }
 
@@ -55,7 +55,7 @@ class PlayerRepository {
       await database
           .rawUpdate('UPDATE Player SET status = -1 WHERE id = ?', [player.id]);
     } catch (e) {
-      throw Exception('プレイヤーの削除中にエラーが発生しました');
+      throw Exception('プレイヤーの削除中にエラーが発生しました。');
     }
   }
 
@@ -64,7 +64,7 @@ class PlayerRepository {
       await database
           .rawUpdate('UPDATE Player SET status = 0 WHERE id = ?', [player.id]);
     } catch (e) {
-      throw Exception('プレイヤーの無効化中にエラーが発生しました');
+      throw Exception('プレイヤーの無効化中にエラーが発生しました。');
     }
   }
 
@@ -73,7 +73,7 @@ class PlayerRepository {
       await database
           .rawUpdate('UPDATE Player SET status = 1 WHERE id = ?', [player.id]);
     } catch (e) {
-      throw Exception('プレイヤーの有効化中にエラーが発生しました');
+      throw Exception('プレイヤーの有効化中にエラーが発生しました。');
     }
   }
 
@@ -83,7 +83,7 @@ class PlayerRepository {
           await database.rawQuery('SELECT MAX(id) as max_id FROM Player');
       return response.first['max_id'] ?? 0;
     } catch (e) {
-      throw Exception('画像名の更新中にエラーが発生しました');
+      throw Exception('画像名の更新中にエラーが発生しました。');
     }
   }
 }

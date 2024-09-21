@@ -7,6 +7,7 @@ import 'package:family_game_score/viewmodel/provider/result_history_provider.dar
 import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -49,7 +50,7 @@ class DialogService {
     final result = await showConfimationBaseDialog(
         context: context,
         title: '確認',
-        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します',
+        content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
         action: (BuildContext dialogContext) async {
           await ref.read(sessionProvider.notifier).updateEndTime();
         });
@@ -62,8 +63,13 @@ class DialogService {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('お疲れ様でした！'),
-          content: const Text('ホーム画面に戻ります'),
+          title: Center(
+              child: Text('お疲れ様でした！',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          content: Text('ホーム画面に戻ります。', style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
               onPressed: () {
@@ -73,7 +79,8 @@ class DialogService {
                 ref.read(sessionProvider.notifier).disposeSession();
                 Navigator.of(dialogContext).pop(true);
               },
-              child: const Text('はい'),
+              child:
+                  Center(child: Text('はい', style: TextStyle(fontSize: 14.sp))),
             ),
           ],
         );
@@ -87,14 +94,20 @@ class DialogService {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('エラー発生'),
-          content: Text(error.toString()),
+          title: Center(
+              child: Text('エラー発生',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          content: Text(error.toString(), style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('はい'),
+              child:
+                  Center(child: Text('はい', style: TextStyle(fontSize: 14.sp))),
             ),
           ],
         );
@@ -108,14 +121,20 @@ class DialogService {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('権限エラー'),
-          content: Text(content),
+          title: Center(
+              child: Text('権限エラー',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          content: Text(content, style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('はい'),
+              child:
+                  Center(child: Text('はい', style: TextStyle(fontSize: 14.sp))),
             ),
           ],
         );
@@ -129,21 +148,26 @@ class DialogService {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: const Text('権限エラー'),
-          content: Text(content),
+          title: Center(
+              child: Text('権限エラー',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          content: Text(content, style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('いいえ'),
+              child: Text('いいえ', style: TextStyle(fontSize: 14.sp)),
             ),
             TextButton(
               onPressed: () {
                 openAppSettings();
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('はい'),
+              child: Text('はい', style: TextStyle(fontSize: 14.sp)),
             ),
           ],
         );
@@ -155,7 +179,7 @@ class DialogService {
       BuildContext context, WidgetRef ref) async {
     final result = await showInputBaseDialog(
         context: context,
-        title: '遊んだゲームの種類を記録できます',
+        title: '遊んだゲームの種類を記録できます！',
         hintText: '例：大富豪',
         action: (String inputText, BuildContext dialogContext) async {
           await ref.read(sessionProvider.notifier).addGameType(inputText);
@@ -167,7 +191,7 @@ class DialogService {
       BuildContext context, WidgetRef ref, Session session) async {
     await showInputBaseDialog(
         context: context,
-        title: '遊んだゲームの種類を編集できます',
+        title: '遊んだゲームの種類を編集できます！',
         hintText: '例：大富豪',
         action: (String inputText, BuildContext dialogContext) async {
           await ref
@@ -182,13 +206,14 @@ class DialogService {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text(''),
-          content: Text(content),
+          content: Text(content, style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
-              child: const Text('はい'),
+              child:
+                  Center(child: Text('はい', style: TextStyle(fontSize: 14.sp))),
             ),
           ],
         );
@@ -207,14 +232,19 @@ class DialogService {
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(title),
-          content: Text(content),
+          title: Center(
+              child: Text(title,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ))),
+          content: Text(content, style: TextStyle(fontSize: 14.sp)),
           actions: [
             TextButton(
                 onPressed: () {
                   Navigator.of(dialogContext).pop(false);
                 },
-                child: const Text('いいえ')),
+                child: Text('いいえ', style: TextStyle(fontSize: 14.sp))),
             TextButton(
               onPressed: () async {
                 try {
@@ -231,7 +261,7 @@ class DialogService {
                   if (context.mounted) await showErrorDialog(context, e);
                 }
               },
-              child: const Text('はい'),
+              child: Text('はい', style: TextStyle(fontSize: 14.sp)),
             )
           ],
         );
@@ -253,15 +283,20 @@ class DialogService {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(title),
+              title: Center(
+                  child: Text(title,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ))),
               content: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    inputText = value;
-                  });
-                },
-                decoration: InputDecoration(hintText: hintText),
-              ),
+                  onChanged: (value) {
+                    setState(() {
+                      inputText = value;
+                    });
+                  },
+                  decoration: InputDecoration(hintText: hintText),
+                  style: TextStyle(fontSize: 14.sp)),
               actions: getInputBaseDialogButtons(
                   context, dialogContext, inputText, action),
             );
@@ -279,7 +314,7 @@ class DialogService {
         onPressed: () {
           Navigator.of(dialogContext).pop(false);
         },
-        child: const Text('キャンセル'),
+        child: Text('キャンセル', style: TextStyle(fontSize: 14.sp)),
       ),
       TextButton(
         onPressed: inputText.trim().isEmpty
@@ -298,7 +333,7 @@ class DialogService {
                   if (context.mounted) await showErrorDialog(context, e);
                 }
               },
-        child: const Text('登録'),
+        child: Text('登録', style: TextStyle(fontSize: 14.sp)),
       )
     ];
   }

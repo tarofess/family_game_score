@@ -13,6 +13,7 @@ import 'package:family_game_score/view/result_history_calendar_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:family_game_score/view/player_setting_view.dart';
@@ -38,20 +39,27 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final initialization = ref.watch(initializationProvider);
 
-    return MaterialApp(
-      theme: createTheme(),
-      debugShowCheckedModeBanner: false,
-      home: initialization.when(
-        data: (_) => const MyTabView(),
-        loading: () => const SplashScreen(),
-        error: (error, stack) => ErrorScreen(
-          error: error,
-          retry: () {
-            // ignore: unused_result
-            ref.refresh(initializationProvider);
-          },
-        ),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          theme: createTheme(),
+          debugShowCheckedModeBanner: false,
+          home: initialization.when(
+            data: (_) => const MyTabView(),
+            loading: () => const SplashScreen(),
+            error: (error, stack) => ErrorScreen(
+              error: error,
+              retry: () {
+                // ignore: unused_result
+                ref.refresh(initializationProvider);
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -111,9 +119,11 @@ class MyTabView extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('ファミリーゲームスコア'),
-          bottom: const TabBar(
-            tabs: [
+          toolbarHeight: 56.r,
+          title: Text('ファミリーゲームスコア', style: TextStyle(fontSize: 20.sp)),
+          bottom: TabBar(
+            labelStyle: TextStyle(fontSize: 14.sp),
+            tabs: const [
               Tab(text: 'ホーム'),
               Tab(text: '過去の成績'),
               Tab(text: 'プレイヤー'),

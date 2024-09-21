@@ -8,6 +8,7 @@ import 'package:family_game_score/view/widget/list_card/player_image.dart';
 import 'package:family_game_score/viewmodel/provider/player_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerListCard extends HookWidget {
@@ -24,15 +25,15 @@ class PlayerListCard extends HookWidget {
     final switchValue = useState(player.status == 1 ? true : false);
 
     return Card(
-      elevation: 4.0,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      elevation: 4.r,
+      margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
         leading: PlayerImage(player: player),
         title: Text(
           player.name,
           overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 18.sp),
         ),
         trailing: Switch(
           value: switchValue.value,

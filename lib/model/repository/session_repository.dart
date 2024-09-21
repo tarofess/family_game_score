@@ -15,7 +15,7 @@ class SessionRepository {
           [newSession.id, newSession.round, newSession.begTime]);
       return newSession;
     } catch (e) {
-      throw Exception('セッションの追加中にエラーが発生しました');
+      throw Exception('セッションの追加中にエラーが発生しました。');
     }
   }
 
@@ -26,7 +26,7 @@ class SessionRepository {
       final session = response.map((map) => Session.fromJson(map)).toList();
       return session.isEmpty ? null : session.first;
     } catch (e) {
-      throw Exception('セッションの取得中にエラーが発生しました');
+      throw Exception('セッションの取得中にエラーが発生しました。');
     }
   }
 
@@ -38,7 +38,7 @@ class SessionRepository {
           ? 1
           : maxIdResponse.first['maxId'] + 1;
     } catch (e) {
-      throw Exception('最新セッションの取得中にエラーが発生しました');
+      throw Exception('最新セッションの取得中にエラーが発生しました。');
     }
   }
 
@@ -49,7 +49,7 @@ class SessionRepository {
           [updatedSession.round, updatedSession.id]);
       return updatedSession;
     } catch (e) {
-      throw Exception('ラウンドの更新中にエラーが発生しました');
+      throw Exception('ラウンドの更新中にエラーが発生しました。');
     }
   }
 
@@ -61,7 +61,7 @@ class SessionRepository {
           [updatedSession.endTime, updatedSession.id]);
       return updatedSession;
     } catch (e) {
-      throw Exception('終了時間の更新中にエラーが発生しました');
+      throw Exception('終了時間の更新中にエラーが発生しました。');
     }
   }
 
@@ -70,7 +70,7 @@ class SessionRepository {
       await database.rawUpdate('UPDATE Session SET gameType = ? WHERE id = ?',
           [gameType, session.id]);
     } catch (e) {
-      throw Exception('ゲーム種類の記録中にエラーが発生しました');
+      throw Exception('ゲーム種類の記録中にエラーが発生しました。');
     }
   }
 }

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SakuraAnimation extends HookConsumerWidget {
@@ -85,20 +86,20 @@ class SakuraPetal {
   double rotation;
 
   SakuraPetal()
-      : x = Random().nextDouble() * 400,
-        y = Random().nextDouble() * 800,
-        size = Random().nextDouble() * 10 + 5,
-        speed = Random().nextDouble() * 2 + 1,
-        angle = Random().nextDouble() * 2 * pi,
-        rotation = Random().nextDouble() * 2 * pi;
+      : x = Random().nextDouble() * 400.r,
+        y = Random().nextDouble() * 800.r,
+        size = Random().nextDouble() * 10.r + 5.r,
+        speed = Random().nextDouble() * 2.r + 1,
+        angle = Random().nextDouble() * 2.r * pi,
+        rotation = Random().nextDouble() * 2.r * pi;
 
   void update() {
     y += speed;
     x += speed * sin(angle);
     rotation += 0.01;
-    if (y > 800) {
+    if (y > 800.r) {
       y = -size;
-      x = Random().nextDouble() * 400;
+      x = Random().nextDouble() * 400.r;
     }
   }
 }

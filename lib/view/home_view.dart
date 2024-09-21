@@ -10,6 +10,7 @@ import 'package:family_game_score/viewmodel/provider/session_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/view/widget/gradient_circle_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
@@ -71,13 +72,13 @@ class HomeView extends ConsumerWidget {
         onShowSnackbar: () => snackbarService.showHomeViewSnackBar(context),
       ),
       text: vm.getButtonText(),
-      size: 200.0,
+      size: 200.r,
       gradientColors: vm.getGradientColors(),
-      textStyle: const TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
+            color: Colors.white,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
+          ),
     );
   }
 }

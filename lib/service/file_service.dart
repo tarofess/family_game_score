@@ -17,7 +17,7 @@ class FileService {
 
       await imageFile.copy(filePath);
     } catch (e) {
-      throw Exception('写真の保存中にエラーが発生しました');
+      throw Exception('写真の保存中にエラーが発生しました。');
     }
   }
 
@@ -28,7 +28,7 @@ class FileService {
         await file.delete();
       }
     } catch (e) {
-      throw Exception('写真の削除中にエラーが発生しました');
+      throw Exception('写真の削除中にエラーが発生しました。');
     }
   }
 
@@ -40,7 +40,7 @@ class FileService {
       }
       return null;
     } catch (e) {
-      throw Exception('写真の取得中にエラーが発生しました');
+      throw Exception('写真の取得中にエラーが発生しました。');
     }
   }
 
@@ -56,7 +56,7 @@ class FileService {
       final File file = File(filePath);
       return file;
     } catch (e) {
-      throw Exception('写真の取得中にエラーが発生しました');
+      throw Exception('写真の取得中にエラーが発生しました。');
     }
   }
 
@@ -72,7 +72,7 @@ class FileService {
       final image = FileImage(File(filePath));
       imageCache.evict(image);
     } catch (e) {
-      throw Exception('キャッシュのクリア中にエラーが発生しました');
+      throw Exception('キャッシュのクリア中にエラーが発生しました。');
     }
   }
 }

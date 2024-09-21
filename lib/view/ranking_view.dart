@@ -8,6 +8,7 @@ import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/ranking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
 
@@ -46,7 +47,8 @@ class RankingView extends HookConsumerWidget {
   AppBar buildAppBar(BuildContext context, WidgetRef ref, RankingViewModel vm) {
     return AppBar(
       centerTitle: true,
-      title: vm.getAppBarTitle(),
+      title: Text(vm.getAppBarTitle(), style: TextStyle(fontSize: 20.sp)),
+      toolbarHeight: 56.r,
       actions: [
         vm.getIconButton(
           () async {
@@ -105,12 +107,12 @@ class RankingView extends HookConsumerWidget {
               await dialogService.showAddGameTypeDialog(context, ref);
           if (isSuccess) {
             if (context.mounted) {
-              await dialogService.showMessageDialog(context, 'ゲームの種類を記録しました！');
+              await dialogService.showMessageDialog(context, 'ゲームの種類を記録しました。');
             }
             isVisibleFloatingActionButton.value = false;
           }
         },
-        child: const Icon(Icons.mode_edit),
+        child: Icon(Icons.mode_edit, size: 24.r),
       ),
     );
   }

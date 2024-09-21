@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SnackbarService {
   bool isSnackbarVisible = false;
@@ -10,9 +11,14 @@ class SnackbarService {
 
     ScaffoldMessenger.of(context)
         .showSnackBar(
-          const SnackBar(
-            content: Text('有効なプレイヤーが2名以上登録されていません\nプレイヤー設定画面でプレイヤーを登録してください',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+          SnackBar(
+            content: Text(
+                '有効なプレイヤーが2名以上登録されていません。\n'
+                'プレイヤー設定画面でプレイヤーを登録してください。',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                )),
           ),
         )
         .closed

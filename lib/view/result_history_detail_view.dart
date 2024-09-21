@@ -4,6 +4,7 @@ import 'package:family_game_score/service/dialog_service.dart';
 import 'package:family_game_score/view/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/viewmodel/result_history_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
@@ -25,7 +26,8 @@ class ResultHistoryDetailView extends ConsumerWidget {
   AppBar buildAppBar(BuildContext context, ResultHistoryDetailViewModel vm) {
     return AppBar(
       centerTitle: true,
-      title: const Text('成績の詳細'),
+      toolbarHeight: 56.r,
+      title: Text('成績の詳細', style: TextStyle(fontSize: 20.sp)),
     );
   }
 
@@ -72,11 +74,10 @@ class ResultHistoryDetailView extends ConsumerWidget {
                 : Text(
                     '${vm.resultHistorySections[index].session.gameType}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                        ),
                   ),
           ),
         ),
@@ -107,12 +108,14 @@ class ResultHistoryDetailView extends ConsumerWidget {
 
   Widget buildPlayerHasBeenDeletedCard(Player player) {
     return Card(
-      elevation: 2.0,
-      margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      elevation: 2.r,
+      margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-        title: Text('プレイヤー：${player.name}は削除されました'),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
+        title: Text(
+          'プレイヤー：${player.name}は削除されました。',
+          style: TextStyle(fontSize: 14.sp),
+        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:family_game_score/viewmodel/provider/result_provider.dart';
 import 'package:family_game_score/view/widget/common_async_widget.dart';
 import 'package:family_game_score/viewmodel/scoring_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ScoringView extends ConsumerWidget {
@@ -33,9 +34,10 @@ class ScoringView extends ConsumerWidget {
   AppBar buildAppBar(BuildContext context, WidgetRef ref, ScoringViewModel vm) {
     return AppBar(
       centerTitle: true,
-      title: vm.getAppBarTitle(),
+      title: Text(vm.getAppBarTitle(), style: TextStyle(fontSize: 20.sp)),
+      toolbarHeight: 56.r,
       leading: IconButton(
-        icon: const Icon(Icons.exit_to_app),
+        icon: Icon(Icons.exit_to_app, size: 24.r),
         onPressed: vm.getExitButtonCallback(
           () async {
             final isSuccess =
@@ -53,7 +55,7 @@ class ScoringView extends ConsumerWidget {
           onPressed: vm.getCheckButtonCallback(() async {
             await dialogService.showMoveToNextRoundDialog(context, ref);
           }),
-          icon: const Icon(Icons.check_circle_outline),
+          icon: Icon(Icons.check_circle_outline, size: 24.r),
         ),
       ],
     );
@@ -88,7 +90,7 @@ class ScoringView extends ConsumerWidget {
         ),
       ),
       backgroundColor: vm.getFloatingActionButtonColor(),
-      child: const Icon(Icons.description),
+      child: Icon(Icons.description, size: 24.r),
     );
   }
 
@@ -104,8 +106,13 @@ class ScoringView extends ConsumerWidget {
   }
 
   Widget buildHereAreTheCurrentRankingsText(BuildContext context) {
-    return const Text('現在の順位はこちら↓',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal));
+    return Text(
+      '現在の順位はこちら↓',
+      style: TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.normal,
+      ),
+    );
   }
 
   Widget buildScoringList(List<Player> players, WidgetRef ref) {

@@ -16,10 +16,8 @@ class ScoringViewModel {
   AsyncValue<Session?> get session => ref.watch(sessionProvider);
   AsyncValue<List<Result>> get results => ref.watch(resultProvider);
 
-  Widget getAppBarTitle() {
-    return Text(
-      '${session.value == null ? '1' : session.value!.round.toString()}回戦',
-    );
+  String getAppBarTitle() {
+    return '${session.value == null ? '1' : session.value!.round.toString()}回戦';
   }
 
   VoidCallback? getExitButtonCallback(VoidCallback onShowFinishGameDialog) {

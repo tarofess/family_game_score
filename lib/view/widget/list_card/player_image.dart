@@ -2,6 +2,7 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/model/entity/player.dart';
 import 'package:family_game_score/service/file_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlayerImage extends StatelessWidget {
   final Player player;
@@ -14,8 +15,8 @@ class PlayerImage extends StatelessWidget {
     return FutureBuilder<FileImage?>(
       future: fileService.getFileImageFromPath(player.image),
       builder: (context, snapshot) {
-        const double avatarRadius = 18.0;
-        const double iconSize = avatarRadius * 2;
+        double avatarRadius = 18.r;
+        double iconSize = avatarRadius * 2;
 
         if (snapshot.hasData) {
           return CircleAvatar(
@@ -23,7 +24,7 @@ class PlayerImage extends StatelessWidget {
             radius: avatarRadius,
           );
         } else {
-          return const Icon(
+          return Icon(
             Icons.person,
             color: Colors.blue,
             size: iconSize,

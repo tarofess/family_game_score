@@ -26,7 +26,7 @@ class DatabaseHelper {
         },
       );
     } catch (e) {
-      throw Exception('データベースの初期化に失敗しました');
+      throw Exception('データベースの初期化に失敗しました。');
     }
   }
 

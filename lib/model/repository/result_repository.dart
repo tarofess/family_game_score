@@ -21,7 +21,7 @@ class ResultRepository {
         x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
       }
     } catch (e) {
-      throw Exception('結果の追加中にエラーが発生しました');
+      throw Exception('結果の追加中にエラーが発生しました。');
     }
   }
 
@@ -37,7 +37,7 @@ class ResultRepository {
               [session.id]);
       return results.map((e) => Result.fromJson(e)).toList();
     } catch (e) {
-      throw Exception('結果の取得中にエラーが発生しました');
+      throw Exception('結果の取得中にエラーが発生しました。');
     }
   }
 
@@ -49,7 +49,7 @@ class ResultRepository {
       final totalScore = response.first['totalScore'] as int;
       return totalScore;
     } catch (e) {
-      throw Exception('合計スコアの取得中にエラーが発生しました');
+      throw Exception('合計スコアの取得中にエラーが発生しました。');
     }
   }
 
@@ -70,7 +70,7 @@ class ResultRepository {
         x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
       }
     } catch (e) {
-      throw Exception('結果の更新中にエラーが発生しました');
+      throw Exception('結果の更新中にエラーが発生しました。');
     }
   }
 
@@ -93,7 +93,7 @@ class ResultRepository {
         }
       }
     } catch (e) {
-      throw Exception('順位の更新中にエラーが発生しました');
+      throw Exception('順位の更新中にエラーが発生しました。');
     }
   }
 }

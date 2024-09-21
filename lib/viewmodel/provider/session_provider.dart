@@ -30,7 +30,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<void> addGameType(String gameType) async {
     if (state.value == null) {
-      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
     final session = state.value!;
     await sessionRepository.updateGameType(session, gameType);
@@ -44,7 +44,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<void> updateRound(Transaction txc) async {
     if (state.value == null) {
-      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
     final updatedSession =
         await sessionRepository.updateRound(state.value!, txc);
@@ -53,7 +53,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<void> updateEndTime() async {
     if (state.value == null) {
-      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました');
+      throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
     final updatedSession = await sessionRepository.updateEndTime(state.value!);
     state = AsyncData(updatedSession);
