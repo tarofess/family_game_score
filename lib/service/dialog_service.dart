@@ -179,7 +179,7 @@ class DialogService {
       BuildContext context, WidgetRef ref) async {
     final result = await showInputBaseDialog(
         context: context,
-        title: '遊んだゲームの種類を記録できます！',
+        title: '遊んだゲームの種類を記録できます。',
         hintText: '例：大富豪',
         action: (String inputText, BuildContext dialogContext) async {
           await ref.read(sessionProvider.notifier).addGameType(inputText);
