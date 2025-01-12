@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
@@ -7,9 +11,6 @@ import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/file_service.dart';
 import 'package:family_game_score/application/state/player_provider.dart';
 import 'package:family_game_score/application/state/result_history_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayerSettingDetailViewModel {
   Ref ref;

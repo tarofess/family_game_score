@@ -1,19 +1,19 @@
-import 'package:family_game_score/main.dart';
-import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/file_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PlayerImage extends StatelessWidget {
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
+
+class PlayerImage extends ConsumerWidget {
   final Player player;
-  final FileService fileService = getIt<FileService>();
 
-  PlayerImage({super.key, required this.player});
+  const PlayerImage({super.key, required this.player});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<FileImage?>(
-      future: fileService.getFileImageFromPath(player.image),
+      future: ref.read(fileImageGetUsecaseProvider).execute(player.image),
       builder: (context, snapshot) {
         double avatarRadius = 18.r;
         double iconSize = avatarRadius * 2;

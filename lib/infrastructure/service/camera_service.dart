@@ -1,8 +1,10 @@
+import 'package:family_game_score/application/interface/camera_service.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CameraService {
+class CameraService implements ICameraService {
   final ImagePicker picker = ImagePicker();
 
+  @override
   Future<String?> takePicture() async {
     try {
       final XFile? photo = await picker.pickImage(
@@ -17,6 +19,7 @@ class CameraService {
     }
   }
 
+  @override
   Future<String?> pickImageFromGallery() async {
     try {
       final XFile? image = await picker.pickImage(
