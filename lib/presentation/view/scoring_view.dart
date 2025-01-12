@@ -1,21 +1,20 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/others/service/navigation_service.dart';
-import 'package:family_game_score/presentation/view/ranking_view.dart';
 import 'package:family_game_score/presentation/widget/list_card/scoring_list_card.dart';
 import 'package:family_game_score/application/state/player_provider.dart';
 import 'package:family_game_score/application/state/result_provider.dart';
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/others/viewmodel/scoring_viewmodel.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ScoringView extends ConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
-  final NavigationService navigationService = getIt<NavigationService>();
   final CameraService cameraService = getIt<CameraService>();
 
   ScoringView({super.key});
@@ -44,7 +43,7 @@ class ScoringView extends ConsumerWidget {
                 await dialogService.showFinishGameDialog(context, ref);
             if (isSuccess) {
               if (context.mounted) {
-                navigationService.pushAndRemoveUntil(context, RankingView());
+                context.pushReplacement('/ranking_view');
               }
             }
           },
@@ -84,10 +83,7 @@ class ScoringView extends ConsumerWidget {
       BuildContext context, WidgetRef ref, ScoringViewModel vm) {
     return FloatingActionButton(
       onPressed: vm.getFloatingActionButtonCallback(
-        () => navigationService.push(
-          context,
-          RankingView(),
-        ),
+        () => context.push('/ranking_view'),
       ),
       backgroundColor: vm.getFloatingActionButtonColor(),
       child: Icon(Icons.description, size: 24.r),

@@ -1,20 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/others/service/navigation_service.dart';
 import 'package:family_game_score/others/service/snackbar_service.dart';
-import 'package:family_game_score/presentation/view/scoring_view.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 import 'package:family_game_score/others/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/application/state/player_provider.dart';
 import 'package:family_game_score/application/state/session_provider.dart';
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomeView extends ConsumerWidget {
-  final NavigationService navigationService = getIt<NavigationService>();
   final DialogService dialogService = getIt<DialogService>();
   final SnackbarService snackbarService = getIt<SnackbarService>();
 
@@ -60,8 +59,7 @@ class HomeView extends ConsumerWidget {
             await LoadingOverlay.of(context).during(
                 () => ref.read(playerProvider.notifier).getActivePlayer());
             if (context.mounted) {
-              navigationService.pushReplacementWithAnimationFromBottom(
-                  context, ScoringView());
+              context.go('/scoring_view');
             }
           } catch (e) {
             if (context.mounted) {

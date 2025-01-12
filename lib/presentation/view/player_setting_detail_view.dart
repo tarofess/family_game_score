@@ -1,17 +1,17 @@
-import 'package:family_game_score/main.dart';
-import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/others/service/navigation_service.dart';
-import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/others/viewmodel/player_setting_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import 'package:family_game_score/main.dart';
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/infrastructure/service/dialog_service.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
+import 'package:family_game_score/others/viewmodel/player_setting_detail_viewmodel.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
   final Player? player;
-  final NavigationService navigationService = getIt<NavigationService>();
   final DialogService dialogService = getIt<DialogService>();
 
   final formKey = GlobalKey<FormState>();
@@ -93,7 +93,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                           ref),
                     );
                     if (isSuccess && context.mounted) {
-                      navigationService.pop(context);
+                      context.pop();
                     }
                   } catch (e) {
                     if (context.mounted) {
@@ -205,7 +205,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
           if (context.mounted) {
             await dialogService.showMessageDialog(context, 'プレイヤーの削除が完了しました。');
           }
-          if (context.mounted) navigationService.pop(context);
+          if (context.mounted) context.pop();
         }
       },
       child: Text(
@@ -238,11 +238,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     (message) =>
                         dialogService.showPermissionPermanentlyDeniedDialog(
                             context, message),
-                    () => navigationService.pop(context),
+                    () => context.pop(),
                   );
                 } catch (e) {
                   if (context.mounted) {
-                    navigationService.pop(context);
+                    context.pop();
                     dialogService.showErrorDialog(context, e);
                   }
                 }
@@ -260,11 +260,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                     (message, action) =>
                         dialogService.showPermissionPermanentlyDeniedDialog(
                             context, message),
-                    () => navigationService.pop(context),
+                    () => context.pop(),
                   );
                 } catch (e) {
                   if (context.mounted) {
-                    navigationService.pop(context);
+                    context.pop();
                     dialogService.showErrorDialog(context, e);
                   }
                 }
@@ -275,7 +275,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 title: Text('削除する', style: TextStyle(fontSize: 14.sp)),
                 onTap: () {
                   vm.deleteImageFromImageCircle(playerImage);
-                  navigationService.pop(context);
+                  context.pop();
                 }),
           ],
         );

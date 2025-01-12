@@ -1,19 +1,20 @@
-import 'package:family_game_score/main.dart';
-import 'package:family_game_score/others/service/navigation_service.dart';
-import 'package:family_game_score/presentation/view/result_history_detail_view.dart';
-import 'package:family_game_score/others/viewmodel/result_history_calendar_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'package:family_game_score/others/viewmodel/result_history_calendar_viewmodel.dart';
+
 class ResultHistoryCalendar extends ConsumerWidget {
-  final NavigationService navigationService = getIt<NavigationService>();
   final ValueNotifier<DateTime> selectedDay;
   final ValueNotifier<DateTime> focusedDay;
 
-  ResultHistoryCalendar(
-      {super.key, required this.selectedDay, required this.focusedDay});
+  const ResultHistoryCalendar({
+    super.key,
+    required this.selectedDay,
+    required this.focusedDay,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,10 +34,9 @@ class ResultHistoryCalendar extends ConsumerWidget {
         focusedDay.value = focused;
 
         if (vm.hasDataInTappedDay(tappedDay)) {
-          navigationService.push(
-            context,
-            ResultHistoryDetailView(selectedDay: selectedDay.value),
-          );
+          context.push('/result_history_detail_view', extra: {
+            'selectedDay': selectedDay.value,
+          });
         }
       },
       selectedDayPredicate: (day) {

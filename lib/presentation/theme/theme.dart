@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-ThemeData createTheme() {
+ThemeData createDefaultTheme() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
     fontFamily: 'MPLUSRounded1c-Regular',
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(fontFamily: 'MPLUSRounded1c-Medium'),
+    textTheme: TextTheme(
+      bodyLarge: const TextStyle(fontFamily: 'MPLUSRounded1c-Medium'),
+      bodyMedium: TextStyle(
+        fontFamily: 'MPLUSRounded1c-Medium',
+        fontSize: 16.sp,
+      ),
     ),
   );
 }

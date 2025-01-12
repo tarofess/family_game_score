@@ -1,20 +1,20 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:in_app_review/in_app_review.dart';
+
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/others/service/navigation_service.dart';
 import 'package:family_game_score/application/state/player_provider.dart';
 import 'package:family_game_score/application/state/result_provider.dart';
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/others/viewmodel/ranking_viewmodel.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:in_app_review/in_app_review.dart';
 
 class RankingView extends HookConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
-  final NavigationService navigationService = getIt<NavigationService>();
 
   RankingView({super.key});
 
@@ -56,7 +56,7 @@ class RankingView extends HookConsumerWidget {
                 await dialogService.showReturnToHomeDialog(context, ref);
             if (isSuccess) {
               if (context.mounted) {
-                navigationService.pushReplacement(context, const MyApp());
+                context.pushReplacement('/');
               }
             }
           },
