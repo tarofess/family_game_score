@@ -5,13 +5,14 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/main.dart';
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/others/viewmodel/home_viewmodel.dart';
 import 'package:family_game_score/application/state/player_provider.dart';
 import 'package:family_game_score/application/state/session_provider.dart';
-import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
+import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
 class HomeView extends HookConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
@@ -20,79 +21,82 @@ class HomeView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final sessionState = ref.watch(sessionProvider);
+    final playerState = ref.watch(playerProvider);
     final isSnackbarVisible = useState(false);
-    final vm = ref.watch(homeViewModelProvider);
 
     return Scaffold(
-      body: buildBody(context, ref, vm, isSnackbarVisible),
-    );
-  }
-
-  Widget buildBody(
-    BuildContext context,
-    WidgetRef ref,
-    HomeViewModel vm,
-    ValueNotifier<bool> isSnackbarVisible,
-  ) {
-    return vm.session.when(
-      data: (_) => buildPlayers(context, ref, vm, isSnackbarVisible),
-      loading: () => CommonAsyncWidgets.showLoading(),
-      error: (error, stackTrace) =>
-          CommonAsyncWidgets.showDataFetchErrorMessage(
-              context, ref, sessionProvider, error),
-    );
-  }
-
-  Widget buildPlayers(
-    BuildContext context,
-    WidgetRef ref,
-    HomeViewModel vm,
-    ValueNotifier<bool> isSnackbarVisible,
-  ) {
-    return vm.players.when(
-      data: (_) {
-        return Center(
-          child: buildCenterCircleButton(
-            context,
-            ref,
-            vm,
-            isSnackbarVisible,
-          ),
-        );
-      },
-      loading: () => CommonAsyncWidgets.showLoading(),
-      error: (error, stackTrace) =>
-          CommonAsyncWidgets.showDataFetchErrorMessage(
-              context, ref, playerProvider, error),
+      body: sessionState.when(
+        data: (session) {
+          return playerState.when(
+            data: (players) {
+              return Center(
+                child: buildCenterCircleButton(
+                  context,
+                  ref,
+                  session,
+                  players,
+                  isSnackbarVisible,
+                ),
+              );
+            },
+            loading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+            error: (error, stackTrace) {
+              return AsyncErrorWidget(
+                  error: error, retry: () => sessionProvider);
+            },
+          );
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (error, stackTrace) {
+          return AsyncErrorWidget(error: error, retry: () => sessionProvider);
+        },
+      ),
     );
   }
 
   Widget buildCenterCircleButton(
     BuildContext context,
     WidgetRef ref,
-    HomeViewModel vm,
+    Session? session,
+    List<Player> players,
     ValueNotifier<bool> isSnackbarVisible,
   ) {
     return GradientCircleButton(
-      onPressed: vm.handleButtonPress(
-        onStartGame: () async {
-          try {
-            await LoadingOverlay.of(context).during(
-                () => ref.read(playerProvider.notifier).getActivePlayer());
-            if (context.mounted) {
-              context.go('/scoring_view');
+      onPressed: players.where((player) => player.status == 1).length >= 2
+          ? () async {
+              try {
+                await LoadingOverlay.of(context).during(
+                    () => ref.read(playerProvider.notifier).getActivePlayer());
+                if (context.mounted) {
+                  context.go('/scoring_view');
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  dialogService.showErrorDialog(context, e.toString());
+                }
+              }
             }
-          } catch (e) {
-            if (context.mounted) {
-              dialogService.showErrorDialog(context, e.toString());
-            }
-          }
-        },
-        onShowSnackbar: () => showHomeViewSnackBar(context, isSnackbarVisible),
-      ),
-      text: vm.getButtonText(),
+          : () => showHomeViewSnackBar(context, isSnackbarVisible),
+      text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
       size: 200.r,
-      gradientColors: vm.getGradientColors(),
+      gradientColors: players.where((player) => player.status == 1).length >= 2
+          ? const [
+              Color.fromARGB(255, 255, 194, 102),
+              Color.fromARGB(255, 255, 101, 90)
+            ]
+          : const [
+              Color.fromARGB(255, 223, 223, 223),
+              Color.fromARGB(255, 109, 109, 109)
+            ],
       textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
             color: Colors.white,
             fontSize: 20.sp,
