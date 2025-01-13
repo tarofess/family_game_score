@@ -3,19 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/domain/entity/result.dart';
+import 'package:family_game_score/domain/entity/result.dart' as entity_result;
 import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/presentation/widget/sakura_animation.dart';
-import 'package:family_game_score/application/state/player_notifier.dart';
-import 'package:family_game_score/application/state/result_history_notifier.dart';
-import 'package:family_game_score/application/state/result_notifier.dart';
-import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/presentation/dialog/input_dialog.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
+import 'package:family_game_score/presentation/provider/reset_game_usecase_provider.dart';
+import 'package:family_game_score/domain/result.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
+import 'package:family_game_score/presentation/provider/add_game_type_usecase_provider.dart';
 
 class RankingView extends ConsumerWidget {
   const RankingView({super.key});
@@ -46,13 +46,15 @@ class RankingView extends ConsumerWidget {
     WidgetRef ref,
     Session? session,
     List<Player> players,
-    List<Result> results,
+    List<entity_result.Result> results,
   ) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(isFinishedGame(session) ? '結果発表' : '現在の順位',
-            style: TextStyle(fontSize: 20.sp)),
+        title: Text(
+          isFinishedGame(session) ? '結果発表' : '現在の順位',
+          style: TextStyle(fontSize: 20.sp),
+        ),
         toolbarHeight: 56.r,
         actions: [
           isFinishedGame(session)
@@ -63,15 +65,9 @@ class RankingView extends ConsumerWidget {
                       context,
                       'お疲れ様でした！\nホーム画面に戻ります。',
                     );
-                    if (context.mounted) {
-                      ref.invalidate(resultNotifierProvider);
-                      ref.invalidate(resultHistoryNotifierProvider);
-                      ref.invalidate(playerNotifierProvider);
-                      ref
-                          .read(sessionNotifierProvider.notifier)
-                          .disposeSession();
-                      context.pushReplacement('/');
-                    }
+
+                    ref.read(resetGameUsecaseProvider).execute();
+                    if (context.mounted) context.pushReplacement('/');
                   },
                 )
               : const SizedBox(),
@@ -87,20 +83,23 @@ class RankingView extends ConsumerWidget {
         visible: isFinishedGame(session),
         child: FloatingActionButton(
           onPressed: () async {
-            final result = await showInputDialog(
+            final gameType = await showInputDialog(
               context: context,
               title: '遊んだゲームの種類を記録できます。',
               hintText: '例：大富豪',
             );
+            if (gameType == null) return;
 
-            if (result == null) return;
-
-            await ref
-                .read(sessionNotifierProvider.notifier)
-                .addGameType(result);
-
-            if (context.mounted) {
-              await showMessageDialog(context, 'ゲームの種類を記録しました。');
+            final result =
+                await ref.read(addGameTypeUsecaseProvider).execute(gameType);
+            switch (result) {
+              case Success():
+                if (context.mounted) {
+                  await showMessageDialog(context, 'ゲームの種類を記録しました。');
+                }
+                break;
+              case Failure(message: final message):
+                if (context.mounted) showErrorDialog(context, message);
             }
           },
           child: Icon(Icons.mode_edit, size: 24.r),
@@ -109,8 +108,12 @@ class RankingView extends ConsumerWidget {
     );
   }
 
-  Widget _buildRankingList(List<Player> players, List<Result> results,
-      BuildContext context, WidgetRef ref) {
+  Widget _buildRankingList(
+    List<Player> players,
+    List<entity_result.Result> results,
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
