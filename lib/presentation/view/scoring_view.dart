@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/domain/entity/result.dart';
+import 'package:family_game_score/domain/entity/result.dart' as entity_result;
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/widget/list_card/scoring_list_card.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
@@ -14,6 +14,9 @@ import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
+import 'package:family_game_score/domain/result.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
+import 'package:family_game_score/presentation/provider/finish_game_usecase_provider.dart';
 
 class ScoringView extends ConsumerWidget {
   const ScoringView({super.key});
@@ -44,7 +47,7 @@ class ScoringView extends ConsumerWidget {
     WidgetRef ref,
     Session? session,
     List<Player> players,
-    List<Result> results,
+    List<entity_result.Result> results,
   ) {
     return Scaffold(
       appBar: AppBar(
@@ -58,19 +61,23 @@ class ScoringView extends ConsumerWidget {
           icon: Icon(Icons.exit_to_app, size: 24.r),
           onPressed: session != null
               ? () async {
-                  final result = await showConfimationDialog(
+                  final isConfirmed = await showConfimationDialog(
                     context: context,
                     title: '確認',
                     content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
                   );
-                  if (result) {
-                    await ref
-                        .read(sessionNotifierProvider.notifier)
-                        .updateEndTime();
+                  if (!isConfirmed) return;
 
-                    if (context.mounted) {
-                      context.pushReplacement('/ranking_view');
-                    }
+                  final result =
+                      await ref.read(finishGameUsecaseProvider).execute();
+                  switch (result) {
+                    case Success():
+                      if (context.mounted) {
+                        context.pushReplacement('/ranking_view');
+                      }
+                      break;
+                    case Failure(message: final message):
+                      if (context.mounted) showErrorDialog(context, message);
                   }
                 }
               : null,

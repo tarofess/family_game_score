@@ -27,12 +27,7 @@ class HomeView extends ConsumerWidget {
           final players = combinedData.$2;
 
           return Center(
-            child: _buildCenterCircleButton(
-              context,
-              ref,
-              session,
-              players,
-            ),
+            child: _buildCenterCircleButton(context, ref, session, players),
           );
         },
         loading: () {
@@ -54,8 +49,9 @@ class HomeView extends ConsumerWidget {
     return GradientCircleButton(
       onPressed: areTwoOrMorePlayersActive(players)
           ? () async {
-              final result = await ref.read(startGameUsecaseProvider).execute();
-              switch (result) {
+              final isConfirmed =
+                  await ref.read(startGameUsecaseProvider).execute();
+              switch (isConfirmed) {
                 case Success():
                   if (context.mounted) context.go('/scoring_view');
                   break;
