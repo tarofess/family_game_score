@@ -10,6 +10,9 @@ import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/dialog/input_dialog.dart';
+import 'package:family_game_score/domain/result.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
+import 'package:family_game_score/presentation/provider/update_game_type_usecase_provider.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
   final DateTime selectedDay;
@@ -62,18 +65,22 @@ class ResultHistoryDetailView extends ConsumerWidget {
   ) {
     return GestureDetector(
       onTap: () async {
-        final result = await showInputDialog(
+        final gameType = await showInputDialog(
           context: context,
           title: '遊んだゲームの種類を編集できます。',
           hintText: '例：大富豪',
         );
 
-        await ref
-            .read(resultHistoryNotifierProvider.notifier)
-            .updateSessionGameType(
+        final result = await ref.read(updateGameTypeUsecaseProvider).execute(
               getResultHistorySections(resultHistories)[index].session,
-              result ?? '',
+              gameType ?? '',
             );
+        switch (result) {
+          case Success():
+            break;
+          case Failure(message: final message):
+            if (context.mounted) showErrorDialog(context, message);
+        }
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
