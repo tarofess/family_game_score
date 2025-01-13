@@ -1,32 +1,40 @@
-import 'package:family_game_score/presentation/widget/common_async_widget.dart';
-import 'package:family_game_score/presentation/widget/result_history_calendar.dart';
-import 'package:family_game_score/application/state/result_history_notifier.dart';
-import 'package:family_game_score/others/viewmodel/result_history_calendar_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+import 'package:family_game_score/presentation/widget/async_error_widget.dart';
+import 'package:family_game_score/presentation/widget/result_history_calendar.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
 
 class ResultHistoryCalendarView extends HookConsumerWidget {
   const ResultHistoryCalendarView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(resultHistoryCalendarViewModelProvider);
+    final resultHistoryState = ref.watch(resultHistoryNotifierProvider);
     var selectedDay = useState(DateTime.now());
     var focusedDay = useState(DateTime.now());
 
     return Scaffold(
-      body: vm.resultHistories.when(
-        data: (_) => SingleChildScrollView(
+      body: resultHistoryState.when(
+        data: (resultHistories) => SingleChildScrollView(
           child: ResultHistoryCalendar(
+            resultHistories: resultHistories,
             selectedDay: selectedDay,
             focusedDay: focusedDay,
           ),
         ),
-        loading: () => CommonAsyncWidgets.showLoading(),
-        error: (error, stackTrace) =>
-            CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, resultHistoryNotifierProvider, error),
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (error, stackTrace) {
+          return AsyncErrorWidget(
+            error: error,
+            retry: () => resultHistoryState,
+          );
+        },
       ),
     );
   }

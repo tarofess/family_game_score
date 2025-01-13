@@ -1,25 +1,29 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import 'package:family_game_score/others/viewmodel/result_history_calendar_viewmodel.dart';
+import 'package:family_game_score/domain/entity/result_history.dart';
 
 class ResultHistoryCalendar extends ConsumerWidget {
+  final List<ResultHistory> resultHistories;
   final ValueNotifier<DateTime> selectedDay;
   final ValueNotifier<DateTime> focusedDay;
+  late final LinkedHashMap<DateTime, List> events;
 
-  const ResultHistoryCalendar({
+  ResultHistoryCalendar({
     super.key,
+    required this.resultHistories,
     required this.selectedDay,
     required this.focusedDay,
-  });
+  }) {
+    initializeEvents();
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(resultHistoryCalendarViewModelProvider);
-
     return TableCalendar(
       availableGestures: AvailableGestures.none,
       firstDay: DateTime.utc(2024, 1, 1),
@@ -28,12 +32,12 @@ class ResultHistoryCalendar extends ConsumerWidget {
       headerStyle: const HeaderStyle(formatButtonVisible: false),
       locale: 'ja_JP',
       rowHeight: 52.r,
-      eventLoader: (day) => vm.events[day] ?? [],
+      eventLoader: (day) => events[day] ?? [],
       onDaySelected: (tappedDay, focused) {
         selectedDay.value = tappedDay;
         focusedDay.value = focused;
 
-        if (vm.hasDataInTappedDay(tappedDay)) {
+        if (hasDataInTappedDay(tappedDay)) {
           context.push('/result_history_detail_view', extra: {
             'selectedDay': selectedDay.value,
           });
@@ -63,5 +67,31 @@ class ResultHistoryCalendar extends ConsumerWidget {
       ),
       daysOfWeekHeight: 24.r,
     );
+  }
+
+  Map<DateTime, List<int>> get eventSessions {
+    Map<DateTime, Set<int>> tempResult = {};
+    for (var resultHistory in resultHistories) {
+      var date = DateTime.parse(resultHistory.session.endTime ?? '');
+      date = DateTime(date.year, date.month, date.day);
+
+      tempResult.putIfAbsent(date, () => <int>{}).add(resultHistory.session.id);
+    }
+    return tempResult.map((key, value) => MapEntry(key, value.toList()));
+  }
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+
+  void initializeEvents() {
+    events = LinkedHashMap<DateTime, List>(
+      equals: isSameDay,
+      hashCode: getHashCode,
+    )..addAll(eventSessions);
+  }
+
+  bool hasDataInTappedDay(DateTime tappedDay) {
+    return events[tappedDay] != null;
   }
 }
