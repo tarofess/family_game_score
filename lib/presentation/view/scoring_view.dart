@@ -33,9 +33,7 @@ class ScoringView extends ConsumerWidget {
         return _buildScaffold(context, ref, session, players, results);
       },
       loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
       error: (error, stackTrace) {
         return AsyncErrorWidget(error: error, retry: () => combinedState);

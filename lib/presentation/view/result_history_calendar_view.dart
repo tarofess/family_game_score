@@ -25,9 +25,7 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
           ),
         ),
         loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         },
         error: (error, stackTrace) {
           return AsyncErrorWidget(
