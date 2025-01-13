@@ -49,9 +49,8 @@ class HomeView extends ConsumerWidget {
     return GradientCircleButton(
       onPressed: areTwoOrMorePlayersActive(players)
           ? () async {
-              final isConfirmed =
-                  await ref.read(startGameUsecaseProvider).execute();
-              switch (isConfirmed) {
+              final result = await ref.read(startGameUsecaseProvider).execute();
+              switch (result) {
                 case Success():
                   if (context.mounted) context.go('/scoring_view');
                   break;

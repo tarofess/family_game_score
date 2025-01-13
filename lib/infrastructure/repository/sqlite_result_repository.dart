@@ -1,15 +1,22 @@
+import 'package:sqflite/sqflite.dart';
+
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:family_game_score/application/interface/result_repository.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
-class ResultRepository {
-  Database database;
+class SQLiteResultRepository implements ResultRepository {
+  final Database _database;
 
-  ResultRepository(this.database);
+  SQLiteResultRepository() : _database = DatabaseHelper.instance.database;
 
+  @override
   Future<void> addResult(
-      List<Player> players, Session session, Transaction txc) async {
+    List<Player> players,
+    Session session,
+    Transaction txc,
+  ) async {
     try {
       int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
@@ -25,11 +32,12 @@ class ResultRepository {
     }
   }
 
+  @override
   Future<List<Result>> getResult(Session session, Transaction? txc) async {
     try {
       List<Map<String, dynamic>> results;
       txc == null
-          ? results = await database.rawQuery(
+          ? results = await _database.rawQuery(
               'SELECT * FROM Result WHERE sessionId = ? ORDER BY score DESC',
               [session.id])
           : results = await txc.rawQuery(
@@ -41,9 +49,10 @@ class ResultRepository {
     }
   }
 
+  @override
   Future<int> getTotalScore(Player player) async {
     try {
-      final response = await database.rawQuery(
+      final response = await _database.rawQuery(
           'SELECT SUM(score) AS totalScore FROM Result WHERE playerId = ?',
           [player.id]);
       final totalScore = response.first['totalScore'] as int;
@@ -53,8 +62,12 @@ class ResultRepository {
     }
   }
 
+  @override
   Future<void> updateResult(
-      List<Player> players, Session session, Transaction txc) async {
+    List<Player> players,
+    Session session,
+    Transaction txc,
+  ) async {
     try {
       int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
 
@@ -74,6 +87,7 @@ class ResultRepository {
     }
   }
 
+  @override
   Future<void> updateRank(Session session, Transaction txc) async {
     try {
       int rank = 1;

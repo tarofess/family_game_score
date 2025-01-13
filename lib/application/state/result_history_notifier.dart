@@ -1,28 +1,25 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
-import 'package:family_game_score/infrastructure/repository/result_history_repository.dart';
-import 'package:family_game_score/infrastructure/repository/session_repository.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:family_game_score/infrastructure/repository/sqlite_result_history_repository.dart';
+import 'package:family_game_score/infrastructure/repository/sqlite_session_repository.dart';
 
 class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
-  late ResultHistoryRepository resultHistoryRepository;
-  Database database;
+  final SQLiteResultHistoryRepository _resultHistoryRepository;
+  final SQLiteSessionRepository _sessionRepository;
 
-  ResultHistoryNotifier(this.database);
+  ResultHistoryNotifier(this._resultHistoryRepository, this._sessionRepository);
 
   @override
   Future<List<ResultHistory>> build() async {
-    resultHistoryRepository = ResultHistoryRepository(database);
-    final resultHistory = await resultHistoryRepository.getResultHistory();
+    final resultHistory = await _resultHistoryRepository.getResultHistory();
     state = AsyncData(resultHistory);
     return resultHistory;
   }
 
   Future<void> updateSessionGameType(Session session, String gameType) async {
-    final sessionRepository = SessionRepository(database);
-    await sessionRepository.updateGameType(session, gameType);
+    await _sessionRepository.updateGameType(session, gameType);
 
     final updatedSession = state.value!.map((e) {
       if (e.session.id == session.id) {
@@ -37,4 +34,8 @@ class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
 
 final resultHistoryNotifierProvider =
     AsyncNotifierProvider<ResultHistoryNotifier, List<ResultHistory>>(
-        () => ResultHistoryNotifier(DatabaseHelper.instance.database));
+  () => ResultHistoryNotifier(
+    SQLiteResultHistoryRepository(),
+    SQLiteSessionRepository(),
+  ),
+);

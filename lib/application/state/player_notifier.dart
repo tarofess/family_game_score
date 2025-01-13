@@ -1,40 +1,37 @@
-import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
-import 'package:family_game_score/infrastructure/repository/player_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:sqflite/sqflite.dart';
+
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/infrastructure/repository/sqlite_player_repository.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
-  late PlayerRepository playerRepository;
-  Database database;
+  final SQLitePlayerRepository _playerRepository;
 
-  PlayerNotifier(this.database);
+  PlayerNotifier(this._playerRepository);
 
   @override
   Future<List<Player>> build() async {
-    playerRepository = PlayerRepository(database);
-    final players = await playerRepository.getPlayer();
+    final players = await _playerRepository.getPlayer();
     state = AsyncData(players);
     return players;
   }
 
   Future<void> addPlayer(String inputText, String image) async {
-    final newPlayer = await playerRepository.addPlayer(inputText, image);
+    final newPlayer = await _playerRepository.addPlayer(inputText, image);
     state = AsyncData([...state.value ?? [], newPlayer]);
   }
 
   Future<void> getPlayer() async {
-    final players = await playerRepository.getPlayer();
+    final players = await _playerRepository.getPlayer();
     state = AsyncData(players);
   }
 
   Future<void> getActivePlayer() async {
-    final players = await playerRepository.getActivePlayer();
+    final players = await _playerRepository.getActivePlayer();
     state = AsyncData(players);
   }
 
   Future<void> updatePlayer(Player player) async {
-    await playerRepository.updatePlayer(player);
+    await _playerRepository.updatePlayer(player);
 
     if (state.value != null) {
       state = AsyncData(
@@ -45,7 +42,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<void> deletePlayer(Player player) async {
-    await playerRepository.deletePlayer(player);
+    await _playerRepository.deletePlayer(player);
 
     if (state.value != null) {
       state = AsyncData(state.value!.where((p) => p.id != player.id).toList());
@@ -55,7 +52,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<void> activatePlayer(Player player) async {
-    await playerRepository.activatePlayer(player);
+    await _playerRepository.activatePlayer(player);
 
     if (state.value != null) {
       state = AsyncData(
@@ -66,7 +63,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<void> deactivatePlayer(Player player) async {
-    await playerRepository.deactivatePlayer(player);
+    await _playerRepository.deactivatePlayer(player);
 
     if (state.value != null) {
       state = AsyncData(
@@ -77,7 +74,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 
   Future<int> getPlayersMaxID() async {
-    return await playerRepository.getPlayersMaxID();
+    return await _playerRepository.getPlayersMaxID();
   }
 
   void reorderPlayer(int oldIndex, int newIndex) {
@@ -91,5 +88,5 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
 final playerNotifierProvider =
     AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
-  return PlayerNotifier(DatabaseHelper.instance.database);
+  return PlayerNotifier(SQLitePlayerRepository());
 });

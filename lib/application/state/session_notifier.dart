@@ -1,27 +1,25 @@
-import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
-import 'package:family_game_score/infrastructure/repository/session_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SessionNotifier extends AsyncNotifier<Session?> {
-  late SessionRepository sessionRepository;
-  Database database;
+import 'package:family_game_score/domain/entity/session.dart';
+import 'package:family_game_score/infrastructure/repository/sqlite_session_repository.dart';
 
-  SessionNotifier(this.database);
+class SessionNotifier extends AsyncNotifier<Session?> {
+  final SQLiteSessionRepository _sessionRepository;
+
+  SessionNotifier(this._sessionRepository);
 
   @override
   Future<Session?> build() async {
-    sessionRepository = SessionRepository(database);
-    final session = await sessionRepository.getSession();
+    final session = await _sessionRepository.getSession();
     state = AsyncData(session);
     return session;
   }
 
   Future<void> addSession(Transaction txc) async {
     if (state.value == null) {
-      final maxID = await sessionRepository.getMaxID(txc);
-      final newSession = await sessionRepository.addSession(maxID, txc);
+      final maxID = await _sessionRepository.getMaxID(txc);
+      final newSession = await _sessionRepository.addSession(maxID, txc);
       state = AsyncData(newSession);
     } else {
       state = AsyncData(state.value);
@@ -33,12 +31,12 @@ class SessionNotifier extends AsyncNotifier<Session?> {
       throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
     final session = state.value!;
-    await sessionRepository.updateGameType(session, gameType);
+    await _sessionRepository.updateGameType(session, gameType);
     state = AsyncData(session);
   }
 
   Future<void> getSession() async {
-    final session = await sessionRepository.getSession();
+    final session = await _sessionRepository.getSession();
     state = AsyncData(session);
   }
 
@@ -47,7 +45,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
       throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
     final updatedSession =
-        await sessionRepository.updateRound(state.value!, txc);
+        await _sessionRepository.updateRound(state.value!, txc);
     state = AsyncData(updatedSession);
   }
 
@@ -55,7 +53,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     if (state.value == null) {
       throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
-    final updatedSession = await sessionRepository.updateEndTime(state.value!);
+    final updatedSession = await _sessionRepository.updateEndTime(state.value!);
     state = AsyncData(updatedSession);
   }
 
@@ -66,5 +64,5 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
 final sessionNotifierProvider =
     AsyncNotifierProvider<SessionNotifier, Session?>(() {
-  return SessionNotifier(DatabaseHelper.instance.database);
+  return SessionNotifier(SQLiteSessionRepository());
 });

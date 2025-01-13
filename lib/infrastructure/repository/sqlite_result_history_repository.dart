@@ -1,14 +1,19 @@
-import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:sqflite/sqflite.dart';
 
-class ResultHistoryRepository {
-  Database database;
+import 'package:family_game_score/application/interface/result_history_repository.dart';
+import 'package:family_game_score/domain/entity/result_history.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
-  ResultHistoryRepository(this.database);
+class SQLiteResultHistoryRepository implements ResultHistoryRepository {
+  final Database _database;
 
+  SQLiteResultHistoryRepository()
+      : _database = DatabaseHelper.instance.database;
+
+  @override
   Future<List<ResultHistory>> getResultHistory() async {
     try {
-      final response = await database.rawQuery('''
+      final response = await _database.rawQuery('''
           SELECT 
             Result.id as resultId,
             Result.playerId,
