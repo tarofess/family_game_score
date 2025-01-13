@@ -1,4 +1,3 @@
-import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +15,7 @@ import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/finish_game_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/move_to_next_round_usecase_provider.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 
 class ScoringView extends ConsumerWidget {
   const ScoringView({super.key});
