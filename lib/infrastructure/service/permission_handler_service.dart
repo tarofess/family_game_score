@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
+import 'package:family_game_score/presentation/dialog/message_dialog.dart';
+
 class PermissionHandlerService {
   static Future<bool> requestCameraPermission(BuildContext context) async {
     final status = await Permission.camera.request();
@@ -10,25 +13,22 @@ class PermissionHandlerService {
         return true;
       case PermissionStatus.denied:
         if (context.mounted) {
-          // await showMessageDialog(
-          //   context: context,
-          //   title: '権限エラー',
-          //   content: 'カメラ撮影が許可されていないので写真を撮影できません。',
-          // );
+          await showMessageDialog(
+            context,
+            'カメラ撮影が許可されていないので写真を撮影できません。',
+          );
         }
         return false;
       case PermissionStatus.permanentlyDenied:
         if (context.mounted) {
-          // final result = await showConfirmationDialog(
-          //   context: context,
-          //   title: '権限エラー',
-          //   content: 'カメラ撮影が拒否されているため写真を撮影できません。\n設定画面でカメラ撮影を許可しますか？',
-          //   positiveButtonText: 'はい',
-          //   negativeButtonText: 'いいえ',
-          // );
-          // if (result) {
-          //   openAppSettings();
-          // }
+          final result = await showConfimationDialog(
+            context: context,
+            title: '権限エラー',
+            content: 'カメラ撮影が拒否されているため写真を撮影できません。\n設定画面でカメラ撮影を許可しますか？',
+          );
+          if (result) {
+            openAppSettings();
+          }
         }
         return false;
       default:
@@ -46,34 +46,30 @@ class PermissionHandlerService {
         return true;
       case PermissionStatus.denied:
         if (context.mounted) {
-          // await showMessageDialog(
-          //   context: context,
-          //   title: '権限エラー',
-          //   content: 'カメラ撮影が許可されていないので写真を撮影できません。',
-          // );
+          await showMessageDialog(
+            context,
+            'カメラ撮影が許可されていないので写真を撮影できません。',
+          );
         }
         return false;
       case PermissionStatus.permanentlyDenied:
         if (context.mounted) {
-          // final result = await showConfirmationDialog(
-          //   context: context,
-          //   title: '権限エラー',
-          //   content: 'カメラ撮影が拒否されているため写真を撮影できません。\n設定画面でカメラ撮影を許可しますか？',
-          //   positiveButtonText: 'はい',
-          //   negativeButtonText: 'いいえ',
-          // );
-          // if (result) {
-          //   openAppSettings();
-          // }
+          final result = await showConfimationDialog(
+            context: context,
+            title: '権限エラー',
+            content: 'カメラ撮影が拒否されているため写真を撮影できません。\n設定画面でカメラ撮影を許可しますか？',
+          );
+          if (result) {
+            openAppSettings();
+          }
         }
         return false;
       case PermissionStatus.restricted:
         if (context.mounted) {
-          // await showMessageDialog(
-          //   context: context,
-          //   title: '権限エラー',
-          //   content: 'カメラ撮影が制限されているので写真を撮影できません。',
-          // );
+          await showMessageDialog(
+            context,
+            'カメラ撮影が制限されているので写真を撮影できません。',
+          );
         }
         return false;
       default:

@@ -6,6 +6,7 @@ import 'package:family_game_score/application/interface/file_service.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/domain/result.dart';
 
 class SavePlayerUsecase {
   final PlayerNotifier _playerNotifier;
@@ -13,21 +14,21 @@ class SavePlayerUsecase {
 
   SavePlayerUsecase(this._playerNotifier, this._fileService);
 
-  Future<bool> execute(
+  Future<Result> execute(
     WidgetRef ref,
     Player? player,
     String playerName,
     FileImage? playerImage,
   ) async {
     try {
-      final result = await savePlayer(ref, player, playerName, playerImage);
-      return result;
+      await savePlayer(ref, player, playerName, playerImage);
+      return const Success(null);
     } catch (e) {
-      return false;
+      return Failure(e.toString(), e as Exception?);
     }
   }
 
-  Future<bool> savePlayer(
+  Future<void> savePlayer(
     WidgetRef ref,
     Player? player,
     String playerName,
@@ -40,7 +41,6 @@ class SavePlayerUsecase {
       rethrow;
     }
     ref.invalidate(resultHistoryNotifierProvider);
-    return true;
   }
 
   Future<String> saveName(

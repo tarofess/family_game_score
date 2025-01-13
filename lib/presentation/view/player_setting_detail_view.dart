@@ -6,17 +6,17 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/presentation/provider/pick_image_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/save_player_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/take_picture_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
-import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
+import 'package:family_game_score/domain/result.dart';
+import 'package:family_game_score/presentation/provider/delete_player_usecase_provider.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
   final formKey = GlobalKey<FormState>();
@@ -100,21 +100,19 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 child: Text('保存', style: TextStyle(fontSize: 14.sp)),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    try {
-                      final isSuccess = await LoadingOverlay.of(context).during(
-                          () => ref.read(savePlayerUsecaseProvider).execute(
-                                ref,
-                                player,
-                                nameTextEditingController.text,
-                                playerImage.value,
-                              ));
-                      if (isSuccess && context.mounted) {
-                        context.pop();
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        showErrorDialog(context, e);
-                      }
+                    final result =
+                        await ref.read(savePlayerUsecaseProvider).execute(
+                              ref,
+                              player,
+                              nameTextEditingController.text,
+                              playerImage.value,
+                            );
+                    switch (result) {
+                      case Success():
+                        if (context.mounted) context.pop();
+                        break;
+                      case Failure(message: final message):
+                        if (context.mounted) showErrorDialog(context, message);
                     }
                   }
                 },
@@ -226,20 +224,25 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     return ElevatedButton(
       onPressed: () async {
         if (player == null) return;
-        final result = await showConfimationDialog(
+        final isConfirmed = await showConfimationDialog(
           context: context,
           title: 'プレイヤー：${player.name}を削除しますか？',
           content: '削除すると元に戻せませんが、本当に削除しますか？',
         );
+        if (!isConfirmed) return;
 
-        if (result) {
-          await ref.read(playerNotifierProvider.notifier).deletePlayer(player);
-          ref.invalidate(resultHistoryNotifierProvider);
-
-          if (context.mounted) {
-            await showMessageDialog(context, 'プレイヤーの削除が完了しました。');
-          }
-          if (context.mounted) context.pop();
+        final result =
+            await ref.read(deletePlayerUsecaseProvider).execute(player);
+        switch (result) {
+          case Success():
+            if (context.mounted) {
+              await showMessageDialog(context, 'プレイヤーの削除が完了しました。');
+            }
+            if (context.mounted) context.pop();
+            break;
+          case Failure(message: final message):
+            if (context.mounted) showErrorDialog(context, message);
+            break;
         }
       },
       child: Text(
@@ -262,22 +265,25 @@ class PlayerSettingDetailView extends HookConsumerWidget {
       context: context,
       builder: (BuildContext context) {
         return Wrap(
-          children: <Widget>[
+          children: [
             ListTile(
               leading: Icon(Icons.camera_alt, size: 24.r),
               title: Text('写真を撮る', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
-                try {
-                  final path = await ref
-                      .read(takePictureUsecaseProvider)
-                      .execute(context);
-                  playerImage.value = FileImage(File(path ?? ''));
-                } catch (e) {
-                  if (context.mounted) {
-                    showErrorDialog(context, e);
-                  }
-                } finally {
-                  if (context.mounted) context.pop();
+                final result =
+                    await ref.read(takePictureUsecaseProvider).execute(context);
+                if (result == null) return;
+
+                switch (result) {
+                  case Success(value: final path):
+                    playerImage.value = FileImage(File(path ?? ''));
+                    if (context.mounted) context.pop();
+                    break;
+                  case Failure(message: final message):
+                    if (context.mounted) {
+                      await showErrorDialog(context, message);
+                    }
+                    if (context.mounted) context.pop();
                 }
               },
             ),
@@ -285,16 +291,20 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               leading: Icon(Icons.photo_library, size: 24.r),
               title: Text('フォトライブラリから選択', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
-                try {
-                  final path =
-                      await ref.read(pickImageUsecaseProvider).execute(context);
-                  playerImage.value = FileImage(File(path ?? ''));
-                } catch (e) {
-                  if (context.mounted) {
-                    showErrorDialog(context, e);
-                  }
-                } finally {
-                  if (context.mounted) context.pop();
+                final result =
+                    await ref.read(pickImageUsecaseProvider).execute(context);
+                if (result == null) return;
+
+                switch (result) {
+                  case Success(value: final path):
+                    playerImage.value = FileImage(File(path ?? ''));
+                    if (context.mounted) context.pop();
+                    break;
+                  case Failure(message: final message):
+                    if (context.mounted) {
+                      await showErrorDialog(context, message);
+                    }
+                    if (context.mounted) context.pop();
                 }
               },
             ),

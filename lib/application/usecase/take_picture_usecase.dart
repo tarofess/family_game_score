@@ -1,4 +1,5 @@
 import 'package:family_game_score/application/interface/camera_service.dart';
+import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/infrastructure/service/permission_handler_service.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class TakePictureUsecase {
 
   TakePictureUsecase(this._cameraService);
 
-  Future<String?> execute(BuildContext context) async {
+  Future<Result?> execute(BuildContext context) async {
     try {
       final result = await PermissionHandlerService.requestCameraPermission(
         context,
@@ -15,9 +16,9 @@ class TakePictureUsecase {
       if (!result) return null;
 
       final String? path = await _cameraService.takePicture();
-      return path;
+      return Success(path);
     } catch (e) {
-      return null;
+      return Failure(e.toString(), e as Exception?);
     }
   }
 }
