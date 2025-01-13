@@ -5,13 +5,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/domain/entity/result.dart';
+import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/scoring_list_card.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/result_provider.dart';
-import 'package:family_game_score/presentation/widget/common_async_widget.dart';
-import 'package:family_game_score/others/viewmodel/scoring_viewmodel.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/combined_provider.dart';
+import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
 class ScoringView extends ConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
@@ -21,97 +22,90 @@ class ScoringView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(scoringViewModelProvider);
+    final combinedState = ref.watch(combinedProvider);
 
+    return combinedState.when(
+      data: (combinedData) {
+        final session = combinedData.$1;
+        final players = combinedData.$2;
+        final results = combinedData.$3;
+
+        return _buildScaffold(context, ref, session, players, results);
+      },
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+      error: (error, stackTrace) {
+        return AsyncErrorWidget(error: error, retry: () => combinedState);
+      },
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context,
+    WidgetRef ref,
+    Session? session,
+    List<Player> players,
+    List<Result> results,
+  ) {
     return Scaffold(
-      appBar: buildAppBar(context, ref, vm),
-      body: buildBody(context, ref, vm),
-      floatingActionButton: buildFloatingActionButton(context, ref, vm),
-    );
-  }
-
-  AppBar buildAppBar(BuildContext context, WidgetRef ref, ScoringViewModel vm) {
-    return AppBar(
-      centerTitle: true,
-      title: Text(vm.getAppBarTitle(), style: TextStyle(fontSize: 20.sp)),
-      toolbarHeight: 56.r,
-      leading: IconButton(
-        icon: Icon(Icons.exit_to_app, size: 24.r),
-        onPressed: vm.getExitButtonCallback(
-          () async {
-            final isSuccess =
-                await dialogService.showFinishGameDialog(context, ref);
-            if (isSuccess) {
-              if (context.mounted) {
-                context.pushReplacement('/ranking_view');
-              }
-            }
-          },
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          '${session == null ? '1' : session.round.toString()}回戦',
+          style: TextStyle(fontSize: 20.sp),
         ),
-      ),
-      actions: [
-        IconButton(
-          onPressed: vm.getCheckButtonCallback(() async {
-            await dialogService.showMoveToNextRoundDialog(context, ref);
-          }),
-          icon: Icon(Icons.check_circle_outline, size: 24.r),
+        toolbarHeight: 56.r,
+        leading: IconButton(
+          icon: Icon(Icons.exit_to_app, size: 24.r),
+          onPressed: session != null
+              ? () async {
+                  final isSuccess =
+                      await dialogService.showFinishGameDialog(context, ref);
+                  if (isSuccess) {
+                    if (context.mounted) {
+                      context.pushReplacement('/ranking_view');
+                    }
+                  }
+                }
+              : null,
         ),
-      ],
-    );
-  }
-
-  Widget buildBody(BuildContext context, WidgetRef ref, ScoringViewModel vm) {
-    return Center(
-      child: Column(
-        children: [
-          buildHereAreTheCurrentRankingsText(context),
-          Expanded(
-            child: vm.results.when(
-              data: (_) => buildPlayers(context, ref, vm),
-              loading: () => CommonAsyncWidgets.showLoading(),
-              error: (error, stackTrace) =>
-                  CommonAsyncWidgets.showDataFetchErrorMessage(
-                      context, ref, resultProvider, error),
-            ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await dialogService.showMoveToNextRoundDialog(context, ref);
+            },
+            icon: Icon(Icons.check_circle_outline, size: 24.r),
           ),
         ],
       ),
-    );
-  }
-
-  FloatingActionButton buildFloatingActionButton(
-      BuildContext context, WidgetRef ref, ScoringViewModel vm) {
-    return FloatingActionButton(
-      onPressed: vm.getFloatingActionButtonCallback(
-        () => context.push('/ranking_view'),
+      body: Center(
+        child: Column(
+          children: [
+            Text(
+              '現在の順位はこちら↓',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            Expanded(
+              child: _buildScoringList(players, ref),
+            ),
+          ],
+        ),
       ),
-      backgroundColor: vm.getFloatingActionButtonColor(),
-      child: Icon(Icons.description, size: 24.r),
-    );
-  }
-
-  Widget buildPlayers(
-      BuildContext context, WidgetRef ref, ScoringViewModel vm) {
-    return vm.activePlayers.when(
-      data: (data) => buildScoringList(data, ref),
-      loading: () => CommonAsyncWidgets.showLoading(),
-      error: (error, stackTrace) =>
-          CommonAsyncWidgets.showDataFetchErrorMessage(
-              context, ref, playerProvider, error),
-    );
-  }
-
-  Widget buildHereAreTheCurrentRankingsText(BuildContext context) {
-    return Text(
-      '現在の順位はこちら↓',
-      style: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.normal,
+      floatingActionButton: FloatingActionButton(
+        onPressed: session == null ? null : () => context.push('/ranking_view'),
+        backgroundColor: session == null ? Colors.grey[300] : null,
+        child: Icon(Icons.description, size: 24.r),
       ),
     );
   }
 
-  Widget buildScoringList(List<Player> players, WidgetRef ref) {
+  Widget _buildScoringList(List<Player> players, WidgetRef ref) {
     return ReorderableListView.builder(
       itemCount: players.length,
       itemBuilder: (context, index) => ScoringListCard(
@@ -123,7 +117,10 @@ class ScoringView extends ConsumerWidget {
         if (oldIndex < newIndex) {
           newIndex -= 1;
         }
-        ref.read(playerProvider.notifier).reorderPlayer(oldIndex, newIndex);
+        ref.read(playerNotifierProvider.notifier).reorderPlayer(
+              oldIndex,
+              newIndex,
+            );
       },
     );
   }

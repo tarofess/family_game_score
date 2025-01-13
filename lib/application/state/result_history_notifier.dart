@@ -35,6 +35,6 @@ class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
   }
 }
 
-final resultHistoryProvider =
+final resultHistoryNotifierProvider =
     AsyncNotifierProvider<ResultHistoryNotifier, List<ResultHistory>>(
         () => ResultHistoryNotifier(DatabaseHelper.instance.database));

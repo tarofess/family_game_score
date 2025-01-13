@@ -3,8 +3,8 @@ import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 import 'package:family_game_score/infrastructure/repository/result_repository.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/session_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,7 +17,7 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   @override
   Future<List<Result>> build() async {
     resultRepository = ResultRepository(database);
-    final session = ref.read(sessionProvider).valueOrNull;
+    final session = ref.read(sessionNotifierProvider).valueOrNull;
 
     if (session == null) {
       state = const AsyncData([]);
@@ -30,8 +30,8 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   }
 
   Future<void> addOrUpdateResult(Transaction txc) async {
-    final players = ref.read(playerProvider).valueOrNull;
-    final session = ref.read(sessionProvider).valueOrNull;
+    final players = ref.read(playerNotifierProvider).valueOrNull;
+    final session = ref.read(sessionNotifierProvider).valueOrNull;
 
     if (players == null || session == null) {
       throw Exception('プレイヤーまたはセッションが取得できませんでした');
@@ -60,6 +60,7 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   }
 }
 
-final resultProvider = AsyncNotifierProvider<ResultNotifier, List<Result>>(() {
+final resultNotifierProvider =
+    AsyncNotifierProvider<ResultNotifier, List<Result>>(() {
   return ResultNotifier(DatabaseHelper.instance.database);
 });

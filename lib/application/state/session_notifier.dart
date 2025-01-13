@@ -64,6 +64,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
   }
 }
 
-final sessionProvider = AsyncNotifierProvider<SessionNotifier, Session?>(() {
+final sessionNotifierProvider =
+    AsyncNotifierProvider<SessionNotifier, Session?>(() {
   return SessionNotifier(DatabaseHelper.instance.database);
 });

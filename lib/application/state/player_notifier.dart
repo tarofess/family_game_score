@@ -89,6 +89,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   }
 }
 
-final playerProvider = AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
+final playerNotifierProvider =
+    AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
   return PlayerNotifier(DatabaseHelper.instance.database);
 });

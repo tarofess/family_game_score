@@ -20,7 +20,9 @@ mixin _$ResultHistory {
   Session get session => throw _privateConstructorUsedError;
   Result get result => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ResultHistoryCopyWith<ResultHistory> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -48,6 +50,8 @@ class _$ResultHistoryCopyWithImpl<$Res, $Val extends ResultHistory>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -71,6 +75,8 @@ class _$ResultHistoryCopyWithImpl<$Res, $Val extends ResultHistory>
     ) as $Val);
   }
 
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PlayerCopyWith<$Res> get player {
@@ -79,6 +85,8 @@ class _$ResultHistoryCopyWithImpl<$Res, $Val extends ResultHistory>
     });
   }
 
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SessionCopyWith<$Res> get session {
@@ -87,6 +95,8 @@ class _$ResultHistoryCopyWithImpl<$Res, $Val extends ResultHistory>
     });
   }
 
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ResultCopyWith<$Res> get result {
@@ -122,6 +132,8 @@ class __$$ResultHistoryImplCopyWithImpl<$Res>
       _$ResultHistoryImpl _value, $Res Function(_$ResultHistoryImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -177,7 +189,9 @@ class _$ResultHistoryImpl implements _ResultHistory {
   @override
   int get hashCode => Object.hash(runtimeType, player, session, result);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ResultHistoryImplCopyWith<_$ResultHistoryImpl> get copyWith =>
@@ -196,8 +210,11 @@ abstract class _ResultHistory implements ResultHistory {
   Session get session;
   @override
   Result get result;
+
+  /// Create a copy of ResultHistory
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ResultHistoryImplCopyWith<_$ResultHistoryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -207,7 +224,9 @@ mixin _$ResultHistorySection {
   Session get session => throw _privateConstructorUsedError;
   List<ResultHistoryItems> get items => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ResultHistorySectionCopyWith<ResultHistorySection> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -234,6 +253,8 @@ class _$ResultHistorySectionCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -252,6 +273,8 @@ class _$ResultHistorySectionCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SessionCopyWith<$Res> get session {
@@ -283,6 +306,8 @@ class __$$ResultHistorySectionImplCopyWithImpl<$Res>
       $Res Function(_$ResultHistorySectionImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -337,7 +362,9 @@ class _$ResultHistorySectionImpl implements _ResultHistorySection {
   int get hashCode => Object.hash(
       runtimeType, session, const DeepCollectionEquality().hash(_items));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ResultHistorySectionImplCopyWith<_$ResultHistorySectionImpl>
@@ -356,8 +383,11 @@ abstract class _ResultHistorySection implements ResultHistorySection {
   Session get session;
   @override
   List<ResultHistoryItems> get items;
+
+  /// Create a copy of ResultHistorySection
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ResultHistorySectionImplCopyWith<_$ResultHistorySectionImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -367,7 +397,9 @@ mixin _$ResultHistoryItems {
   Player get player => throw _privateConstructorUsedError;
   Result get result => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ResultHistoryItemsCopyWith<ResultHistoryItems> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -394,6 +426,8 @@ class _$ResultHistoryItemsCopyWithImpl<$Res, $Val extends ResultHistoryItems>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -412,6 +446,8 @@ class _$ResultHistoryItemsCopyWithImpl<$Res, $Val extends ResultHistoryItems>
     ) as $Val);
   }
 
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PlayerCopyWith<$Res> get player {
@@ -420,6 +456,8 @@ class _$ResultHistoryItemsCopyWithImpl<$Res, $Val extends ResultHistoryItems>
     });
   }
 
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ResultCopyWith<$Res> get result {
@@ -453,6 +491,8 @@ class __$$ResultHistoryItemsImplCopyWithImpl<$Res>
       $Res Function(_$ResultHistoryItemsImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -499,7 +539,9 @@ class _$ResultHistoryItemsImpl implements _ResultHistoryItems {
   @override
   int get hashCode => Object.hash(runtimeType, player, result);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ResultHistoryItemsImplCopyWith<_$ResultHistoryItemsImpl> get copyWith =>
@@ -516,8 +558,11 @@ abstract class _ResultHistoryItems implements ResultHistoryItems {
   Player get player;
   @override
   Result get result;
+
+  /// Create a copy of ResultHistoryItems
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ResultHistoryItemsImplCopyWith<_$ResultHistoryItemsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

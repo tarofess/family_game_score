@@ -8,8 +8,8 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/result_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/others/viewmodel/ranking_viewmodel.dart';
 
@@ -75,7 +75,7 @@ class RankingView extends HookConsumerWidget {
           loading: () => CommonAsyncWidgets.showLoading(),
           error: (error, stackTrace) =>
               CommonAsyncWidgets.showDataFetchErrorMessage(
-                  context, ref, resultProvider, error),
+                  context, ref, resultNotifierProvider, error),
         ),
         vm.getSakuraAnimation(),
       ],
@@ -93,7 +93,7 @@ class RankingView extends HookConsumerWidget {
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>
           CommonAsyncWidgets.showDataFetchErrorMessage(
-              context, ref, playerProvider, error),
+              context, ref, playerNotifierProvider, error),
     );
   }
 

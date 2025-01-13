@@ -3,9 +3,9 @@ import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/presentation/widget/sakura_animation.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/result_provider.dart';
-import 'package:family_game_score/application/state/session_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/result_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,9 +16,10 @@ class RankingViewModel {
 
   RankingViewModel(this.ref);
 
-  AsyncValue<List<Player>> get activePlayers => ref.watch(playerProvider);
-  AsyncValue<List<Result>> get results => ref.watch(resultProvider);
-  AsyncValue<Session?> get session => ref.watch(sessionProvider);
+  AsyncValue<List<Player>> get activePlayers =>
+      ref.watch(playerNotifierProvider);
+  AsyncValue<List<Result>> get results => ref.watch(resultNotifierProvider);
+  AsyncValue<Session?> get session => ref.watch(sessionNotifierProvider);
 
   bool isFinishedGame() {
     return session.value?.endTime == null ? false : true;

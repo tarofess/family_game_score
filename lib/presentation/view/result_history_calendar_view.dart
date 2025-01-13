@@ -1,6 +1,6 @@
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/presentation/widget/result_history_calendar.dart';
-import 'package:family_game_score/application/state/result_history_provider.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/others/viewmodel/result_history_calendar_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,7 +26,7 @@ class ResultHistoryCalendarView extends HookConsumerWidget {
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
             CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, resultHistoryProvider, error),
+                context, ref, resultHistoryNotifierProvider, error),
       ),
     );
   }

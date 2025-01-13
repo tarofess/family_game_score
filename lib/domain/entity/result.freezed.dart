@@ -26,8 +26,12 @@ mixin _$Result {
   int get score => throw _privateConstructorUsedError;
   int get rank => throw _privateConstructorUsedError;
 
+  /// Serializes this Result to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ResultCopyWith<Result> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -49,6 +53,8 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -101,6 +107,8 @@ class __$$ResultImplCopyWithImpl<$Res>
       _$ResultImpl _value, $Res Function(_$ResultImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -178,12 +186,14 @@ class _$ResultImpl implements _Result {
             (identical(other.rank, rank) || other.rank == rank));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, playerId, sessionId, score, rank);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ResultImplCopyWith<_$ResultImpl> get copyWith =>
@@ -217,8 +227,11 @@ abstract class _Result implements Result {
   int get score;
   @override
   int get rank;
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ResultImplCopyWith<_$ResultImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

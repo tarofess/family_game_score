@@ -9,10 +9,10 @@ import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/session_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
+import 'package:family_game_score/application/state/combined_provider.dart';
 
 class HomeView extends HookConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
@@ -21,34 +21,23 @@ class HomeView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionState = ref.watch(sessionProvider);
-    final playerState = ref.watch(playerProvider);
+    final combinedState = ref.watch(combinedProvider);
     final isSnackbarVisible = useState(false);
 
     return Scaffold(
-      body: sessionState.when(
-        data: (session) {
-          return playerState.when(
-            data: (players) {
-              return Center(
-                child: buildCenterCircleButton(
-                  context,
-                  ref,
-                  session,
-                  players,
-                  isSnackbarVisible,
-                ),
-              );
-            },
-            loading: () {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-            error: (error, stackTrace) {
-              return AsyncErrorWidget(
-                  error: error, retry: () => sessionProvider);
-            },
+      body: combinedState.when(
+        data: (combinedData) {
+          final session = combinedData.$1;
+          final players = combinedData.$2;
+
+          return Center(
+            child: _buildCenterCircleButton(
+              context,
+              ref,
+              session,
+              players,
+              isSnackbarVisible,
+            ),
           );
         },
         loading: () {
@@ -57,13 +46,13 @@ class HomeView extends HookConsumerWidget {
           );
         },
         error: (error, stackTrace) {
-          return AsyncErrorWidget(error: error, retry: () => sessionProvider);
+          return AsyncErrorWidget(error: error, retry: () => combinedState);
         },
       ),
     );
   }
 
-  Widget buildCenterCircleButton(
+  Widget _buildCenterCircleButton(
     BuildContext context,
     WidgetRef ref,
     Session? session,
@@ -74,8 +63,9 @@ class HomeView extends HookConsumerWidget {
       onPressed: players.where((player) => player.status == 1).length >= 2
           ? () async {
               try {
-                await LoadingOverlay.of(context).during(
-                    () => ref.read(playerProvider.notifier).getActivePlayer());
+                await LoadingOverlay.of(context).during(() => ref
+                    .read(playerNotifierProvider.notifier)
+                    .getActivePlayer());
                 if (context.mounted) {
                   context.go('/scoring_view');
                 }
@@ -85,7 +75,7 @@ class HomeView extends HookConsumerWidget {
                 }
               }
             }
-          : () => showHomeViewSnackBar(context, isSnackbarVisible),
+          : () => _showHomeViewSnackBar(context, isSnackbarVisible),
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
       size: 200.r,
       gradientColors: players.where((player) => player.status == 1).length >= 2
@@ -105,7 +95,7 @@ class HomeView extends HookConsumerWidget {
     );
   }
 
-  void showHomeViewSnackBar(
+  void _showHomeViewSnackBar(
     BuildContext context,
     ValueNotifier<bool> isSnackbarVisible,
   ) {

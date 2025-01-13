@@ -7,8 +7,8 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/player_list_card.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/session_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/presentation/widget/common_async_widget.dart';
 import 'package:family_game_score/others/viewmodel/player_setting_viewmodel.dart';
 
@@ -37,7 +37,7 @@ class PlayerSettingView extends ConsumerWidget {
         loading: () => CommonAsyncWidgets.showLoading(),
         error: (error, stackTrace) =>
             CommonAsyncWidgets.showDataFetchErrorMessage(
-                context, ref, sessionProvider, error),
+                context, ref, sessionNotifierProvider, error),
       ),
     );
   }
@@ -66,7 +66,7 @@ class PlayerSettingView extends ConsumerWidget {
       loading: () => CommonAsyncWidgets.showLoading(),
       error: (error, stackTrace) =>
           CommonAsyncWidgets.showDataFetchErrorMessage(
-              context, ref, playerProvider, error),
+              context, ref, playerNotifierProvider, error),
     );
   }
 

@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:family_game_score/domain/entity/result_history.dart';
-import 'package:family_game_score/application/state/result_history_provider.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -14,7 +14,7 @@ class ResultHistoryCalendarViewModel {
   }
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
-      ref.watch(resultHistoryProvider);
+      ref.watch(resultHistoryNotifierProvider);
 
   Map<DateTime, List<int>> get eventSessions {
     Map<DateTime, Set<int>> tempResult = {};

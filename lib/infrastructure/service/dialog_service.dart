@@ -2,10 +2,10 @@ import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/result_history_provider.dart';
-import 'package:family_game_score/application/state/result_provider.dart';
-import 'package:family_game_score/application/state/session_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
+import 'package:family_game_score/application/state/result_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,15 +19,15 @@ class DialogService {
         title: 'プレイヤー：${player.name}を削除しますか？',
         content: '削除すると元に戻せませんが、本当に削除しますか？',
         action: (BuildContext dialogContext) async {
-          await ref.read(playerProvider.notifier).deletePlayer(player);
-          ref.invalidate(resultHistoryProvider);
+          await ref.read(playerNotifierProvider.notifier).deletePlayer(player);
+          ref.invalidate(resultHistoryNotifierProvider);
         });
     return result ?? false;
   }
 
   Future<void> showMoveToNextRoundDialog(
       BuildContext context, WidgetRef ref) async {
-    final session = ref.read(sessionProvider).value;
+    final session = ref.read(sessionNotifierProvider).value;
     final nextRound = session != null ? (session.round + 1).toString() : '2';
 
     await showConfimationBaseDialog(
@@ -36,13 +36,15 @@ class DialogService {
         content: '$nextRound回戦に進みますか？',
         action: (BuildContext dialogContext) async {
           await DatabaseHelper.instance.database.transaction((txc) async {
-            await ref.read(sessionProvider.notifier).addSession(txc);
-            await ref.read(sessionProvider.notifier).updateRound(txc);
-            await ref.read(resultProvider.notifier).addOrUpdateResult(txc);
+            await ref.read(sessionNotifierProvider.notifier).addSession(txc);
+            await ref.read(sessionNotifierProvider.notifier).updateRound(txc);
+            await ref
+                .read(resultNotifierProvider.notifier)
+                .addOrUpdateResult(txc);
           });
         },
         onRollBack: () async {
-          await ref.read(sessionProvider.notifier).getSession();
+          await ref.read(sessionNotifierProvider.notifier).getSession();
         });
   }
 
@@ -52,7 +54,7 @@ class DialogService {
         title: '確認',
         content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
         action: (BuildContext dialogContext) async {
-          await ref.read(sessionProvider.notifier).updateEndTime();
+          await ref.read(sessionNotifierProvider.notifier).updateEndTime();
         });
     return result ?? false;
   }
@@ -73,10 +75,10 @@ class DialogService {
           actions: [
             TextButton(
               onPressed: () {
-                ref.invalidate(resultProvider);
-                ref.invalidate(resultHistoryProvider);
-                ref.invalidate(playerProvider);
-                ref.read(sessionProvider.notifier).disposeSession();
+                ref.invalidate(resultNotifierProvider);
+                ref.invalidate(resultHistoryNotifierProvider);
+                ref.invalidate(playerNotifierProvider);
+                ref.read(sessionNotifierProvider.notifier).disposeSession();
                 Navigator.of(dialogContext).pop(true);
               },
               child:
@@ -182,7 +184,9 @@ class DialogService {
         title: '遊んだゲームの種類を記録できます。',
         hintText: '例：大富豪',
         action: (String inputText, BuildContext dialogContext) async {
-          await ref.read(sessionProvider.notifier).addGameType(inputText);
+          await ref
+              .read(sessionNotifierProvider.notifier)
+              .addGameType(inputText);
         });
     return result ?? false;
   }
@@ -195,7 +199,7 @@ class DialogService {
         hintText: '例：大富豪',
         action: (String inputText, BuildContext dialogContext) async {
           await ref
-              .read(resultHistoryProvider.notifier)
+              .read(resultHistoryNotifierProvider.notifier)
               .updateSessionGameType(session, inputText);
         });
   }

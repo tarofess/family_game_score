@@ -26,8 +26,12 @@ mixin _$Session {
   String? get endTime => throw _privateConstructorUsedError;
   String? get gameType => throw _privateConstructorUsedError;
 
+  /// Serializes this Session to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Session
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SessionCopyWith<Session> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -50,6 +54,8 @@ class _$SessionCopyWithImpl<$Res, $Val extends Session>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Session
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -103,6 +109,8 @@ class __$$SessionImplCopyWithImpl<$Res>
       _$SessionImpl _value, $Res Function(_$SessionImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Session
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -179,12 +187,14 @@ class _$SessionImpl implements _Session {
                 other.gameType == gameType));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, round, begTime, endTime, gameType);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Session
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SessionImplCopyWith<_$SessionImpl> get copyWith =>
@@ -218,8 +228,11 @@ abstract class _Session implements Session {
   String? get endTime;
   @override
   String? get gameType;
+
+  /// Create a copy of Session
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SessionImplCopyWith<_$SessionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

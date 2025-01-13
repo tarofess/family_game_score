@@ -9,8 +9,8 @@ import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/file_service.dart';
-import 'package:family_game_score/application/state/player_provider.dart';
-import 'package:family_game_score/application/state/result_history_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
 
 class PlayerSettingDetailViewModel {
   Ref ref;
@@ -20,7 +20,7 @@ class PlayerSettingDetailViewModel {
   PlayerSettingDetailViewModel(this.ref);
 
   AsyncValue<List<ResultHistory>> get resultHistories =>
-      ref.watch(resultHistoryProvider);
+      ref.watch(resultHistoryNotifierProvider);
 
   bool isPlayerNull(Player? player) {
     return player == null ? true : false;
@@ -62,7 +62,7 @@ class PlayerSettingDetailViewModel {
         rollbackSaveName(player, ref);
         rethrow;
       }
-      ref.invalidate(resultHistoryProvider);
+      ref.invalidate(resultHistoryNotifierProvider);
       return true;
     }
 
@@ -73,11 +73,11 @@ class PlayerSettingDetailViewModel {
       FileImage? playerImage, WidgetRef ref) async {
     final fileName = await getFileName(player, playerImage);
     player == null
-        ? await ref.read(playerProvider.notifier).addPlayer(
+        ? await ref.read(playerNotifierProvider.notifier).addPlayer(
               playerName,
               fileName,
             )
-        : await ref.read(playerProvider.notifier).updatePlayer(
+        : await ref.read(playerNotifierProvider.notifier).updatePlayer(
               player.copyWith(name: playerName, image: fileName),
             );
 
@@ -91,7 +91,7 @@ class PlayerSettingDetailViewModel {
 
     if (player == null) {
       final playerMaxId =
-          await ref.read(playerProvider.notifier).getPlayersMaxID() + 1;
+          await ref.read(playerNotifierProvider.notifier).getPlayersMaxID() + 1;
       return '$playerMaxId.jpg';
     } else {
       return '${player.id}.jpg';
@@ -112,9 +112,9 @@ class PlayerSettingDetailViewModel {
   Future<void> rollbackSaveName(Player? player, WidgetRef ref) async {
     player == null
         ? await ref
-            .read(playerProvider.notifier)
-            .deletePlayer(ref.read(playerProvider).value!.last)
-        : await ref.read(playerProvider.notifier).updatePlayer(player);
+            .read(playerNotifierProvider.notifier)
+            .deletePlayer(ref.read(playerNotifierProvider).value!.last)
+        : await ref.read(playerNotifierProvider.notifier).updatePlayer(player);
   }
 
   Future<void> handleCameraAction(
