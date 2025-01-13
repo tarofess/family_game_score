@@ -1,3 +1,4 @@
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -10,13 +11,11 @@ import 'package:family_game_score/presentation/widget/list_card/scoring_list_car
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
-import 'package:family_game_score/application/state/result_notifier.dart';
-import 'package:family_game_score/application/state/session_notifier.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/finish_game_usecase_provider.dart';
+import 'package:family_game_score/presentation/provider/move_to_next_round_usecase_provider.dart';
 
 class ScoringView extends ConsumerWidget {
   const ScoringView({super.key});
@@ -57,59 +56,9 @@ class ScoringView extends ConsumerWidget {
           style: TextStyle(fontSize: 20.sp),
         ),
         toolbarHeight: 56.r,
-        leading: IconButton(
-          icon: Icon(Icons.exit_to_app, size: 24.r),
-          onPressed: session != null
-              ? () async {
-                  final isConfirmed = await showConfimationDialog(
-                    context: context,
-                    title: '確認',
-                    content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
-                  );
-                  if (!isConfirmed) return;
-
-                  final result =
-                      await ref.read(finishGameUsecaseProvider).execute();
-                  switch (result) {
-                    case Success():
-                      if (context.mounted) {
-                        context.pushReplacement('/ranking_view');
-                      }
-                      break;
-                    case Failure(message: final message):
-                      if (context.mounted) showErrorDialog(context, message);
-                  }
-                }
-              : null,
-        ),
+        leading: _buildFinighGameIconButton(context, ref, session),
         actions: [
-          IconButton(
-            onPressed: () async {
-              final session = ref.read(sessionNotifierProvider).value;
-              final nextRound =
-                  session != null ? (session.round + 1).toString() : '2';
-              final result = await showConfimationDialog(
-                context: context,
-                title: '確認',
-                content: '$nextRound回戦に進みますか？',
-              );
-
-              if (result) {
-                await DatabaseHelper.instance.database.transaction((txc) async {
-                  await ref
-                      .read(sessionNotifierProvider.notifier)
-                      .addSession(txc);
-                  await ref
-                      .read(sessionNotifierProvider.notifier)
-                      .updateRound(txc);
-                  await ref
-                      .read(resultNotifierProvider.notifier)
-                      .addOrUpdateResult(txc);
-                });
-              }
-            },
-            icon: Icon(Icons.check_circle_outline, size: 24.r),
-          ),
+          _buildMoveToNextRoundIconButton(context, ref),
         ],
       ),
       body: Center(
@@ -133,6 +82,65 @@ class ScoringView extends ConsumerWidget {
         backgroundColor: session == null ? Colors.grey[300] : null,
         child: Icon(Icons.description, size: 24.r),
       ),
+    );
+  }
+
+  Widget _buildFinighGameIconButton(
+    BuildContext context,
+    WidgetRef ref,
+    Session? session,
+  ) {
+    return IconButton(
+      icon: Icon(Icons.exit_to_app, size: 24.r),
+      onPressed: session != null
+          ? () async {
+              final isConfirmed = await showConfimationDialog(
+                context: context,
+                title: '確認',
+                content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
+              );
+              if (!isConfirmed) return;
+
+              final result =
+                  await ref.read(finishGameUsecaseProvider).execute();
+              switch (result) {
+                case Success():
+                  if (context.mounted) {
+                    context.pushReplacement('/ranking_view');
+                  }
+                  break;
+                case Failure(message: final message):
+                  if (context.mounted) showErrorDialog(context, message);
+              }
+            }
+          : null,
+    );
+  }
+
+  Widget _buildMoveToNextRoundIconButton(BuildContext context, WidgetRef ref) {
+    return IconButton(
+      onPressed: () async {
+        final session = ref.read(sessionNotifierProvider).value;
+        final nextRound =
+            session != null ? (session.round + 1).toString() : '2';
+        final isConfirmed = await showConfimationDialog(
+          context: context,
+          title: '確認',
+          content: '$nextRound回戦に進みますか？',
+        );
+
+        if (!isConfirmed) return;
+
+        final result = await ref.read(moveToNextRoundUsecaseProvider).execute();
+        switch (result) {
+          case Success():
+            break;
+          case Failure(message: final message):
+            if (context.mounted) showErrorDialog(context, message);
+            break;
+        }
+      },
+      icon: Icon(Icons.check_circle_outline, size: 24.r),
     );
   }
 
