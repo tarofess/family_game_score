@@ -50,13 +50,6 @@ class FileService implements IFileService {
   }
 
   @override
-  Future<String> getFullPathOfImage(String fileName) async {
-    final Directory appDir = await getApplicationDocumentsDirectory();
-    final String filePath = path.join(appDir.path, fileName);
-    return filePath;
-  }
-
-  @override
   Future<void> deleteImage(String? fileName) async {
     try {
       if (await isImageExists(fileName)) {
@@ -77,9 +70,8 @@ class FileService implements IFileService {
   @override
   Future<void> clearCache(String fileName) async {
     try {
-      final filePath = await getFullPathOfImage(fileName);
-      final image = FileImage(File(filePath));
-      imageCache.evict(image);
+      final image = await getFileImageFromPath(fileName);
+      if (image != null) imageCache.evict(image);
     } catch (e) {
       throw Exception('キャッシュのクリア中にエラーが発生しました。');
     }

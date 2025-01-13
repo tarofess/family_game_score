@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,32 +9,45 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/others/viewmodel/player_setting_detail_viewmodel.dart';
+import 'package:family_game_score/domain/entity/result_history.dart';
+import 'package:family_game_score/application/state/result_history_notifier.dart';
+import 'package:family_game_score/presentation/provider/pick_image_usecase_provider.dart';
+import 'package:family_game_score/presentation/provider/save_player_usecase_provider.dart';
+import 'package:family_game_score/presentation/provider/take_picture_usecase_provider.dart';
+import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
+  final formKey = GlobalKey<FormState>();
   final Player? player;
   final DialogService dialogService = getIt<DialogService>();
-
-  final formKey = GlobalKey<FormState>();
 
   PlayerSettingDetailView({super.key, required this.player});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(playerDetailViewmodelProvider);
     final nameTextEditingController =
         useTextEditingController(text: player?.name ?? '');
     final playerName = useState(nameTextEditingController.text);
     final playerImage = useState<FileImage?>(null);
 
     useEffect(() {
-      vm.setPlayerImagePath(player, playerImage);
+      Future<void> setPlayerImagePath() async {
+        if (player?.image != null && player!.image.isNotEmpty) {
+          final fileImage = await ref
+              .read(fileImageGetUsecaseProvider)
+              .execute(player?.image ?? '');
+          playerImage.value = fileImage;
+        } else {
+          playerImage.value = null;
+        }
+      }
 
       void listener() {
         playerName.value = nameTextEditingController.text;
       }
 
       nameTextEditingController.addListener(listener);
+      setPlayerImagePath();
       return () {
         nameTextEditingController.removeListener(listener);
       };
@@ -41,23 +55,21 @@ class PlayerSettingDetailView extends HookConsumerWidget {
 
     return Scaffold(
       appBar: buildAppBar(
-          context, ref, playerImage, nameTextEditingController, playerName, vm),
+          context, ref, playerImage, nameTextEditingController, playerName),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             children: [
               SizedBox(height: 50.r),
-              buildImageCircle(context, playerImage, vm),
+              buildImageCircle(context, ref, playerImage),
               SizedBox(height: 60.r),
-              buildNameWidget(nameTextEditingController, vm),
+              buildNameWidget(nameTextEditingController),
               SizedBox(height: 60.r),
-              buildTotalScoreWidget(vm, player),
-              vm.isPlayerNull(player)
+              buildTotalScoreWidget(ref, player),
+              player == null ? const SizedBox() : SizedBox(height: 150.r),
+              player == null
                   ? const SizedBox()
-                  : SizedBox(height: 150.r),
-              vm.isPlayerNull(player)
-                  ? const SizedBox()
-                  : buildDeletePlayerButton(context, ref, player, vm),
+                  : buildDeletePlayerButton(context, ref, player),
               SizedBox(height: 50.r),
             ],
           ),
@@ -67,37 +79,41 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   }
 
   AppBar buildAppBar(
-      BuildContext context,
-      WidgetRef ref,
-      ValueNotifier<FileImage?> playerImage,
-      TextEditingController nameTextEditingController,
-      ValueNotifier<String> playerName,
-      PlayerSettingDetailViewModel vm) {
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<FileImage?> playerImage,
+    TextEditingController nameTextEditingController,
+    ValueNotifier<String> playerName,
+  ) {
     return AppBar(
       toolbarHeight: 56.r,
-      title: Text(vm.getAppBarTitle(player), style: TextStyle(fontSize: 20.sp)),
+      title: Text(
+        player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細',
+        style: TextStyle(fontSize: 20.sp),
+      ),
       centerTitle: true,
       actions: [
-        vm.isEmptyBothImageAndName(playerName.value, playerImage.value)
+        playerName.value.isEmpty && playerImage.value == null
             ? const SizedBox()
             : TextButton(
                 child: Text('保存', style: TextStyle(fontSize: 14.sp)),
                 onPressed: () async {
-                  try {
-                    final isSuccess = await LoadingOverlay.of(context).during(
-                      () => vm.savePlayer(
-                          formKey,
-                          player,
-                          nameTextEditingController.text,
-                          playerImage.value,
-                          ref),
-                    );
-                    if (isSuccess && context.mounted) {
-                      context.pop();
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      dialogService.showErrorDialog(context, e);
+                  if (formKey.currentState!.validate()) {
+                    try {
+                      final isSuccess = await LoadingOverlay.of(context).during(
+                          () => ref.read(savePlayerUsecaseProvider).execute(
+                                ref,
+                                player,
+                                nameTextEditingController.text,
+                                playerImage.value,
+                              ));
+                      if (isSuccess && context.mounted) {
+                        context.pop();
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        dialogService.showErrorDialog(context, e);
+                      }
                     }
                   }
                 },
@@ -106,8 +122,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     );
   }
 
-  Widget buildImageCircle(BuildContext context,
-      ValueNotifier<FileImage?> playerImage, PlayerSettingDetailViewModel vm) {
+  Widget buildImageCircle(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<FileImage?> playerImage,
+  ) {
     return GestureDetector(
       child: Container(
         width: 240.r,
@@ -116,7 +135,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
           shape: BoxShape.circle,
           color: Colors.grey,
         ),
-        child: vm.hasAlreadyImage(playerImage.value)
+        child: playerImage.value != null
             ? ClipOval(
                 child: FittedBox(
                   fit: BoxFit.cover,
@@ -129,12 +148,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 size: 50.r,
               ),
       ),
-      onTap: () => showActionSheet(context, playerImage, vm),
+      onTap: () => showActionSheet(context, ref, playerImage),
     );
   }
 
-  Widget buildNameWidget(TextEditingController nameTextEditingController,
-      PlayerSettingDetailViewModel vm) {
+  Widget buildNameWidget(TextEditingController nameTextEditingController) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -145,7 +163,12 @@ class PlayerSettingDetailView extends HookConsumerWidget {
             child: TextFormField(
               controller: nameTextEditingController,
               style: TextStyle(fontSize: 20.sp),
-              validator: (value) => vm.handleNameValidation(value),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '名前を入力してください';
+                }
+                return null;
+              },
               decoration: InputDecoration(
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -178,9 +201,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     );
   }
 
-  Widget buildTotalScoreWidget(
-      PlayerSettingDetailViewModel vm, Player? player) {
-    return vm.isPlayerNull(player)
+  Widget buildTotalScoreWidget(WidgetRef ref, Player? player) {
+    return player == null
         ? const SizedBox()
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -188,15 +210,18 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               Text('総獲得ポイント数:', style: TextStyle(fontSize: 20.sp)),
               SizedBox(width: 10.r),
               Text(
-                '${vm.getTotalScore(player)}',
+                '${getTotalScore(ref, player)}',
                 style: TextStyle(fontSize: 20.sp),
               ),
             ],
           );
   }
 
-  Widget buildDeletePlayerButton(BuildContext context, WidgetRef ref,
-      Player? player, PlayerSettingDetailViewModel vm) {
+  Widget buildDeletePlayerButton(
+    BuildContext context,
+    WidgetRef ref,
+    Player? player,
+  ) {
     return ElevatedButton(
       onPressed: () async {
         final isSuccess =
@@ -219,8 +244,11 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     );
   }
 
-  void showActionSheet(BuildContext context,
-      ValueNotifier<FileImage?> playerImage, PlayerSettingDetailViewModel vm) {
+  void showActionSheet(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<FileImage?> playerImage,
+  ) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -231,20 +259,16 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               title: Text('写真を撮る', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
                 try {
-                  await vm.handleCameraAction(
-                    playerImage,
-                    (message) => dialogService.showPermissionDeniedDialog(
-                        context, message),
-                    (message) =>
-                        dialogService.showPermissionPermanentlyDeniedDialog(
-                            context, message),
-                    () => context.pop(),
-                  );
+                  final path = await ref
+                      .read(takePictureUsecaseProvider)
+                      .execute(context);
+                  playerImage.value = FileImage(File(path ?? ''));
                 } catch (e) {
                   if (context.mounted) {
-                    context.pop();
                     dialogService.showErrorDialog(context, e);
                   }
+                } finally {
+                  if (context.mounted) context.pop();
                 }
               },
             ),
@@ -253,20 +277,15 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               title: Text('フォトライブラリから選択', style: TextStyle(fontSize: 14.sp)),
               onTap: () async {
                 try {
-                  await vm.handleGalleryAction(
-                    playerImage,
-                    (message) => dialogService.showPermissionDeniedDialog(
-                        context, message),
-                    (message, action) =>
-                        dialogService.showPermissionPermanentlyDeniedDialog(
-                            context, message),
-                    () => context.pop(),
-                  );
+                  final path =
+                      await ref.read(pickImageUsecaseProvider).execute(context);
+                  playerImage.value = FileImage(File(path ?? ''));
                 } catch (e) {
                   if (context.mounted) {
-                    context.pop();
                     dialogService.showErrorDialog(context, e);
                   }
+                } finally {
+                  if (context.mounted) context.pop();
                 }
               },
             ),
@@ -274,12 +293,28 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                 leading: Icon(Icons.cancel, size: 24.r),
                 title: Text('削除する', style: TextStyle(fontSize: 14.sp)),
                 onTap: () {
-                  vm.deleteImageFromImageCircle(playerImage);
+                  playerImage.value = null;
                   context.pop();
                 }),
           ],
         );
       },
     );
+  }
+
+  int getTotalScore(WidgetRef ref, Player? player) {
+    final resultHistories = ref.watch(resultHistoryNotifierProvider).value;
+
+    int totalScore = 0;
+
+    if (player == null) return totalScore;
+
+    for (ResultHistory resultHistory in resultHistories ?? []) {
+      if (resultHistory.player.id == player.id) {
+        totalScore += resultHistory.result.score;
+      }
+    }
+
+    return totalScore;
   }
 }
