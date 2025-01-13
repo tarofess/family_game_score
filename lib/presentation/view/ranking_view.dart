@@ -72,7 +72,6 @@ class RankingView extends ConsumerWidget {
                       ref
                           .read(sessionNotifierProvider.notifier)
                           .disposeSession();
-                      context.pop();
                       context.pushReplacement('/');
                     }
                   },
@@ -95,9 +94,11 @@ class RankingView extends ConsumerWidget {
               hintText: '例：大富豪',
             );
 
+            if (result == null) return;
+
             await ref
                 .read(sessionNotifierProvider.notifier)
-                .addGameType(result ?? '');
+                .addGameType(result);
 
             if (context.mounted) {
               await showMessageDialog(context, 'ゲームの種類を記録しました。');

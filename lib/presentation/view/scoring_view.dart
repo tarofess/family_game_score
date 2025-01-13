@@ -63,8 +63,14 @@ class ScoringView extends ConsumerWidget {
                     title: '確認',
                     content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
                   );
-                  if (result && context.mounted) {
-                    context.pushReplacement('/ranking_view');
+                  if (result) {
+                    await ref
+                        .read(sessionNotifierProvider.notifier)
+                        .updateEndTime();
+
+                    if (context.mounted) {
+                      context.pushReplacement('/ranking_view');
+                    }
                   }
                 }
               : null,
