@@ -6,7 +6,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/player_image.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
@@ -15,7 +14,6 @@ class PlayerListCard extends HookWidget {
   final Player player;
   final WidgetRef ref;
   final DialogService dialogService = getIt<DialogService>();
-  final CameraService cameraService = getIt<CameraService>();
 
   PlayerListCard({super.key, required this.player, required this.ref});
 

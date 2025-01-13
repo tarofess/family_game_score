@@ -1,17 +1,15 @@
-import 'package:family_game_score/main.dart';
-import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/domain/entity/result.dart';
-import 'package:family_game_score/infrastructure/service/camera_service.dart';
-import 'package:family_game_score/presentation/widget/list_card/player_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/domain/entity/result.dart';
+import 'package:family_game_score/presentation/widget/list_card/player_image.dart';
 
 class ResultListCard extends StatelessWidget {
   final Player player;
   final Result result;
-  final CameraService cameraService = getIt<CameraService>();
 
-  ResultListCard({super.key, required this.player, required this.result});
+  const ResultListCard({super.key, required this.player, required this.result});
 
   @override
   Widget build(BuildContext context) {

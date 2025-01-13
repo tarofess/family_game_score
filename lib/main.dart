@@ -11,9 +11,7 @@ import 'firebase_options.dart';
 
 import 'package:family_game_score/presentation/router/router.dart';
 import 'package:family_game_score/infrastructure/repository/database_helper.dart';
-import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/infrastructure/service/file_service.dart';
 import 'package:family_game_score/presentation/theme/theme.dart';
 import 'package:family_game_score/presentation/view/error_view.dart';
 import 'package:family_game_score/presentation/view/loading_view.dart';
@@ -85,6 +83,4 @@ final getIt = GetIt.instance;
 
 void setupLocator() {
   getIt.registerLazySingleton(() => DialogService());
-  getIt.registerLazySingleton(() => CameraService());
-  getIt.registerLazySingleton(() => FileService());
 }

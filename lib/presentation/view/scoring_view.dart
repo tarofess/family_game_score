@@ -7,7 +7,6 @@ import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/service/camera_service.dart';
 import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/scoring_list_card.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
@@ -16,7 +15,6 @@ import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
 class ScoringView extends ConsumerWidget {
   final DialogService dialogService = getIt<DialogService>();
-  final CameraService cameraService = getIt<CameraService>();
 
   ScoringView({super.key});
 
