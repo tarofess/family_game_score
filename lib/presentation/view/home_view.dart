@@ -55,7 +55,7 @@ class HomeView extends HookConsumerWidget {
     ValueNotifier<bool> isSnackbarVisible,
   ) {
     return GradientCircleButton(
-      onPressed: players.where((player) => player.status == 1).length >= 2
+      onPressed: areTwoOrMorePlayersActive(players)
           ? () async {
               try {
                 await LoadingOverlay.of(context).during(() => ref
@@ -73,7 +73,7 @@ class HomeView extends HookConsumerWidget {
           : () => _showHomeViewSnackBar(context, isSnackbarVisible),
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
       size: 200.r,
-      gradientColors: players.where((player) => player.status == 1).length >= 2
+      gradientColors: areTwoOrMorePlayersActive(players)
           ? const [
               Color.fromARGB(255, 255, 194, 102),
               Color.fromARGB(255, 255, 101, 90)
@@ -113,5 +113,9 @@ class HomeView extends HookConsumerWidget {
         )
         .closed
         .then((_) => isSnackbarVisible.value = false);
+  }
+
+  bool areTwoOrMorePlayersActive(List<Player> players) {
+    return players.where((player) => player.status == 1).length >= 2;
   }
 }

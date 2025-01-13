@@ -51,14 +51,12 @@ class RankingView extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-            session != null && session.endTime == null ? '現在の順位' : '結果発表',
+        title: Text(isFinishedGame(session) ? '結果発表' : '現在の順位',
             style: TextStyle(fontSize: 20.sp)),
         toolbarHeight: 56.r,
         actions: [
-          session != null && session.endTime == null
-              ? const SizedBox()
-              : IconButton(
+          isFinishedGame(session)
+              ? IconButton(
                   icon: Icon(Icons.home, size: 24.r),
                   onPressed: () async {
                     await showMessageDialog(
@@ -75,7 +73,8 @@ class RankingView extends ConsumerWidget {
                       context.pushReplacement('/');
                     }
                   },
-                ),
+                )
+              : const SizedBox(),
         ],
       ),
       body: Stack(
@@ -85,7 +84,7 @@ class RankingView extends ConsumerWidget {
         ],
       ),
       floatingActionButton: Visibility(
-        visible: session != null && session.endTime != null,
+        visible: isFinishedGame(session),
         child: FloatingActionButton(
           onPressed: () async {
             final result = await showInputDialog(
@@ -127,12 +126,16 @@ class RankingView extends ConsumerWidget {
   }
 
   Widget _buildSakuraAnimation(Session? session) {
-    return session != null && session.endTime == null
-        ? const SizedBox()
-        : const Positioned.fill(
+    return isFinishedGame(session)
+        ? const Positioned.fill(
             child: IgnorePointer(
               child: SakuraAnimation(),
             ),
-          );
+          )
+        : const SizedBox();
+  }
+
+  bool isFinishedGame(Session? session) {
+    return session != null && session.endTime != null ? true : false;
   }
 }

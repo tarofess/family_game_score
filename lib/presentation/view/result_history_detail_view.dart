@@ -129,7 +129,8 @@ class ResultHistoryDetailView extends ConsumerWidget {
             ? buildPlayerHasBeenDeletedCard(
                 getResultHistorySections(resultHistories)[index]
                     .items[itemIndex]
-                    .player)
+                    .player,
+              )
             : ResultListCard(
                 key: ValueKey(
                   getResultHistorySections(resultHistories)[index]
