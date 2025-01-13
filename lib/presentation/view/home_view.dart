@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/presentation/widget/loading_overlay.dart';
-import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
+import 'package:family_game_score/domain/result.dart';
+import 'package:family_game_score/presentation/provider/start_game_usecase_provider.dart';
+import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 
-class HomeView extends HookConsumerWidget {
+class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final combinedState = ref.watch(combinedProvider);
-    final isSnackbarVisible = useState(false);
 
     return Scaffold(
       body: combinedState.when(
@@ -33,7 +32,6 @@ class HomeView extends HookConsumerWidget {
               ref,
               session,
               players,
-              isSnackbarVisible,
             ),
           );
         },
@@ -52,25 +50,25 @@ class HomeView extends HookConsumerWidget {
     WidgetRef ref,
     Session? session,
     List<Player> players,
-    ValueNotifier<bool> isSnackbarVisible,
   ) {
     return GradientCircleButton(
       onPressed: areTwoOrMorePlayersActive(players)
           ? () async {
-              try {
-                await LoadingOverlay.of(context).during(() => ref
-                    .read(playerNotifierProvider.notifier)
-                    .getActivePlayer());
-                if (context.mounted) {
-                  context.go('/scoring_view');
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  showErrorDialog(context, e.toString());
-                }
+              final result = await ref.read(startGameUsecaseProvider).execute();
+              switch (result) {
+                case Success():
+                  if (context.mounted) context.go('/scoring_view');
+                  break;
+                case Failure(message: final message):
+                  if (context.mounted) showErrorDialog(context, message);
+                  break;
               }
             }
-          : () => _showHomeViewSnackBar(context, isSnackbarVisible),
+          : () => showMessageDialog(
+                context,
+                '有効なプレイヤーが2名以上登録されていません。\n'
+                'プレイヤー設定画面でプレイヤーを登録してください。',
+              ),
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
       size: 200.r,
       gradientColors: areTwoOrMorePlayersActive(players)
@@ -88,31 +86,6 @@ class HomeView extends HookConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
     );
-  }
-
-  void _showHomeViewSnackBar(
-    BuildContext context,
-    ValueNotifier<bool> isSnackbarVisible,
-  ) {
-    if (isSnackbarVisible.value) return;
-
-    isSnackbarVisible.value = true;
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-          SnackBar(
-            content: Text(
-              '有効なプレイヤーが2名以上登録されていません。\n'
-              'プレイヤー設定画面でプレイヤーを登録してください。',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
-              ),
-            ),
-          ),
-        )
-        .closed
-        .then((_) => isSnackbarVisible.value = false);
   }
 
   bool areTwoOrMorePlayersActive(List<Player> players) {
