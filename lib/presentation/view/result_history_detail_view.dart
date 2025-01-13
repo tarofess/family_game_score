@@ -1,11 +1,16 @@
-import 'package:family_game_score/main.dart';
-import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
-import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
-import 'package:family_game_score/others/viewmodel/result_history_detail_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:table_calendar/table_calendar.dart';
+
+import 'package:family_game_score/application/state/result_history_notifier.dart';
+import 'package:family_game_score/domain/entity/result_history.dart';
+import 'package:family_game_score/main.dart';
+import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/infrastructure/service/dialog_service.dart';
+import 'package:family_game_score/presentation/widget/async_error_widget.dart';
+import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
+import 'package:family_game_score/domain/entity/session.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
   final DateTime selectedDay;
@@ -15,43 +20,53 @@ class ResultHistoryDetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(resultHistoryViewModelProvider(selectedDay));
+    final resultHistoryState = ref.watch(resultHistoryNotifierProvider);
 
     return Scaffold(
-      appBar: buildAppBar(context, vm),
-      body: buildBody(context, vm, ref),
+      appBar: AppBar(
+        centerTitle: true,
+        toolbarHeight: 56.r,
+        title: Text('成績の詳細', style: TextStyle(fontSize: 20.sp)),
+      ),
+      body: resultHistoryState.when(
+        data: (resultHistories) {
+          return ListView.builder(
+            itemCount: getResultHistorySections(resultHistories).length,
+            itemBuilder: (context, index) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildSectionHeader(context, ref, resultHistories, index),
+                  buildSectionItems(ref, resultHistories, index),
+                ],
+              );
+            },
+          );
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        error: (error, stackTrace) {
+          return AsyncErrorWidget(
+            error: error,
+            retry: () => resultHistoryState,
+          );
+        },
+      ),
     );
   }
 
-  AppBar buildAppBar(BuildContext context, ResultHistoryDetailViewModel vm) {
-    return AppBar(
-      centerTitle: true,
-      toolbarHeight: 56.r,
-      title: Text('成績の詳細', style: TextStyle(fontSize: 20.sp)),
-    );
-  }
-
-  Widget buildBody(
-      BuildContext context, ResultHistoryDetailViewModel vm, WidgetRef ref) {
-    return ListView.builder(
-      itemCount: vm.resultHistorySections.length,
-      itemBuilder: (context, index) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildSectionHeader(context, index, vm, ref),
-            buildSectionItems(index, vm, ref),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget buildSectionHeader(BuildContext context, int index,
-      ResultHistoryDetailViewModel vm, WidgetRef ref) {
+  Widget buildSectionHeader(
+    BuildContext context,
+    WidgetRef ref,
+    List<ResultHistory> resultHistories,
+    int index,
+  ) {
     return GestureDetector(
-      onTap: () async => await dialogService.showEditGameTypeDialog(
-          context, ref, vm.resultHistorySections[index].session),
+      onTap: () async => await dialogService.showEditGameTypeDialog(context,
+          ref, getResultHistorySections(resultHistories)[index].session),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
@@ -69,10 +84,13 @@ class ResultHistoryDetailView extends ConsumerWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: vm.isGameTypeNull(vm.resultHistorySections[index].session)
+            child: getResultHistorySections(resultHistories)[index]
+                        .session
+                        .gameType ==
+                    null
                 ? const Text('')
                 : Text(
-                    '${vm.resultHistorySections[index].session.gameType}',
+                    '${getResultHistorySections(resultHistories)[index].session.gameType}',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Colors.white,
@@ -86,21 +104,37 @@ class ResultHistoryDetailView extends ConsumerWidget {
   }
 
   Widget buildSectionItems(
-      int index, ResultHistoryDetailViewModel vm, WidgetRef ref) {
+    WidgetRef ref,
+    List<ResultHistory> resultHistories,
+    int index,
+  ) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: vm.resultHistorySections[index].items.length,
+      itemCount: getResultHistorySections(resultHistories)[index].items.length,
       itemBuilder: (context, itemIndex) {
-        return vm.isPlayerHasBeenDeleted(index, itemIndex)
+        return getResultHistorySections(resultHistories)[index]
+                    .items[itemIndex]
+                    .player
+                    .status ==
+                -1
             ? buildPlayerHasBeenDeletedCard(
-                vm.resultHistorySections[index].items[itemIndex].player)
+                getResultHistorySections(resultHistories)[index]
+                    .items[itemIndex]
+                    .player)
             : ResultListCard(
                 key: ValueKey(
-                  vm.resultHistorySections[index].items[itemIndex].result.id,
+                  getResultHistorySections(resultHistories)[index]
+                      .items[itemIndex]
+                      .result
+                      .id,
                 ),
-                player: vm.resultHistorySections[index].items[itemIndex].player,
-                result: vm.resultHistorySections[index].items[itemIndex].result,
+                player: getResultHistorySections(resultHistories)[index]
+                    .items[itemIndex]
+                    .player,
+                result: getResultHistorySections(resultHistories)[index]
+                    .items[itemIndex]
+                    .result,
               );
       },
     );
@@ -118,5 +152,55 @@ class ResultHistoryDetailView extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  List<ResultHistorySection> getResultHistorySections(
+    List<ResultHistory> resultHistories,
+  ) {
+    final filteredResultHistoryies = resultHistories.where((element) {
+      final elementDate = DateTime.parse(element.session.endTime!);
+      return isSameDay(elementDate, selectedDay);
+    }).toList();
+
+    if (filteredResultHistoryies.isNotEmpty) {
+      final convertedResultHistorySection =
+          convertToResultHistorySection(filteredResultHistoryies);
+      return convertedResultHistorySection;
+    }
+
+    return [];
+  }
+
+  List<ResultHistorySection> convertToResultHistorySection(
+      List<ResultHistory> resultHistories) {
+    Map<int, List<ResultHistoryItems>> sessionItemsMap = {};
+
+    for (var resultHistory in resultHistories) {
+      int sessionId = resultHistory.session.id;
+      if (!sessionItemsMap.containsKey(sessionId)) {
+        sessionItemsMap[sessionId] = [];
+      }
+      sessionItemsMap[sessionId]!.add(ResultHistoryItems(
+        player: resultHistory.player,
+        result: resultHistory.result,
+      ));
+    }
+
+    List<ResultHistorySection> sessionResultHistories = [];
+    for (var entry in sessionItemsMap.entries) {
+      int sessionId = entry.key;
+      List<ResultHistoryItems> items = entry.value;
+
+      Session session = resultHistories
+          .firstWhere((history) => history.session.id == sessionId)
+          .session;
+
+      sessionResultHistories.add(ResultHistorySection(
+        session: session,
+        items: items,
+      ));
+    }
+
+    return sessionResultHistories;
   }
 }
