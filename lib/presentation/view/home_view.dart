@@ -4,20 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/application/state/combined_provider.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 
 class HomeView extends HookConsumerWidget {
-  final DialogService dialogService = getIt<DialogService>();
-
-  HomeView({super.key});
+  const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -69,7 +66,7 @@ class HomeView extends HookConsumerWidget {
                 }
               } catch (e) {
                 if (context.mounted) {
-                  dialogService.showErrorDialog(context, e.toString());
+                  showErrorDialog(context, e.toString());
                 }
               }
             }

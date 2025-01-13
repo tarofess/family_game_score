@@ -4,18 +4,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/player_image.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 
 class PlayerListCard extends HookWidget {
   final Player player;
   final WidgetRef ref;
-  final DialogService dialogService = getIt<DialogService>();
 
-  PlayerListCard({super.key, required this.player, required this.ref});
+  const PlayerListCard({super.key, required this.player, required this.ref});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +47,7 @@ class PlayerListCard extends HookWidget {
             } catch (e) {
               switchValue.value = !value;
               if (context.mounted) {
-                await dialogService.showErrorDialog(context, e.toString());
+                await showErrorDialog(context, e.toString());
               }
             }
           },

@@ -5,18 +5,16 @@ import 'package:table_calendar/table_calendar.dart';
 
 import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
 import 'package:family_game_score/domain/entity/session.dart';
+import 'package:family_game_score/presentation/dialog/input_dialog.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
   final DateTime selectedDay;
-  final dialogService = getIt<DialogService>();
 
-  ResultHistoryDetailView({super.key, required this.selectedDay});
+  const ResultHistoryDetailView({super.key, required this.selectedDay});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -63,8 +61,20 @@ class ResultHistoryDetailView extends ConsumerWidget {
     int index,
   ) {
     return GestureDetector(
-      onTap: () async => await dialogService.showEditGameTypeDialog(context,
-          ref, getResultHistorySections(resultHistories)[index].session),
+      onTap: () async {
+        final result = await showInputDialog(
+          context: context,
+          title: '遊んだゲームの種類を編集できます。',
+          hintText: '例：大富豪',
+        );
+
+        await ref
+            .read(resultHistoryNotifierProvider.notifier)
+            .updateSessionGameType(
+              getResultHistorySections(resultHistories)[index].session,
+              result ?? '',
+            );
+      },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(

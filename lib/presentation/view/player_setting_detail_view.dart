@@ -5,9 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/application/state/result_history_notifier.dart';
@@ -15,11 +13,14 @@ import 'package:family_game_score/presentation/provider/pick_image_usecase_provi
 import 'package:family_game_score/presentation/provider/save_player_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/take_picture_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
+import 'package:family_game_score/presentation/dialog/error_dialog.dart';
+import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
   final formKey = GlobalKey<FormState>();
   final Player? player;
-  final DialogService dialogService = getIt<DialogService>();
 
   PlayerSettingDetailView({super.key, required this.player});
 
@@ -112,7 +113,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                       }
                     } catch (e) {
                       if (context.mounted) {
-                        dialogService.showErrorDialog(context, e);
+                        showErrorDialog(context, e);
                       }
                     }
                   }
@@ -224,11 +225,19 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   ) {
     return ElevatedButton(
       onPressed: () async {
-        final isSuccess =
-            await dialogService.showDeletePlayerDialog(context, ref, player!);
-        if (isSuccess) {
+        if (player == null) return;
+        final result = await showConfimationDialog(
+          context: context,
+          title: 'プレイヤー：${player.name}を削除しますか？',
+          content: '削除すると元に戻せませんが、本当に削除しますか？',
+        );
+
+        if (result) {
+          await ref.read(playerNotifierProvider.notifier).deletePlayer(player);
+          ref.invalidate(resultHistoryNotifierProvider);
+
           if (context.mounted) {
-            await dialogService.showMessageDialog(context, 'プレイヤーの削除が完了しました。');
+            await showMessageDialog(context, 'プレイヤーの削除が完了しました。');
           }
           if (context.mounted) context.pop();
         }
@@ -265,7 +274,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                   playerImage.value = FileImage(File(path ?? ''));
                 } catch (e) {
                   if (context.mounted) {
-                    dialogService.showErrorDialog(context, e);
+                    showErrorDialog(context, e);
                   }
                 } finally {
                   if (context.mounted) context.pop();
@@ -282,7 +291,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
                   playerImage.value = FileImage(File(path ?? ''));
                 } catch (e) {
                   if (context.mounted) {
-                    dialogService.showErrorDialog(context, e);
+                    showErrorDialog(context, e);
                   }
                 } finally {
                   if (context.mounted) context.pop();

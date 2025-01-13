@@ -3,17 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/player_list_card.dart';
 import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
 class PlayerSettingView extends ConsumerWidget {
-  final DialogService dialogService = getIt<DialogService>();
-
-  PlayerSettingView({super.key});
+  const PlayerSettingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

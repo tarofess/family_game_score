@@ -3,20 +3,20 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:family_game_score/main.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/service/dialog_service.dart';
 import 'package:family_game_score/presentation/widget/list_card/scoring_list_card.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
+import 'package:family_game_score/application/state/result_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
+import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
 
 class ScoringView extends ConsumerWidget {
-  final DialogService dialogService = getIt<DialogService>();
-
-  ScoringView({super.key});
+  const ScoringView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,12 +58,13 @@ class ScoringView extends ConsumerWidget {
           icon: Icon(Icons.exit_to_app, size: 24.r),
           onPressed: session != null
               ? () async {
-                  final isSuccess =
-                      await dialogService.showFinishGameDialog(context, ref);
-                  if (isSuccess) {
-                    if (context.mounted) {
-                      context.pushReplacement('/ranking_view');
-                    }
+                  final result = await showConfimationDialog(
+                    context: context,
+                    title: '確認',
+                    content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
+                  );
+                  if (result && context.mounted) {
+                    context.pushReplacement('/ranking_view');
                   }
                 }
               : null,
@@ -71,7 +72,28 @@ class ScoringView extends ConsumerWidget {
         actions: [
           IconButton(
             onPressed: () async {
-              await dialogService.showMoveToNextRoundDialog(context, ref);
+              final session = ref.read(sessionNotifierProvider).value;
+              final nextRound =
+                  session != null ? (session.round + 1).toString() : '2';
+              final result = await showConfimationDialog(
+                context: context,
+                title: '確認',
+                content: '$nextRound回戦に進みますか？',
+              );
+
+              if (result) {
+                await DatabaseHelper.instance.database.transaction((txc) async {
+                  await ref
+                      .read(sessionNotifierProvider.notifier)
+                      .addSession(txc);
+                  await ref
+                      .read(sessionNotifierProvider.notifier)
+                      .updateRound(txc);
+                  await ref
+                      .read(resultNotifierProvider.notifier)
+                      .addOrUpdateResult(txc);
+                });
+              }
             },
             icon: Icon(Icons.check_circle_outline, size: 24.r),
           ),
