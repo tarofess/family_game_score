@@ -21,13 +21,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/home_view',
-        builder: (context, state) => HomeView(),
+        builder: (context, state) => const HomeView(),
       ),
       GoRoute(
         path: '/scoring_view',
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
-            child: ScoringView(),
+            child: const ScoringView(),
             transitionDuration: const Duration(milliseconds: 800),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -46,7 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/ranking_view',
-        builder: (context, state) => RankingView(),
+        builder: (context, state) => const RankingView(),
       ),
       GoRoute(
         path: '/result_history_calendar_view',
@@ -63,7 +63,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/player_setting_view',
-        builder: (context, state) => PlayerSettingView(),
+        builder: (context, state) => const PlayerSettingView(),
       ),
       GoRoute(
         path: '/player_setting_detail_view',

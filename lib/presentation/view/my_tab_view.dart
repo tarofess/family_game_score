@@ -26,10 +26,10 @@ class MyTabView extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
             HomeView(),
-            const ResultHistoryCalendarView(),
+            ResultHistoryCalendarView(),
             PlayerSettingView(),
           ],
         ),
