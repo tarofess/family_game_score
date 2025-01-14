@@ -6,8 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/domain/entity/result_history.dart';
-import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/presentation/provider/pick_image_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/save_player_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/take_picture_usecase_provider.dart';
@@ -17,6 +15,7 @@ import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/provider/delete_player_usecase_provider.dart';
+import 'package:family_game_score/presentation/provider/get_total_score_usecase_provider.dart';
 
 class PlayerSettingDetailView extends HookConsumerWidget {
   final formKey = GlobalKey<FormState>();
@@ -33,7 +32,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
 
     useEffect(() {
       Future<void> setPlayerImagePath() async {
-        if (player?.image != null && player!.image.isNotEmpty) {
+        if (player != null && player!.image.isNotEmpty) {
           final fileImage = await ref
               .read(fileImageGetUsecaseProvider)
               .execute(player?.image ?? '');
@@ -47,8 +46,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
         playerName.value = nameTextEditingController.text;
       }
 
-      nameTextEditingController.addListener(listener);
       setPlayerImagePath();
+      nameTextEditingController.addListener(listener);
       return () {
         nameTextEditingController.removeListener(listener);
       };
@@ -201,6 +200,8 @@ class PlayerSettingDetailView extends HookConsumerWidget {
   }
 
   Widget buildTotalScoreWidget(WidgetRef ref, Player? player) {
+    final totalScore = ref.read(getTotalScoreUsecaseProvider).execute(player);
+
     return player == null
         ? const SizedBox()
         : Row(
@@ -209,7 +210,7 @@ class PlayerSettingDetailView extends HookConsumerWidget {
               Text('総獲得ポイント数:', style: TextStyle(fontSize: 20.sp)),
               SizedBox(width: 10.r),
               Text(
-                '${getTotalScore(ref, player)}',
+                '$totalScore',
                 style: TextStyle(fontSize: 20.sp),
               ),
             ],
@@ -319,21 +320,5 @@ class PlayerSettingDetailView extends HookConsumerWidget {
         );
       },
     );
-  }
-
-  int getTotalScore(WidgetRef ref, Player? player) {
-    final resultHistories = ref.watch(resultHistoryNotifierProvider).value;
-
-    int totalScore = 0;
-
-    if (player == null) return totalScore;
-
-    for (ResultHistory resultHistory in resultHistories ?? []) {
-      if (resultHistory.player.id == player.id) {
-        totalScore += resultHistory.result.score;
-      }
-    }
-
-    return totalScore;
   }
 }

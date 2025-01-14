@@ -67,20 +67,28 @@ class HomeView extends ConsumerWidget {
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
       size: 200.r,
       gradientColors: areTwoOrMorePlayersActive(players)
-          ? const [
-              Color.fromARGB(255, 255, 194, 102),
-              Color.fromARGB(255, 255, 101, 90)
-            ]
-          : const [
-              Color.fromARGB(255, 223, 223, 223),
-              Color.fromARGB(255, 109, 109, 109)
-            ],
+          ? getActiveButtonColor()
+          : getInactiveButtonColor(),
       textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
             color: Colors.white,
             fontSize: 20.sp,
             fontWeight: FontWeight.bold,
           ),
     );
+  }
+
+  List<Color> getActiveButtonColor() {
+    return const [
+      Color.fromARGB(255, 255, 194, 102),
+      Color.fromARGB(255, 255, 101, 90)
+    ];
+  }
+
+  List<Color> getInactiveButtonColor() {
+    return const [
+      Color.fromARGB(255, 223, 223, 223),
+      Color.fromARGB(255, 109, 109, 109)
+    ];
   }
 
   bool areTwoOrMorePlayersActive(List<Player> players) {
