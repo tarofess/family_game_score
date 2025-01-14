@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import 'package:family_game_score/application/state/result_history_notifier.dart';
 import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/widget/list_card/result_list_card.dart';
-import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/dialog/input_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/update_game_type_usecase_provider.dart';
+import 'package:family_game_score/presentation/viewmodel/result_history_detail_viewmodel.dart';
 
 class ResultHistoryDetailView extends ConsumerWidget {
   final DateTime selectedDay;
@@ -22,6 +21,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final resultHistoryState = ref.watch(resultHistoryNotifierProvider);
+    final vm = ref.watch(resultHistoryViewModelProvider(selectedDay));
 
     return Scaffold(
       appBar: AppBar(
@@ -32,13 +32,13 @@ class ResultHistoryDetailView extends ConsumerWidget {
       body: resultHistoryState.when(
         data: (resultHistories) {
           return ListView.builder(
-            itemCount: getResultHistorySections(resultHistories).length,
+            itemCount: vm.resultHistorySections.length,
             itemBuilder: (context, index) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  buildSectionHeader(context, ref, resultHistories, index),
-                  buildSectionItems(ref, resultHistories, index),
+                  buildSectionHeader(context, ref, resultHistories, index, vm),
+                  buildSectionItems(ref, resultHistories, index, vm),
                 ],
               );
             },
@@ -62,6 +62,7 @@ class ResultHistoryDetailView extends ConsumerWidget {
     WidgetRef ref,
     List<ResultHistory> resultHistories,
     int index,
+    ResultHistoryDetailViewModel vm,
   ) {
     return GestureDetector(
       onTap: () async {
@@ -70,10 +71,11 @@ class ResultHistoryDetailView extends ConsumerWidget {
           title: '遊んだゲームの種類を編集できます。',
           hintText: '例：大富豪',
         );
+        if (gameType == null) return;
 
         final result = await ref.read(updateGameTypeUsecaseProvider).execute(
-              getResultHistorySections(resultHistories)[index].session,
-              gameType ?? '',
+              vm.resultHistorySections[index].session,
+              gameType,
             );
         switch (result) {
           case Success():
@@ -99,13 +101,10 @@ class ResultHistoryDetailView extends ConsumerWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: getResultHistorySections(resultHistories)[index]
-                        .session
-                        .gameType ==
-                    null
+            child: vm.isGameTypeNull(vm.resultHistorySections[index].session)
                 ? const Text('')
                 : Text(
-                    '${getResultHistorySections(resultHistories)[index].session.gameType}',
+                    '${vm.resultHistorySections[index].session.gameType}',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Colors.white,
@@ -122,35 +121,23 @@ class ResultHistoryDetailView extends ConsumerWidget {
     WidgetRef ref,
     List<ResultHistory> resultHistories,
     int index,
+    ResultHistoryDetailViewModel vm,
   ) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: getResultHistorySections(resultHistories)[index].items.length,
+      itemCount: vm.resultHistorySections[index].items.length,
       itemBuilder: (context, itemIndex) {
-        return getResultHistorySections(resultHistories)[index]
-                    .items[itemIndex]
-                    .player
-                    .status ==
-                -1
+        return vm.isPlayerHasBeenDeleted(index, itemIndex)
             ? buildPlayerHasBeenDeletedCard(
-                getResultHistorySections(resultHistories)[index]
-                    .items[itemIndex]
-                    .player,
+                vm.resultHistorySections[index].items[itemIndex].player,
               )
             : ResultListCard(
                 key: ValueKey(
-                  getResultHistorySections(resultHistories)[index]
-                      .items[itemIndex]
-                      .result
-                      .id,
+                  vm.resultHistorySections[index].items[itemIndex].result.id,
                 ),
-                player: getResultHistorySections(resultHistories)[index]
-                    .items[itemIndex]
-                    .player,
-                result: getResultHistorySections(resultHistories)[index]
-                    .items[itemIndex]
-                    .result,
+                player: vm.resultHistorySections[index].items[itemIndex].player,
+                result: vm.resultHistorySections[index].items[itemIndex].result,
               );
       },
     );
@@ -168,55 +155,5 @@ class ResultHistoryDetailView extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  List<ResultHistorySection> getResultHistorySections(
-    List<ResultHistory> resultHistories,
-  ) {
-    final filteredResultHistoryies = resultHistories.where((element) {
-      final elementDate = DateTime.parse(element.session.endTime!);
-      return isSameDay(elementDate, selectedDay);
-    }).toList();
-
-    if (filteredResultHistoryies.isNotEmpty) {
-      final convertedResultHistorySection =
-          convertToResultHistorySection(filteredResultHistoryies);
-      return convertedResultHistorySection;
-    }
-
-    return [];
-  }
-
-  List<ResultHistorySection> convertToResultHistorySection(
-      List<ResultHistory> resultHistories) {
-    Map<int, List<ResultHistoryItems>> sessionItemsMap = {};
-
-    for (var resultHistory in resultHistories) {
-      int sessionId = resultHistory.session.id;
-      if (!sessionItemsMap.containsKey(sessionId)) {
-        sessionItemsMap[sessionId] = [];
-      }
-      sessionItemsMap[sessionId]!.add(ResultHistoryItems(
-        player: resultHistory.player,
-        result: resultHistory.result,
-      ));
-    }
-
-    List<ResultHistorySection> sessionResultHistories = [];
-    for (var entry in sessionItemsMap.entries) {
-      int sessionId = entry.key;
-      List<ResultHistoryItems> items = entry.value;
-
-      Session session = resultHistories
-          .firstWhere((history) => history.session.id == sessionId)
-          .session;
-
-      sessionResultHistories.add(ResultHistorySection(
-        session: session,
-        items: items,
-      ));
-    }
-
-    return sessionResultHistories;
   }
 }
