@@ -31,22 +31,25 @@ class PlayerSettingDetailView extends HookConsumerWidget {
     final playerImage = useState<FileImage?>(null);
 
     useEffect(() {
-      Future<void> setPlayerImagePath() async {
-        if (player != null && player!.image.isNotEmpty) {
-          final fileImage = await ref
-              .read(fileImageGetUsecaseProvider)
-              .execute(player?.image ?? '');
-          playerImage.value = fileImage;
-        } else {
-          playerImage.value = null;
-        }
-      }
-
       void listener() {
         playerName.value = nameTextEditingController.text;
       }
 
-      setPlayerImagePath();
+      Future<void> setPlayerImagePath() async {
+        if (player != null && player!.image.isNotEmpty) {
+          final fileImage = await ref
+              .read(fileImageGetUsecaseProvider)
+              .execute(player?.image);
+          playerImage.value = fileImage;
+        }
+      }
+
+      try {
+        setPlayerImagePath();
+      } catch (e) {
+        showErrorDialog(context, e.toString());
+      }
+
       nameTextEditingController.addListener(listener);
       return () {
         nameTextEditingController.removeListener(listener);

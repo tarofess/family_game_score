@@ -6,8 +6,10 @@ class FileImageGetUsecase {
 
   FileImageGetUsecase(this._fileService);
 
-  Future<FileImage?> execute(String fileName) async {
+  Future<FileImage?> execute(String? fileName) async {
     try {
+      if (fileName == null) return null;
+
       final fileImage = _fileService.getFileImageFromPath(fileName);
       return fileImage;
     } catch (e) {
