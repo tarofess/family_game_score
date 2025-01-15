@@ -7,34 +7,43 @@ import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/widget/gradient_circle_button.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
-import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/provider/start_game_usecase_provider.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 
 class HomeView extends ConsumerWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combinedState = ref.watch(combinedProvider);
+    final sessionState = ref.watch(sessionNotifierProvider);
+    final playersState = ref.watch(playerNotifierProvider);
 
     return Scaffold(
-      body: combinedState.when(
-        data: (combinedData) {
-          final session = combinedData.$1;
-          final players = combinedData.$2;
-
-          return Center(
-            child: _buildCenterCircleButton(context, ref, session, players),
+      body: sessionState.when(
+        data: (session) {
+          return playersState.when(
+            data: (players) {
+              return Center(
+                child: _buildCenterCircleButton(context, ref, session, players),
+              );
+            },
+            loading: () {
+              return const Center(child: CircularProgressIndicator());
+            },
+            error: (error, stackTrace) {
+              return AsyncErrorWidget(error: error, retry: () => playersState);
+            },
           );
         },
         loading: () {
           return const Center(child: CircularProgressIndicator());
         },
         error: (error, stackTrace) {
-          return AsyncErrorWidget(error: error, retry: () => combinedState);
+          return AsyncErrorWidget(error: error, retry: () => sessionState);
         },
       ),
     );

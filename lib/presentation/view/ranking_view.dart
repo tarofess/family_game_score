@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/result.dart' as entity_result;
-import 'package:family_game_score/application/state/combined_provider.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
@@ -16,28 +15,60 @@ import 'package:family_game_score/presentation/provider/reset_game_usecase_provi
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/add_game_type_usecase_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/result_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 
 class RankingView extends ConsumerWidget {
   const RankingView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combinedState = ref.watch(combinedProvider);
+    final sessionState = ref.watch(sessionNotifierProvider);
+    final playersState = ref.watch(playerNotifierProvider);
+    final resultsState = ref.watch(resultNotifierProvider);
 
-    return combinedState.when(
-      data: (combinedData) {
-        final session = combinedData.$1;
-        final players = combinedData.$2;
-        final results = combinedData.$3;
-
-        return _buildScaffold(context, ref, session, players, results);
-      },
-      loading: () {
-        return const Center(child: CircularProgressIndicator());
-      },
-      error: (error, stackTrace) {
-        return AsyncErrorWidget(error: error, retry: () => combinedState);
-      },
+    return Scaffold(
+      body: sessionState.when(
+        data: (session) {
+          return playersState.when(
+            data: (players) {
+              return resultsState.when(
+                data: (results) {
+                  return _buildScaffold(
+                    context,
+                    ref,
+                    session,
+                    players,
+                    results,
+                  );
+                },
+                loading: () {
+                  return const Center(child: CircularProgressIndicator());
+                },
+                error: (error, stackTrace) {
+                  return AsyncErrorWidget(
+                    error: error,
+                    retry: () => resultsState,
+                  );
+                },
+              );
+            },
+            loading: () {
+              return const Center(child: CircularProgressIndicator());
+            },
+            error: (error, stackTrace) {
+              return AsyncErrorWidget(error: error, retry: () => playersState);
+            },
+          );
+        },
+        loading: () {
+          return const Center(child: CircularProgressIndicator());
+        },
+        error: (error, stackTrace) {
+          return AsyncErrorWidget(error: error, retry: () => sessionState);
+        },
+      ),
     );
   }
 

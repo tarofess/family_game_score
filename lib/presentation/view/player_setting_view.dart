@@ -5,7 +5,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/presentation/widget/list_card/player_list_card.dart';
-import 'package:family_game_score/application/state/combined_provider.dart';
+import 'package:family_game_score/application/state/player_notifier.dart';
+import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
 class PlayerSettingView extends ConsumerWidget {
@@ -13,21 +14,31 @@ class PlayerSettingView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final combinedState = ref.watch(combinedProvider);
+    final sessionState = ref.watch(sessionNotifierProvider);
+    final playersState = ref.watch(playerNotifierProvider);
 
-    return combinedState.when(
-      data: (combinedData) {
-        final session = combinedData.$1;
-        final players = combinedData.$2;
-
-        return _buildScaffold(context, ref, session, players);
-      },
-      loading: () {
-        return const Center(child: CircularProgressIndicator());
-      },
-      error: (error, stackTrace) {
-        return AsyncErrorWidget(error: error, retry: () => combinedState);
-      },
+    return Scaffold(
+      body: sessionState.when(
+        data: (session) {
+          return playersState.when(
+            data: (players) {
+              return _buildScaffold(context, ref, session, players);
+            },
+            loading: () {
+              return const Center(child: CircularProgressIndicator());
+            },
+            error: (error, stackTrace) {
+              return AsyncErrorWidget(error: error, retry: () => playersState);
+            },
+          );
+        },
+        loading: () {
+          return const Center(child: CircularProgressIndicator());
+        },
+        error: (error, stackTrace) {
+          return AsyncErrorWidget(error: error, retry: () => sessionState);
+        },
+      ),
     );
   }
 
