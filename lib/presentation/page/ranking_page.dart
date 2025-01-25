@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,7 +20,7 @@ import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 
-class RankingPage extends ConsumerWidget {
+class RankingPage extends HookConsumerWidget {
   const RankingPage({super.key});
 
   @override
@@ -27,6 +28,7 @@ class RankingPage extends ConsumerWidget {
     final sessionState = ref.watch(sessionNotifierProvider);
     final playersState = ref.watch(playerNotifierProvider);
     final resultsState = ref.watch(resultNotifierProvider);
+    final isWrittenGameType = useState(false);
 
     return Scaffold(
       body: sessionState.when(
@@ -41,6 +43,7 @@ class RankingPage extends ConsumerWidget {
                     session,
                     players,
                     results,
+                    isWrittenGameType,
                   );
                 },
                 loading: () {
@@ -78,6 +81,7 @@ class RankingPage extends ConsumerWidget {
     Session? session,
     List<Player> players,
     List<entity_result.Result> results,
+    ValueNotifier<bool> isWrittenGameType,
   ) {
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +115,7 @@ class RankingPage extends ConsumerWidget {
         ],
       ),
       floatingActionButton: Visibility(
-        visible: isFinishedGame(session),
+        visible: isFinishedGame(session) && !isWrittenGameType.value,
         child: FloatingActionButton(
           onPressed: () async {
             final gameType = await showInputDialog(
@@ -127,6 +131,7 @@ class RankingPage extends ConsumerWidget {
               case Success():
                 if (context.mounted) {
                   await showMessageDialog(context, 'ゲームの種類を記録しました。');
+                  isWrittenGameType.value = true;
                 }
                 break;
               case Failure(message: final message):
