@@ -20,7 +20,7 @@ class PlayerListCard extends HookWidget {
     final switchValue = useState(player.status == 1 ? true : false);
 
     return Card(
-      elevation: 4.r,
+      elevation: 2.r,
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),

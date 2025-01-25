@@ -144,7 +144,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
 
   Widget buildPlayerHasBeenDeletedCard(Player player) {
     return Card(
-      elevation: 2.r,
+      elevation: 1.r,
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),

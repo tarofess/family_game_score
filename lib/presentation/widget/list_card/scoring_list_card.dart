@@ -17,7 +17,7 @@ class ScoringListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4.r,
+      elevation: 2.r,
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 6.r),
