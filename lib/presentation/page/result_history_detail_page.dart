@@ -12,6 +12,7 @@ import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/update_game_type_usecase_provider.dart';
 import 'package:family_game_score/presentation/viewmodel/result_history_detail_viewmodel.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class ResultHistoryDetailPage extends ConsumerWidget {
   final DateTime selectedDay;
@@ -69,12 +70,16 @@ class ResultHistoryDetailPage extends ConsumerWidget {
           title: '遊んだゲームの種類を編集できます',
           hintText: '例：大富豪',
         );
-        if (gameType == null) return;
 
-        final result = await ref.read(updateGameTypeUsecaseProvider).execute(
-              vm.resultHistorySections[index].session,
-              gameType,
-            );
+        if (gameType == null || !context.mounted) return;
+
+        final result = await LoadingOverlay.of(context).during(
+          () => ref.read(updateGameTypeUsecaseProvider).execute(
+                vm.resultHistorySections[index].session,
+                gameType,
+              ),
+        );
+
         switch (result) {
           case Success():
             break;
@@ -104,10 +109,10 @@ class ResultHistoryDetailPage extends ConsumerWidget {
                 : Text(
                     '${vm.resultHistorySections[index].session.gameType}',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Colors.white,
-                          fontSize: 20.sp,
-                        ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.white, fontSize: 20.sp),
                   ),
           ),
         ),

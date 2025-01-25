@@ -12,6 +12,7 @@ import 'package:family_game_score/presentation/provider/start_game_usecase_provi
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -57,7 +58,10 @@ class HomePage extends ConsumerWidget {
     return GradientCircleButton(
       onPressed: _areTwoOrMorePlayersActive(players)
           ? () async {
-              final result = await ref.read(startGameUsecaseProvider).execute();
+              final result = await LoadingOverlay.of(context).during(
+                () => ref.read(startGameUsecaseProvider).execute(),
+              );
+
               switch (result) {
                 case Success():
                   if (context.mounted) context.go('/scoring_page');

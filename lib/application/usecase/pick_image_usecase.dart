@@ -9,7 +9,7 @@ class PickImageUsecase {
 
   PickImageUsecase(this._cameraService);
 
-  Future<Result?> execute(BuildContext context) async {
+  Future<Result<String>?> execute(BuildContext context) async {
     try {
       final result = await PermissionHandlerService.requestCameraPermission(
         context,
@@ -17,6 +17,8 @@ class PickImageUsecase {
       if (!result) return null;
 
       final String? path = await _cameraService.pickImageFromGallery();
+      if (path == null) return null;
+
       return Success(path);
     } catch (e) {
       return Failure(e.toString(), e as Exception?);

@@ -8,7 +8,7 @@ class TakePictureUsecase {
 
   TakePictureUsecase(this._cameraService);
 
-  Future<Result?> execute(BuildContext context) async {
+  Future<Result<String>?> execute(BuildContext context) async {
     try {
       final result = await PermissionHandlerService.requestCameraPermission(
         context,
@@ -16,6 +16,8 @@ class TakePictureUsecase {
       if (!result) return null;
 
       final String? path = await _cameraService.takePicture();
+      if (path == null) return null;
+
       return Success(path);
     } catch (e) {
       return Failure(e.toString(), e as Exception?);

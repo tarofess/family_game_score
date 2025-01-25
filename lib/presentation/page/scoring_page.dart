@@ -16,6 +16,7 @@ import 'package:family_game_score/presentation/provider/finish_game_usecase_prov
 import 'package:family_game_score/presentation/provider/move_to_next_round_usecase_provider.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class ScoringPage extends ConsumerWidget {
   const ScoringPage({super.key});
@@ -120,10 +121,12 @@ class ScoringPage extends ConsumerWidget {
                 title: '確認',
                 content: 'ゲームを終了しますか？\nゲームが終了すると順位が確定します。',
               );
-              if (!isConfirmed) return;
 
-              final result =
-                  await ref.read(finishGameUsecaseProvider).execute();
+              if (!isConfirmed || !context.mounted) return;
+
+              final result = await LoadingOverlay.of(context).during(
+                () => ref.read(finishGameUsecaseProvider).execute(),
+              );
               switch (result) {
                 case Success():
                   if (context.mounted) {
@@ -150,9 +153,11 @@ class ScoringPage extends ConsumerWidget {
           content: '$nextRound回戦に進みますか？',
         );
 
-        if (!isConfirmed) return;
+        if (!isConfirmed || !context.mounted) return;
 
-        final result = await ref.read(moveToNextRoundUsecaseProvider).execute();
+        final result = await LoadingOverlay.of(context).during(
+          () => ref.read(moveToNextRoundUsecaseProvider).execute(),
+        );
         switch (result) {
           case Success():
             break;

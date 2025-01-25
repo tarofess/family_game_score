@@ -19,6 +19,7 @@ import 'package:family_game_score/presentation/provider/add_game_type_usecase_pr
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class RankingPage extends HookConsumerWidget {
   const RankingPage({super.key});
@@ -119,10 +120,12 @@ class RankingPage extends HookConsumerWidget {
               title: '遊んだゲームの種類を記録できます',
               hintText: '例：大富豪',
             );
-            if (gameType == null) return;
 
-            final result =
-                await ref.read(addGameTypeUsecaseProvider).execute(gameType);
+            if (gameType == null || !context.mounted) return;
+
+            final result = await LoadingOverlay.of(context).during(
+              () => ref.read(addGameTypeUsecaseProvider).execute(gameType),
+            );
             switch (result) {
               case Success():
                 if (context.mounted) {

@@ -16,6 +16,7 @@ import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/provider/delete_player_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/get_total_score_usecase_provider.dart';
+import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class PlayerSettingDetailPage extends HookConsumerWidget {
   final formKey = GlobalKey<FormState>();
@@ -102,13 +103,15 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
                 child: const Text('保存'),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
-                    final result =
-                        await ref.read(savePlayerUsecaseProvider).execute(
-                              ref,
-                              player,
-                              nameTextEditingController.text,
-                              playerImage.value,
-                            );
+                    final result = await LoadingOverlay.of(context).during(
+                      () => ref.read(savePlayerUsecaseProvider).execute(
+                            ref,
+                            player,
+                            nameTextEditingController.text,
+                            playerImage.value,
+                          ),
+                    );
+
                     switch (result) {
                       case Success():
                         if (context.mounted) context.pop();
@@ -241,10 +244,13 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
           title: 'プレイヤー：${player.name}を削除しますか？',
           content: '削除すると元に戻せませんが、本当に削除しますか？',
         );
-        if (!isConfirmed) return;
 
-        final result =
-            await ref.read(deletePlayerUsecaseProvider).execute(player);
+        if (!isConfirmed || !context.mounted) return;
+
+        final result = await LoadingOverlay.of(context).during(
+          () => ref.read(deletePlayerUsecaseProvider).execute(player),
+        );
+
         switch (result) {
           case Success():
             if (context.mounted) {
@@ -284,13 +290,15 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               onTap: () async {
-                final result =
-                    await ref.read(takePictureUsecaseProvider).execute(context);
+                final result = await LoadingOverlay.of(context).during(
+                  () => ref.read(takePictureUsecaseProvider).execute(context),
+                );
+
                 if (result == null) return;
 
                 switch (result) {
                   case Success(value: final path):
-                    playerImage.value = FileImage(File(path ?? ''));
+                    playerImage.value = FileImage(File(path!));
                     if (context.mounted) context.pop();
                     break;
                   case Failure(message: final message):
@@ -308,13 +316,15 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               onTap: () async {
-                final result =
-                    await ref.read(pickImageUsecaseProvider).execute(context);
+                final result = await LoadingOverlay.of(context).during(
+                  () => ref.read(pickImageUsecaseProvider).execute(context),
+                );
+
                 if (result == null) return;
 
                 switch (result) {
                   case Success(value: final path):
-                    playerImage.value = FileImage(File(path ?? ''));
+                    playerImage.value = FileImage(File(path!));
                     if (context.mounted) context.pop();
                     break;
                   case Failure(message: final message):
