@@ -21,16 +21,22 @@ class ScoringListCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 6.r),
-        leading: Text('${index + 1}位', style: TextStyle(fontSize: 16.sp)),
+        leading: Text(
+          '${index + 1}位',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
         title: Row(
           children: [
             PlayerImage(player: players[index]),
-            SizedBox(width: 12.r),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 players[index].name,
-                style: TextStyle(fontSize: 18.sp),
                 overflow: TextOverflow.ellipsis,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 18.sp),
               ),
             ),
           ],

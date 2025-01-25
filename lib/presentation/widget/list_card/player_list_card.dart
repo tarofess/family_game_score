@@ -28,7 +28,9 @@ class PlayerListCard extends HookWidget {
         title: Text(
           player.name,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 18.sp),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                fontSize: 18.sp,
+              ),
         ),
         trailing: Switch(
           value: switchValue.value,
@@ -38,12 +40,12 @@ class PlayerListCard extends HookWidget {
             try {
               switchValue.value = value;
               value
-                  ? ref.read(playerNotifierProvider.notifier).activatePlayer(
-                        player.copyWith(status: 1),
-                      )
-                  : ref.read(playerNotifierProvider.notifier).deactivatePlayer(
-                        player.copyWith(status: 0),
-                      );
+                  ? await ref
+                      .read(playerNotifierProvider.notifier)
+                      .activatePlayer(player.copyWith(status: 1))
+                  : await ref
+                      .read(playerNotifierProvider.notifier)
+                      .deactivatePlayer(player.copyWith(status: 0));
             } catch (e) {
               switchValue.value = !value;
               if (context.mounted) {

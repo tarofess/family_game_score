@@ -33,11 +33,15 @@ class MyApp extends ConsumerWidget {
             routerConfig: ref.watch(routerProvider),
             debugShowCheckedModeBanner: false,
           ),
-          loading: () => const MaterialApp(
+          loading: () => MaterialApp(
+            theme: createLightMode(),
+            darkTheme: createDarkMode(),
             debugShowCheckedModeBanner: false,
-            home: LoadingPage(),
+            home: const LoadingPage(),
           ),
           error: (error, stack) => MaterialApp(
+            theme: createLightMode(),
+            darkTheme: createDarkMode(),
             debugShowCheckedModeBanner: false,
             home: ErrorPage(
               error: error,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -74,30 +73,10 @@ class HomePage extends ConsumerWidget {
                 'プレイヤー設定画面でプレイヤーを登録してください。',
               ),
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
-      size: 200.r,
       gradientColors: areTwoOrMorePlayersActive(players)
           ? getActiveButtonColor()
           : getInactiveButtonColor(),
-      textStyle: Theme.of(context).textTheme.bodyLarge!.copyWith(
-            color: Colors.white,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-          ),
     );
-  }
-
-  List<Color> getActiveButtonColor() {
-    return const [
-      Color.fromARGB(255, 255, 194, 102),
-      Color.fromARGB(255, 255, 101, 90)
-    ];
-  }
-
-  List<Color> getInactiveButtonColor() {
-    return const [
-      Color.fromARGB(255, 223, 223, 223),
-      Color.fromARGB(255, 109, 109, 109)
-    ];
   }
 
   bool areTwoOrMorePlayersActive(List<Player> players) {

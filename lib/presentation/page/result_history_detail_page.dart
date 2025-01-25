@@ -25,8 +25,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 56.r,
-        title: Text('成績の詳細', style: TextStyle(fontSize: 20.sp)),
+        title: const Text('成績の詳細'),
       ),
       body: resultHistoryState.when(
         data: (resultHistories) {
@@ -37,7 +36,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildSectionHeader(context, ref, resultHistories, index, vm),
-                  buildSectionItems(ref, resultHistories, index, vm),
+                  buildSectionItems(context, ref, resultHistories, index, vm),
                 ],
               );
             },
@@ -67,7 +66,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
       onTap: () async {
         final gameType = await showInputDialog(
           context: context,
-          title: '遊んだゲームの種類を編集できます。',
+          title: '遊んだゲームの種類を編集できます',
           hintText: '例：大富豪',
         );
         if (gameType == null) return;
@@ -117,6 +116,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
   }
 
   Widget buildSectionItems(
+    BuildContext context,
     WidgetRef ref,
     List<ResultHistory> resultHistories,
     int index,
@@ -129,6 +129,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
       itemBuilder: (context, itemIndex) {
         return vm.isPlayerHasBeenDeleted(index, itemIndex)
             ? buildPlayerHasBeenDeletedCard(
+                context,
                 vm.resultHistorySections[index].items[itemIndex].player,
               )
             : ResultListCard(
@@ -142,7 +143,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
     );
   }
 
-  Widget buildPlayerHasBeenDeletedCard(Player player) {
+  Widget buildPlayerHasBeenDeletedCard(BuildContext context, Player player) {
     return Card(
       elevation: 1.r,
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
@@ -150,7 +151,7 @@ class ResultHistoryDetailPage extends ConsumerWidget {
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
         title: Text(
           'プレイヤー：${player.name}は削除されました。',
-          style: TextStyle(fontSize: 14.sp),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
     );

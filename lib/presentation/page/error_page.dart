@@ -10,25 +10,32 @@ class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('アプリの初期化に失敗しました'),
-            SizedBox(height: 16.h),
-            if (error != null)
+      body: Padding(
+        padding: EdgeInsets.all(24.w),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Text(
-                '$error',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
+                'アプリの初期化に失敗しました',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              SizedBox(height: 20.h),
+              if (error != null)
+                Text(
+                  '$error',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              SizedBox(height: 32.h),
+              ElevatedButton(
+                onPressed: retry,
+                child: Text(
+                  'リトライ',
+                  style: Theme.of(context).textTheme.labelLarge,
                 ),
               ),
-            SizedBox(height: 16.h),
-            ElevatedButton(
-              onPressed: retry,
-              child: const Text('リトライ'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

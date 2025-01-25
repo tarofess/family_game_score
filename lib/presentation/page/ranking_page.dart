@@ -85,11 +85,7 @@ class RankingPage extends HookConsumerWidget {
   ) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          isFinishedGame(session) ? '結果発表' : '現在の順位',
-          style: TextStyle(fontSize: 20.sp),
-        ),
-        toolbarHeight: 56.r,
+        title: Text(isFinishedGame(session) ? '結果発表' : '現在の順位'),
         actions: [
           isFinishedGame(session)
               ? IconButton(
@@ -119,7 +115,7 @@ class RankingPage extends HookConsumerWidget {
           onPressed: () async {
             final gameType = await showInputDialog(
               context: context,
-              title: '遊んだゲームの種類を記録できます。',
+              title: '遊んだゲームの種類を記録できます',
               hintText: '例：大富豪',
             );
             if (gameType == null) return;

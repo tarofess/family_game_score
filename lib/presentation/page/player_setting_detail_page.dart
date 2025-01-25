@@ -68,17 +68,17 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: 50.r),
+              SizedBox(height: 50.h),
               buildImageCircle(context, ref, playerImage),
-              SizedBox(height: 60.r),
-              buildNameWidget(nameTextEditingController),
-              SizedBox(height: 60.r),
-              buildTotalScoreWidget(ref, player),
-              player == null ? const SizedBox() : SizedBox(height: 150.r),
+              SizedBox(height: 60.h),
+              buildNameWidget(context, nameTextEditingController),
+              SizedBox(height: 60.h),
+              buildTotalScoreWidget(context, ref, player),
+              player == null ? const SizedBox() : SizedBox(height: 150.h),
               player == null
                   ? const SizedBox()
                   : buildDeletePlayerButton(context, ref, player),
-              SizedBox(height: 50.r),
+              SizedBox(height: 50.h),
             ],
           ),
         ),
@@ -94,16 +94,12 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
     ValueNotifier<String> playerName,
   ) {
     return AppBar(
-      toolbarHeight: 56.r,
-      title: Text(
-        player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細',
-        style: TextStyle(fontSize: 20.sp),
-      ),
+      title: Text(player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細'),
       actions: [
         playerName.value.isEmpty && playerImage.value == null
             ? const SizedBox()
             : TextButton(
-                child: Text('保存', style: TextStyle(fontSize: 14.sp)),
+                child: const Text('保存'),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final result =
@@ -157,7 +153,10 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
     );
   }
 
-  Widget buildNameWidget(TextEditingController nameTextEditingController) {
+  Widget buildNameWidget(
+    BuildContext context,
+    TextEditingController nameTextEditingController,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -167,7 +166,7 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
             key: formKey,
             child: TextFormField(
               controller: nameTextEditingController,
-              style: TextStyle(fontSize: 20.sp),
+              style: Theme.of(context).textTheme.bodyLarge,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '名前を入力してください';
@@ -175,6 +174,7 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
                 return null;
               },
               decoration: InputDecoration(
+                labelText: '名前',
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: const BorderSide(
@@ -182,15 +182,12 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
                     width: 2.0,
                   ),
                 ),
-                errorStyle: TextStyle(
-                  fontSize: 14.sp,
-                ),
+                errorStyle: TextStyle(fontSize: 14.sp),
                 labelStyle: TextStyle(
                   fontSize: 20.sp,
                   color: Colors.grey[700],
                 ),
-                labelText: '名前',
-                floatingLabelStyle: TextStyle(fontSize: 20.sp),
+                floatingLabelStyle: Theme.of(context).textTheme.bodyMedium,
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide(
@@ -206,7 +203,11 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
     );
   }
 
-  Widget buildTotalScoreWidget(WidgetRef ref, Player? player) {
+  Widget buildTotalScoreWidget(
+    BuildContext context,
+    WidgetRef ref,
+    Player? player,
+  ) {
     final totalScore = ref.read(getTotalScoreUsecaseProvider).execute(player);
 
     return player == null
@@ -214,11 +215,14 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('総獲得ポイント数:', style: TextStyle(fontSize: 20.sp)),
-              SizedBox(width: 10.r),
+              Text(
+                '総獲得ポイント数:',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              SizedBox(width: 10.w),
               Text(
                 '$totalScore',
-                style: TextStyle(fontSize: 20.sp),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
           );
@@ -255,11 +259,10 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
       },
       child: Text(
         'プレイヤーを削除する',
-        style: TextStyle(
-          color: Colors.red,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.sp,
-        ),
+        style: Theme.of(context)
+            .textTheme
+            .bodySmall!
+            .copyWith(color: Colors.red, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -276,7 +279,10 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
           children: [
             ListTile(
               leading: Icon(Icons.camera_alt, size: 24.r),
-              title: Text('写真を撮る', style: TextStyle(fontSize: 14.sp)),
+              title: Text(
+                '写真を撮る',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               onTap: () async {
                 final result =
                     await ref.read(takePictureUsecaseProvider).execute(context);
@@ -297,7 +303,10 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
             ),
             ListTile(
               leading: Icon(Icons.photo_library, size: 24.r),
-              title: Text('フォトライブラリから選択', style: TextStyle(fontSize: 14.sp)),
+              title: Text(
+                'フォトライブラリから選択',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               onTap: () async {
                 final result =
                     await ref.read(pickImageUsecaseProvider).execute(context);
@@ -318,7 +327,10 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
             ),
             ListTile(
                 leading: Icon(Icons.cancel, size: 24.r),
-                title: Text('削除する', style: TextStyle(fontSize: 14.sp)),
+                title: Text(
+                  '削除する',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
                 onTap: () {
                   playerImage.value = null;
                   context.pop();

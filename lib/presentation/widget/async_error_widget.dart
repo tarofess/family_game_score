@@ -15,11 +15,22 @@ class AsyncErrorWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('$error', style: TextStyle(fontSize: 16.sp)),
-            SizedBox(height: 16.h),
+            Text(
+              'エラーが発生しました',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              '$error',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            SizedBox(height: 32.h),
             ElevatedButton(
               onPressed: retry,
-              child: Text('リトライ', style: TextStyle(fontSize: 16.sp)),
+              child: Text(
+                'リトライ',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
             ),
           ],
         ),

@@ -18,23 +18,29 @@ class ResultListCard extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 10.r, vertical: 6.r),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
-        leading: Text('${result.rank}位', style: TextStyle(fontSize: 14.sp)),
+        leading: Text(
+          '${result.rank}位',
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
         title: Row(
           children: [
             PlayerImage(player: player),
-            SizedBox(width: 12.r),
+            SizedBox(width: 12.w),
             Expanded(
               child: Text(
                 player.name,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18.sp),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 18.sp),
               ),
             ),
           ],
         ),
         trailing: Text(
           '${result.score}ポイント',
-          style: TextStyle(fontSize: 14.sp),
+          style: Theme.of(context).textTheme.labelMedium,
         ),
       ),
     );

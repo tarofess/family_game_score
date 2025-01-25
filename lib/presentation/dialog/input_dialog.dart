@@ -16,23 +16,25 @@ Future<String?> showInputDialog({
             title: Center(
               child: Text(
                 title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             content: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    inputText = value;
-                  });
-                },
-                decoration: InputDecoration(hintText: hintText),
-                style: TextStyle(fontSize: 14.sp)),
+              onChanged: (value) {
+                setState(() {
+                  inputText = value;
+                });
+              },
+              decoration: InputDecoration(hintText: hintText),
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(null),
-                child: Text('キャンセル', style: TextStyle(fontSize: 14.sp)),
+                child: Text(
+                  'キャンセル',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
               ),
               TextButton(
                 onPressed: inputText.trim().isEmpty

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:family_game_score/presentation/page/home_page.dart';
 import 'package:family_game_score/presentation/page/player_setting_page.dart';
@@ -14,10 +13,9 @@ class MyTabPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 56.r,
-          title: Text('ファミリーゲームスコア', style: TextStyle(fontSize: 20.sp)),
+          title: const Text('ファミリーゲームスコア'),
           bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 14.sp),
+            labelStyle: Theme.of(context).textTheme.labelMedium,
             tabs: const [
               Tab(text: 'ホーム'),
               Tab(text: '過去の成績'),

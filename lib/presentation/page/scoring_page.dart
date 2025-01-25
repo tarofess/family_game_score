@@ -79,11 +79,7 @@ class ScoringPage extends ConsumerWidget {
   ) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${session == null ? '1' : session.round.toString()}回戦',
-          style: TextStyle(fontSize: 20.sp),
-        ),
-        toolbarHeight: 56.r,
+        title: Text('${session == null ? '1' : session.round.toString()}回戦'),
         leading: _buildFinighGameIconButton(context, ref, session),
         actions: [
           _buildMoveToNextRoundIconButton(context, ref),
@@ -94,10 +90,7 @@ class ScoringPage extends ConsumerWidget {
           children: [
             Text(
               '現在の順位はこちら↓',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.normal,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             Expanded(
               child: _buildScoringList(players, ref),
