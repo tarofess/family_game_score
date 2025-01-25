@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-ThemeData createDefaultTheme() {
+ThemeData createDarkMode() {
   return ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
     fontFamily: 'MPLUSRounded1c-Regular',
     textTheme: TextTheme(
-      bodyLarge: const TextStyle(fontFamily: 'MPLUSRounded1c-Medium'),
+      bodySmall: TextStyle(
+        fontSize: 16.sp,
+      ),
       bodyMedium: TextStyle(
         fontFamily: 'MPLUSRounded1c-Medium',
-        fontSize: 16.sp,
+        fontSize: 20.sp,
+      ),
+      bodyLarge: const TextStyle(
+        fontFamily: 'MPLUSRounded1c-Medium',
       ),
     ),
   );

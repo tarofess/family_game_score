@@ -1,18 +1,13 @@
-import 'dart:async';
-import 'dart:ui';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'firebase_options.dart';
 
 import 'package:family_game_score/presentation/router/router.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
-import 'package:family_game_score/presentation/theme/theme.dart';
+import 'package:family_game_score/presentation/theme/light_mode.dart';
+import 'package:family_game_score/presentation/theme/dark_mode.dart';
 import 'package:family_game_score/presentation/page/error_page.dart';
 import 'package:family_game_score/presentation/page/loading_page.dart';
+import 'package:family_game_score/presentation/provider/initialization_provider.dart';
 
 void main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -32,9 +27,11 @@ class MyApp extends ConsumerWidget {
       builder: (context, child) {
         return initializeApp.when(
           data: (_) => MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            theme: createDefaultTheme(),
+            theme: createLightMode(),
+            darkTheme: createDarkMode(),
+            themeMode: ThemeMode.system,
             routerConfig: ref.watch(routerProvider),
+            debugShowCheckedModeBanner: false,
           ),
           loading: () => const MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -54,24 +51,4 @@ class MyApp extends ConsumerWidget {
       },
     );
   }
-}
-
-final initializationProvider = FutureProvider<void>((ref) async {
-  await initializeDateFormatting('ja_JP');
-  await setupFirebaseCrashlytics();
-  await DatabaseHelper.instance.initDatabase();
-});
-
-Future<void> setupFirebaseCrashlytics() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
 }
