@@ -14,8 +14,8 @@ import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 
-class HomeView extends ConsumerWidget {
-  const HomeView({super.key});
+class HomePage extends ConsumerWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -61,7 +61,7 @@ class HomeView extends ConsumerWidget {
               final result = await ref.read(startGameUsecaseProvider).execute();
               switch (result) {
                 case Success():
-                  if (context.mounted) context.go('/scoring_view');
+                  if (context.mounted) context.go('/scoring_page');
                   break;
                 case Failure(message: final message):
                   if (context.mounted) showErrorDialog(context, message);

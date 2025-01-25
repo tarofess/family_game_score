@@ -17,8 +17,8 @@ import 'package:family_game_score/presentation/provider/move_to_next_round_useca
 import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
 
-class ScoringView extends ConsumerWidget {
-  const ScoringView({super.key});
+class ScoringPage extends ConsumerWidget {
+  const ScoringPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -107,7 +107,7 @@ class ScoringView extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: session == null ? null : () => context.push('/ranking_view'),
+        onPressed: session == null ? null : () => context.push('/ranking_page'),
         backgroundColor: session == null ? Colors.grey[300] : null,
         child: Icon(Icons.description, size: 24.r),
       ),
@@ -135,7 +135,7 @@ class ScoringView extends ConsumerWidget {
               switch (result) {
                 case Success():
                   if (context.mounted) {
-                    context.pushReplacement('/ranking_view');
+                    context.pushReplacement('/ranking_page');
                   }
                   break;
                 case Failure(message: final message):

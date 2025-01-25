@@ -19,8 +19,8 @@ import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 
-class RankingView extends ConsumerWidget {
-  const RankingView({super.key});
+class RankingPage extends ConsumerWidget {
+  const RankingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

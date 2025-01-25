@@ -9,8 +9,8 @@ import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 
-class PlayerSettingView extends ConsumerWidget {
-  const PlayerSettingView({super.key});
+class PlayerSettingPage extends ConsumerWidget {
+  const PlayerSettingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +57,7 @@ class PlayerSettingView extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: session == null
             ? () => context.push(
-                  '/player_setting_detail_view',
+                  '/player_setting_detail_page',
                   extra: {'player': null},
                 )
             : null,

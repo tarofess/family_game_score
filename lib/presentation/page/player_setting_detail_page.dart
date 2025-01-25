@@ -17,11 +17,11 @@ import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/provider/delete_player_usecase_provider.dart';
 import 'package:family_game_score/presentation/provider/get_total_score_usecase_provider.dart';
 
-class PlayerSettingDetailView extends HookConsumerWidget {
+class PlayerSettingDetailPage extends HookConsumerWidget {
   final formKey = GlobalKey<FormState>();
   final Player? player;
 
-  PlayerSettingDetailView({super.key, required this.player});
+  PlayerSettingDetailPage({super.key, required this.player});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

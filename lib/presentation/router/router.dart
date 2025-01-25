@@ -3,31 +3,31 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/presentation/view/home_view.dart';
-import 'package:family_game_score/presentation/view/my_tab_view.dart';
-import 'package:family_game_score/presentation/view/player_setting_detail_view.dart';
-import 'package:family_game_score/presentation/view/player_setting_view.dart';
-import 'package:family_game_score/presentation/view/ranking_view.dart';
-import 'package:family_game_score/presentation/view/result_history_calendar_view.dart';
-import 'package:family_game_score/presentation/view/result_history_detail_view.dart';
-import 'package:family_game_score/presentation/view/scoring_view.dart';
+import 'package:family_game_score/presentation/page/home_page.dart';
+import 'package:family_game_score/presentation/page/my_tab_page.dart';
+import 'package:family_game_score/presentation/page/player_setting_detail_page.dart';
+import 'package:family_game_score/presentation/page/player_setting_page.dart';
+import 'package:family_game_score/presentation/page/ranking_page.dart';
+import 'package:family_game_score/presentation/page/result_history_calendar_page.dart';
+import 'package:family_game_score/presentation/page/result_history_detail_page.dart';
+import 'package:family_game_score/presentation/page/scoring_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const MyTabView(),
+        builder: (context, state) => const MyTabPage(),
       ),
       GoRoute(
-        path: '/home_view',
-        builder: (context, state) => const HomeView(),
+        path: '/home_page',
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
-        path: '/scoring_view',
+        path: '/scoring_page',
         pageBuilder: (BuildContext context, GoRouterState state) {
           return CustomTransitionPage(
-            child: const ScoringView(),
+            child: const ScoringPage(),
             transitionDuration: const Duration(milliseconds: 800),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -45,33 +45,33 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: '/ranking_view',
-        builder: (context, state) => const RankingView(),
+        path: '/ranking_page',
+        builder: (context, state) => const RankingPage(),
       ),
       GoRoute(
-        path: '/result_history_calendar_view',
-        builder: (context, state) => const ResultHistoryCalendarView(),
+        path: '/result_history_calendar_page',
+        builder: (context, state) => const ResultHistoryCalendarPage(),
       ),
       GoRoute(
-        path: '/result_history_detail_view',
+        path: '/result_history_detail_page',
         builder: (context, state) {
           final Map<String, dynamic> extra =
               state.extra as Map<String, dynamic>;
           final selectedDay = extra['selectedDay'] as DateTime;
-          return ResultHistoryDetailView(selectedDay: selectedDay);
+          return ResultHistoryDetailPage(selectedDay: selectedDay);
         },
       ),
       GoRoute(
-        path: '/player_setting_view',
-        builder: (context, state) => const PlayerSettingView(),
+        path: '/player_setting_page',
+        builder: (context, state) => const PlayerSettingPage(),
       ),
       GoRoute(
-        path: '/player_setting_detail_view',
+        path: '/player_setting_detail_page',
         builder: (context, state) {
           final Map<String, dynamic> extra =
               state.extra as Map<String, dynamic>;
           final player = extra['player'] as Player?;
-          return PlayerSettingDetailView(player: player);
+          return PlayerSettingDetailPage(player: player);
         },
       ),
     ],

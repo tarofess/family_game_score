@@ -6,8 +6,8 @@ import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/widget/result_history_calendar.dart';
 import 'package:family_game_score/application/state/result_history_notifier.dart';
 
-class ResultHistoryCalendarView extends HookConsumerWidget {
-  const ResultHistoryCalendarView({super.key});
+class ResultHistoryCalendarPage extends HookConsumerWidget {
+  const ResultHistoryCalendarPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

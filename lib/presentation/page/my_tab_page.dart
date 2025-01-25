@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:family_game_score/presentation/view/home_view.dart';
-import 'package:family_game_score/presentation/view/player_setting_view.dart';
-import 'package:family_game_score/presentation/view/result_history_calendar_view.dart';
+import 'package:family_game_score/presentation/page/home_page.dart';
+import 'package:family_game_score/presentation/page/player_setting_page.dart';
+import 'package:family_game_score/presentation/page/result_history_calendar_page.dart';
 
-class MyTabView extends StatelessWidget {
-  const MyTabView({super.key});
+class MyTabPage extends StatelessWidget {
+  const MyTabPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +28,9 @@ class MyTabView extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            HomeView(),
-            ResultHistoryCalendarView(),
-            PlayerSettingView(),
+            HomePage(),
+            ResultHistoryCalendarPage(),
+            PlayerSettingPage(),
           ],
         ),
       ),

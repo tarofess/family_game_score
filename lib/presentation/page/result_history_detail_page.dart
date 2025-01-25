@@ -13,10 +13,10 @@ import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/provider/update_game_type_usecase_provider.dart';
 import 'package:family_game_score/presentation/viewmodel/result_history_detail_viewmodel.dart';
 
-class ResultHistoryDetailView extends ConsumerWidget {
+class ResultHistoryDetailPage extends ConsumerWidget {
   final DateTime selectedDay;
 
-  const ResultHistoryDetailView({super.key, required this.selectedDay});
+  const ResultHistoryDetailPage({super.key, required this.selectedDay});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

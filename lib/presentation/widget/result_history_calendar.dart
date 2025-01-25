@@ -38,7 +38,7 @@ class ResultHistoryCalendar extends ConsumerWidget {
         focusedDay.value = focused;
 
         if (hasDataInTappedDay(tappedDay)) {
-          context.push('/result_history_detail_view', extra: {
+          context.push('/result_history_detail_page', extra: {
             'selectedDay': selectedDay.value,
           });
         }

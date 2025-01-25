@@ -11,8 +11,8 @@ import 'firebase_options.dart';
 import 'package:family_game_score/presentation/router/router.dart';
 import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 import 'package:family_game_score/presentation/theme/theme.dart';
-import 'package:family_game_score/presentation/view/error_view.dart';
-import 'package:family_game_score/presentation/view/loading_view.dart';
+import 'package:family_game_score/presentation/page/error_page.dart';
+import 'package:family_game_score/presentation/page/loading_page.dart';
 
 void main() async {
   runApp(const ProviderScope(child: MyApp()));
@@ -38,11 +38,11 @@ class MyApp extends ConsumerWidget {
           ),
           loading: () => const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: LoadingView(),
+            home: LoadingPage(),
           ),
           error: (error, stack) => MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: ErrorView(
+            home: ErrorPage(
               error: error,
               retry: () {
                 // ignore: unused_result

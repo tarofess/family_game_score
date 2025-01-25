@@ -53,7 +53,7 @@ class PlayerListCard extends HookWidget {
           },
         ),
         onTap: () => context.push(
-          '/player_setting_detail_view',
+          '/player_setting_detail_page',
           extra: {'player': player},
         ),
       ),
