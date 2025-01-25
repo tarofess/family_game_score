@@ -91,10 +91,11 @@ class RankingPage extends HookConsumerWidget {
               ? IconButton(
                   icon: Icon(Icons.home, size: 24.r),
                   onPressed: () async {
-                    await showMessageDialog(
+                    final isConfirmed = await showMessageDialog(
                       context,
                       'お疲れ様でした！\nホーム画面に戻ります。',
                     );
+                    if (!isConfirmed) return;
 
                     ref.read(resetGameUsecaseProvider).execute();
                     if (context.mounted) context.pushReplacement('/');
