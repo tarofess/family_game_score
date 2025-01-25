@@ -19,7 +19,7 @@ class ResultHistoryCalendar extends ConsumerWidget {
     required this.selectedDay,
     required this.focusedDay,
   }) {
-    initializeEvents();
+    _initializeEvents();
   }
 
   @override
@@ -37,7 +37,7 @@ class ResultHistoryCalendar extends ConsumerWidget {
         selectedDay.value = tappedDay;
         focusedDay.value = focused;
 
-        if (hasDataInTappedDay(tappedDay)) {
+        if (_hasDataInTappedDay(tappedDay)) {
           context.push('/result_history_detail_page', extra: {
             'selectedDay': selectedDay.value,
           });
@@ -60,6 +60,15 @@ class ResultHistoryCalendar extends ConsumerWidget {
         defaultTextStyle: TextStyle(fontSize: 14.sp),
         weekendTextStyle: TextStyle(fontSize: 14.sp),
         outsideTextStyle: TextStyle(fontSize: 14.sp, color: Colors.grey),
+        markerDecoration: _isDarkMode(context)
+            ? const BoxDecoration(
+                color: Colors.white70,
+                shape: BoxShape.circle,
+              )
+            : const BoxDecoration(
+                color: Color(0xFF263238),
+                shape: BoxShape.circle,
+              ),
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
         weekdayStyle: TextStyle(fontSize: 14.sp),
@@ -80,18 +89,22 @@ class ResultHistoryCalendar extends ConsumerWidget {
     return tempResult.map((key, value) => MapEntry(key, value.toList()));
   }
 
-  int getHashCode(DateTime key) {
+  int _getHashCode(DateTime key) {
     return key.day * 1000000 + key.month * 10000 + key.year;
   }
 
-  void initializeEvents() {
+  void _initializeEvents() {
     events = LinkedHashMap<DateTime, List>(
       equals: isSameDay,
-      hashCode: getHashCode,
+      hashCode: _getHashCode,
     )..addAll(eventSessions);
   }
 
-  bool hasDataInTappedDay(DateTime tappedDay) {
+  bool _hasDataInTappedDay(DateTime tappedDay) {
     return events[tappedDay] != null;
+  }
+
+  bool _isDarkMode(BuildContext context) {
+    return MediaQuery.of(context).platformBrightness == Brightness.dark;
   }
 }

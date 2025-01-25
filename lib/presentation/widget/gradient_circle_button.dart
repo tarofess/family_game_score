@@ -49,6 +49,10 @@ class GradientCircleButton extends StatelessWidget {
       ),
     );
   }
+
+  bool isDarkMode(BuildContext context) {
+    return MediaQuery.of(context).platformBrightness == Brightness.dark;
+  }
 }
 
 List<Color> getActiveButtonColor() {

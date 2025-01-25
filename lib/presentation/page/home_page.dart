@@ -55,7 +55,7 @@ class HomePage extends ConsumerWidget {
     List<Player> players,
   ) {
     return GradientCircleButton(
-      onPressed: areTwoOrMorePlayersActive(players)
+      onPressed: _areTwoOrMorePlayersActive(players)
           ? () async {
               final result = await ref.read(startGameUsecaseProvider).execute();
               switch (result) {
@@ -73,13 +73,13 @@ class HomePage extends ConsumerWidget {
                 'プレイヤー設定画面でプレイヤーを登録してください。',
               ),
       text: session == null ? 'ゲームスタート！' : 'ゲーム再開！',
-      gradientColors: areTwoOrMorePlayersActive(players)
+      gradientColors: _areTwoOrMorePlayersActive(players)
           ? getActiveButtonColor()
           : getInactiveButtonColor(),
     );
   }
 
-  bool areTwoOrMorePlayersActive(List<Player> players) {
+  bool _areTwoOrMorePlayersActive(List<Player> players) {
     return players.where((player) => player.status == 1).length >= 2;
   }
 }
