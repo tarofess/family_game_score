@@ -17,7 +17,7 @@ class ResetGameUsecase {
       _ref.invalidate(resultHistoryNotifierProvider);
       _ref.invalidate(playerNotifierProvider);
       _ref.read(sessionNotifierProvider.notifier).disposeSession();
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

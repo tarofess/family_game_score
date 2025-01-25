@@ -9,7 +9,7 @@ class AddGameTypeUsecase {
   Future<Result> execute(String result) async {
     try {
       await _sessionNotifier.addGameType(result);
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

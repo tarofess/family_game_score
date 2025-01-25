@@ -15,7 +15,7 @@ class DeletePlayerUsecase {
     try {
       await _playerNotifier.deletePlayer(player);
       _ref.invalidate(resultHistoryNotifierProvider);
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

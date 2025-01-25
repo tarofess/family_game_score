@@ -10,7 +10,7 @@ class UpdateGameTypeUsecase {
   Future<Result> execute(Session session, String gameType) async {
     try {
       await _resultHistoryNotifier.updateSessionGameType(session, gameType);
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

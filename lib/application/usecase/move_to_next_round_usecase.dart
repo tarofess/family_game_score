@@ -16,7 +16,7 @@ class MoveToNextRoundUsecase {
         await _sessionNotifier.updateRound(txc);
         await _resultNotifier.addOrUpdateResult(txc);
       });
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

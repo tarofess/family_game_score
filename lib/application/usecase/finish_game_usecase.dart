@@ -9,7 +9,7 @@ class FinishGameUsecase {
   Future<Result> execute() async {
     try {
       await _sessionNotifier.updateEndTime();
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }

@@ -22,7 +22,7 @@ class SavePlayerUsecase {
   ) async {
     try {
       await savePlayer(ref, player, playerName, playerImage);
-      return const Success(null);
+      return const Success();
     } catch (e) {
       return Failure(e.toString(), e as Exception?);
     }
