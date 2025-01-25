@@ -85,7 +85,6 @@ class RankingPage extends HookConsumerWidget {
   ) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           isFinishedGame(session) ? '結果発表' : '現在の順位',
           style: TextStyle(fontSize: 20.sp),

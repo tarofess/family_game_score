@@ -58,7 +58,12 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
 
     return Scaffold(
       appBar: buildAppBar(
-          context, ref, playerImage, nameTextEditingController, playerName),
+        context,
+        ref,
+        playerImage,
+        nameTextEditingController,
+        playerName,
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -94,7 +99,6 @@ class PlayerSettingDetailPage extends HookConsumerWidget {
         player == null ? 'プレイヤーの追加' : 'プレイヤーの詳細',
         style: TextStyle(fontSize: 20.sp),
       ),
-      centerTitle: true,
       actions: [
         playerName.value.isEmpty && playerImage.value == null
             ? const SizedBox()

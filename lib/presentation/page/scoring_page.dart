@@ -79,7 +79,6 @@ class ScoringPage extends ConsumerWidget {
   ) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text(
           '${session == null ? '1' : session.round.toString()}回戦',
           style: TextStyle(fontSize: 20.sp),

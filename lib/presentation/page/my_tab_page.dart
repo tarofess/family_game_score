@@ -14,7 +14,6 @@ class MyTabPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
           toolbarHeight: 56.r,
           title: Text('ファミリーゲームスコア', style: TextStyle(fontSize: 20.sp)),
           bottom: TabBar(

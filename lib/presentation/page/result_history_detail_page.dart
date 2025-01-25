@@ -25,7 +25,6 @@ class ResultHistoryDetailPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         toolbarHeight: 56.r,
         title: Text('成績の詳細', style: TextStyle(fontSize: 20.sp)),
       ),
