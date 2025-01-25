@@ -2,10 +2,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:family_game_score/domain/entity/session.dart';
+import 'package:family_game_score/application/interface/session_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_session_repository.dart';
 
 class SessionNotifier extends AsyncNotifier<Session?> {
-  final SQLiteSessionRepository _sessionRepository;
+  final SessionRepository _sessionRepository;
 
   SessionNotifier(this._sessionRepository);
 
@@ -44,8 +45,11 @@ class SessionNotifier extends AsyncNotifier<Session?> {
     if (state.value == null) {
       throw Exception('ゲームは既に終了しており予期せぬエラーが発生しました。');
     }
-    final updatedSession =
-        await _sessionRepository.updateRound(state.value!, txc);
+    final updatedSession = await _sessionRepository.updateRound(
+      state.value!,
+      txc,
+    );
+
     state = AsyncData(updatedSession);
   }
 

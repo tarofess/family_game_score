@@ -1,10 +1,11 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
+import 'package:family_game_score/application/interface/player_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_player_repository.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
-  final SQLitePlayerRepository _playerRepository;
+  final PlayerRepository _playerRepository;
 
   PlayerNotifier(this._playerRepository);
 
@@ -35,7 +36,8 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
     if (state.value != null) {
       state = AsyncData(
-          state.value!.map((p) => p.id == player.id ? player : p).toList());
+        state.value!.map((p) => p.id == player.id ? player : p).toList(),
+      );
     } else {
       state = const AsyncData([]);
     }
@@ -56,7 +58,8 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
     if (state.value != null) {
       state = AsyncData(
-          state.value!.map((p) => p.id == player.id ? player : p).toList());
+        state.value!.map((p) => p.id == player.id ? player : p).toList(),
+      );
     } else {
       state = const AsyncData([]);
     }
@@ -80,6 +83,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
   void reorderPlayer(int oldIndex, int newIndex) {
     final List<Player> players =
         state.value?.where((player) => player.status == 1).toList() ?? [];
+
     final playerToMove = players.removeAt(oldIndex);
     players.insert(newIndex, playerToMove);
     state = AsyncData(players);

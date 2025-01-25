@@ -4,12 +4,13 @@ import 'package:sqflite/sqflite.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
-import 'package:family_game_score/infrastructure/repository/sqlite_result_repository.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
+import 'package:family_game_score/application/interface/result_repository.dart';
+import 'package:family_game_score/infrastructure/repository/sqlite_result_repository.dart';
 
 class ResultNotifier extends AsyncNotifier<List<Result>> {
-  final SQLiteResultRepository _resultRepository;
+  final ResultRepository _resultRepository;
 
   ResultNotifier(this._resultRepository);
 
