@@ -6,16 +6,16 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/presentation/provider/pick_image_usecase_provider.dart';
-import 'package:family_game_score/presentation/provider/save_player_usecase_provider.dart';
-import 'package:family_game_score/presentation/provider/take_picture_usecase_provider.dart';
-import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
+import 'package:family_game_score/application/di/pick_image_usecase_provider.dart';
+import 'package:family_game_score/application/di/save_player_usecase_provider.dart';
+import 'package:family_game_score/application/di/take_picture_usecase_provider.dart';
+import 'package:family_game_score/application/di/file_image_get_usecase_provider.dart';
 import 'package:family_game_score/presentation/dialog/confirmation_dialog.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
-import 'package:family_game_score/presentation/provider/delete_player_usecase_provider.dart';
-import 'package:family_game_score/presentation/provider/get_total_score_usecase_provider.dart';
+import 'package:family_game_score/application/di/delete_player_usecase_provider.dart';
+import 'package:family_game_score/application/di/get_total_score_usecase_provider.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 
 class PlayerSettingDetailPage extends HookConsumerWidget {

@@ -7,7 +7,7 @@ import 'package:family_game_score/presentation/theme/light_mode.dart';
 import 'package:family_game_score/presentation/theme/dark_mode.dart';
 import 'package:family_game_score/presentation/page/error_page.dart';
 import 'package:family_game_score/presentation/page/loading_page.dart';
-import 'package:family_game_score/presentation/provider/initialization_provider.dart';
+import 'package:family_game_score/application/di/initialization_provider.dart';
 
 void main() async {
   runApp(const ProviderScope(child: MyApp()));

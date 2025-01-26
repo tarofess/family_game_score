@@ -8,7 +8,7 @@ import 'package:family_game_score/presentation/widget/gradient_circle_button.dar
 import 'package:family_game_score/presentation/widget/async_error_widget.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
-import 'package:family_game_score/presentation/provider/start_game_usecase_provider.dart';
+import 'package:family_game_score/application/di/start_game_usecase_provider.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';

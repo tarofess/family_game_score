@@ -10,7 +10,7 @@ import 'package:family_game_score/presentation/widget/list_card/result_list_card
 import 'package:family_game_score/presentation/dialog/input_dialog.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
-import 'package:family_game_score/presentation/provider/update_game_type_usecase_provider.dart';
+import 'package:family_game_score/application/di/update_game_type_usecase_provider.dart';
 import 'package:family_game_score/presentation/viewmodel/result_history_detail_viewmodel.dart';
 import 'package:family_game_score/presentation/widget/loading_overlay.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/presentation/provider/file_image_get_usecase_provider.dart';
+import 'package:family_game_score/application/di/file_image_get_usecase_provider.dart';
 
 class PlayerImage extends ConsumerWidget {
   final Player player;

@@ -12,10 +12,10 @@ import 'package:family_game_score/presentation/widget/list_card/result_list_card
 import 'package:family_game_score/presentation/widget/sakura_animation.dart';
 import 'package:family_game_score/presentation/dialog/input_dialog.dart';
 import 'package:family_game_score/presentation/dialog/message_dialog.dart';
-import 'package:family_game_score/presentation/provider/reset_game_usecase_provider.dart';
+import 'package:family_game_score/application/di/reset_game_usecase_provider.dart';
 import 'package:family_game_score/domain/result.dart';
 import 'package:family_game_score/presentation/dialog/error_dialog.dart';
-import 'package:family_game_score/presentation/provider/add_game_type_usecase_provider.dart';
+import 'package:family_game_score/application/di/add_game_type_usecase_provider.dart';
 import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/result_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
