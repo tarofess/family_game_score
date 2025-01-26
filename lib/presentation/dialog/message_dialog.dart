@@ -5,7 +5,7 @@ Future<bool> showMessageDialog(BuildContext context, String content) async {
     context: context,
     builder: (BuildContext dialogContext) {
       return AlertDialog(
-        title: null,
+        title: const Text(''),
         content: Text(
           content,
           style: Theme.of(context).textTheme.bodyMedium,
