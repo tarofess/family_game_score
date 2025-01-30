@@ -4,6 +4,7 @@ import 'package:family_game_score/domain/entity/result_history.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_result_history_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_session_repository.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
   final SQLiteResultHistoryRepository _resultHistoryRepository;
@@ -35,7 +36,7 @@ class ResultHistoryNotifier extends AsyncNotifier<List<ResultHistory>> {
 final resultHistoryNotifierProvider =
     AsyncNotifierProvider<ResultHistoryNotifier, List<ResultHistory>>(
   () => ResultHistoryNotifier(
-    SQLiteResultHistoryRepository(),
-    SQLiteSessionRepository(),
+    SQLiteResultHistoryRepository(DatabaseHelper.instance.database),
+    SQLiteSessionRepository(DatabaseHelper.instance.database),
   ),
 );

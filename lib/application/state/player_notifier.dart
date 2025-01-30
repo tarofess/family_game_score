@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/application/interface/player_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_player_repository.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class PlayerNotifier extends AsyncNotifier<List<Player>> {
   final PlayerRepository _playerRepository;
@@ -92,5 +93,7 @@ class PlayerNotifier extends AsyncNotifier<List<Player>> {
 
 final playerNotifierProvider =
     AsyncNotifierProvider<PlayerNotifier, List<Player>>(() {
-  return PlayerNotifier(SQLitePlayerRepository());
+  return PlayerNotifier(SQLitePlayerRepository(
+    DatabaseHelper.instance.database,
+  ));
 });

@@ -20,7 +20,7 @@ Result _$ResultFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Result {
-  int get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   int get playerId => throw _privateConstructorUsedError;
   int get sessionId => throw _privateConstructorUsedError;
   int get score => throw _privateConstructorUsedError;
@@ -40,7 +40,7 @@ abstract class $ResultCopyWith<$Res> {
   factory $ResultCopyWith(Result value, $Res Function(Result) then) =
       _$ResultCopyWithImpl<$Res, Result>;
   @useResult
-  $Res call({int id, int playerId, int sessionId, int score, int rank});
+  $Res call({int? id, int playerId, int sessionId, int score, int rank});
 }
 
 /// @nodoc
@@ -58,17 +58,17 @@ class _$ResultCopyWithImpl<$Res, $Val extends Result>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? playerId = null,
     Object? sessionId = null,
     Object? score = null,
     Object? rank = null,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       playerId: null == playerId
           ? _value.playerId
           : playerId // ignore: cast_nullable_to_non_nullable
@@ -96,7 +96,7 @@ abstract class _$$ResultImplCopyWith<$Res> implements $ResultCopyWith<$Res> {
       __$$ResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int id, int playerId, int sessionId, int score, int rank});
+  $Res call({int? id, int playerId, int sessionId, int score, int rank});
 }
 
 /// @nodoc
@@ -112,17 +112,17 @@ class __$$ResultImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
+    Object? id = freezed,
     Object? playerId = null,
     Object? sessionId = null,
     Object? score = null,
     Object? rank = null,
   }) {
     return _then(_$ResultImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       playerId: null == playerId
           ? _value.playerId
           : playerId // ignore: cast_nullable_to_non_nullable
@@ -147,7 +147,7 @@ class __$$ResultImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ResultImpl implements _Result {
   const _$ResultImpl(
-      {required this.id,
+      {this.id,
       required this.playerId,
       required this.sessionId,
       required this.score,
@@ -157,7 +157,7 @@ class _$ResultImpl implements _Result {
       _$$ResultImplFromJson(json);
 
   @override
-  final int id;
+  final int? id;
   @override
   final int playerId;
   @override
@@ -209,7 +209,7 @@ class _$ResultImpl implements _Result {
 
 abstract class _Result implements Result {
   const factory _Result(
-      {required final int id,
+      {final int? id,
       required final int playerId,
       required final int sessionId,
       required final int score,
@@ -218,7 +218,7 @@ abstract class _Result implements Result {
   factory _Result.fromJson(Map<String, dynamic> json) = _$ResultImpl.fromJson;
 
   @override
-  int get id;
+  int? get id;
   @override
   int get playerId;
   @override

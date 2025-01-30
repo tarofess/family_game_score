@@ -6,7 +6,7 @@ part 'result.g.dart';
 @freezed
 class Result with _$Result {
   const factory Result({
-    required int id,
+    int? id,
     required int playerId,
     required int sessionId,
     required int score,

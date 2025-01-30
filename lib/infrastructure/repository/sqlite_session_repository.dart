@@ -2,12 +2,11 @@ import 'package:sqflite/sqflite.dart';
 
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/application/interface/session_repository.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class SQLiteSessionRepository implements SessionRepository {
   final Database _database;
 
-  SQLiteSessionRepository() : _database = DatabaseHelper.instance.database;
+  SQLiteSessionRepository(this._database);
 
   @override
   Future<Session> addSession(int id, Transaction txc) async {

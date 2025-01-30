@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/application/interface/session_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_session_repository.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class SessionNotifier extends AsyncNotifier<Session?> {
   final SessionRepository _sessionRepository;
@@ -68,5 +69,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
 final sessionNotifierProvider =
     AsyncNotifierProvider<SessionNotifier, Session?>(() {
-  return SessionNotifier(SQLiteSessionRepository());
+  return SessionNotifier(SQLiteSessionRepository(
+    DatabaseHelper.instance.database,
+  ));
 });

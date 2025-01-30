@@ -8,15 +8,18 @@ import 'package:family_game_score/application/state/player_notifier.dart';
 import 'package:family_game_score/application/state/session_notifier.dart';
 import 'package:family_game_score/application/interface/result_repository.dart';
 import 'package:family_game_score/infrastructure/repository/sqlite_result_repository.dart';
+import 'package:family_game_score/domain/feature/score_calculator.dart';
+import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class ResultNotifier extends AsyncNotifier<List<Result>> {
   final ResultRepository _resultRepository;
+  final ScoreCalculator _calculator;
 
-  ResultNotifier(this._resultRepository);
+  ResultNotifier(this._resultRepository, this._calculator);
 
   @override
   Future<List<Result>> build() async {
-    final session = ref.read(sessionNotifierProvider).valueOrNull;
+    final session = ref.read(sessionNotifierProvider).value;
 
     if (session == null) {
       state = const AsyncData([]);
@@ -28,15 +31,16 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
     }
   }
 
-  Future<void> addOrUpdateResult(Transaction txc) async {
-    final players = ref.read(playerNotifierProvider).valueOrNull;
-    final session = ref.read(sessionNotifierProvider).valueOrNull;
+  Future<void> saveResult(Transaction txc) async {
+    final players = ref.read(playerNotifierProvider).value;
+    final session = ref.read(sessionNotifierProvider).value;
 
     if (players == null || session == null) {
-      throw Exception('プレイヤーまたはセッションが取得できませんでした');
+      throw Exception('プレイヤーまたはセッションが取得できませんでした。');
     }
 
     if (state.value?.isEmpty ?? true) {
+      // 初回の結果登録
       await addResult(players, session, txc);
     } else {
       await updateResult(players, session, txc);
@@ -47,19 +51,47 @@ class ResultNotifier extends AsyncNotifier<List<Result>> {
   }
 
   Future<void> addResult(
-      List<Player> players, Session session, Transaction txc) async {
-    await _resultRepository.addResult(players, session, txc);
-    await _resultRepository.updateRank(session, txc);
+    List<Player> players,
+    Session session,
+    Transaction txc,
+  ) async {
+    final results = _calculator.calculateScores(players, session);
+
+    for (final result in results) {
+      await _resultRepository.addResult(result, txc);
+      await _resultRepository.updateRank(result, txc);
+    }
   }
 
   Future<void> updateResult(
-      List<Player> players, Session session, Transaction txc) async {
-    await _resultRepository.updateResult(players, session, txc);
-    await _resultRepository.updateRank(session, txc);
+    List<Player> players,
+    Session session,
+    Transaction txc,
+  ) async {
+    // 既存の結果を取得
+    final existingResults = await _resultRepository.getResult(
+      session,
+      txc,
+    );
+
+    // スコアを更新した結果を取得
+    final updatedResults = _calculator.calculateUpdatedScores(
+      players,
+      session,
+      existingResults,
+    );
+
+    for (final result in updatedResults) {
+      await _resultRepository.updateResult(result, txc);
+      await _resultRepository.updateRank(result, txc);
+    }
   }
 }
 
 final resultNotifierProvider =
-    AsyncNotifierProvider<ResultNotifier, List<Result>>(() {
-  return ResultNotifier(SQLiteResultRepository());
-});
+    AsyncNotifierProvider<ResultNotifier, List<Result>>(
+  () => ResultNotifier(
+    SQLiteResultRepository(DatabaseHelper.instance.database),
+    ScoreCalculator(),
+  ),
+);

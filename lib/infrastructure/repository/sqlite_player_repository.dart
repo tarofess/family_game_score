@@ -2,12 +2,11 @@ import 'package:sqflite/sqflite.dart';
 
 import 'package:family_game_score/application/interface/player_repository.dart';
 import 'package:family_game_score/domain/entity/player.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class SQLitePlayerRepository implements PlayerRepository {
   final Database _database;
 
-  SQLitePlayerRepository() : _database = DatabaseHelper.instance.database;
+  SQLitePlayerRepository(this._database);
 
   @override
   Future<Player> addPlayer(String name, String image) async {

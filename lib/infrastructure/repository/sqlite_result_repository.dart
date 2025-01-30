@@ -4,30 +4,19 @@ import 'package:family_game_score/domain/entity/player.dart';
 import 'package:family_game_score/domain/entity/result.dart';
 import 'package:family_game_score/domain/entity/session.dart';
 import 'package:family_game_score/application/interface/result_repository.dart';
-import 'package:family_game_score/infrastructure/repository/database_helper.dart';
 
 class SQLiteResultRepository implements ResultRepository {
   final Database _database;
 
-  SQLiteResultRepository() : _database = DatabaseHelper.instance.database;
+  SQLiteResultRepository(this._database);
 
   @override
-  Future<void> addResult(
-    List<Player> players,
-    Session session,
-    Transaction txc,
-  ) async {
+  Future<void> addResult(Result result, Transaction txc) async {
     try {
-      int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
-
-      for (final player in players) {
-        await txc.rawInsert(
-          'INSERT INTO Result(playerId, sessionId, score, rank) VALUES(?, ?, ?, 1)',
-          [player.id, session.id, x * 10],
-        );
-
-        x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
-      }
+      await txc.rawInsert(
+        'INSERT INTO Result(playerId, sessionId, score, rank) VALUES(?, ?, ?, ?)',
+        [result.playerId, result.sessionId, result.score, result.rank],
+      );
     } catch (e) {
       throw Exception('結果の追加中にエラーが発生しました。');
     }
@@ -69,57 +58,24 @@ class SQLiteResultRepository implements ResultRepository {
   }
 
   @override
-  Future<void> updateResult(
-    List<Player> players,
-    Session session,
-    Transaction txc,
-  ) async {
+  Future<void> updateResult(Result result, Transaction txc) async {
     try {
-      int x = players.length; // 順位ごとにscoreに10ポイントずつ差をつけるための変数
-
-      for (final player in players) {
-        final response = await txc.rawQuery(
-          'SELECT * FROM Result WHERE playerId = ? AND sessionId = ?',
-          [player.id, session.id],
-        );
-
-        final results = response.map((e) => Result.fromJson(e)).toList();
-
-        await txc.rawUpdate(
-          'UPDATE Result SET score = ? WHERE playerId = ? AND sessionId = ?',
-          [results.first.score + x * 10, player.id, session.id],
-        );
-
-        x -= 1; // 該当プレイヤーが順位を下げるたびに10ポイントずつ減らす
-      }
+      await txc.rawUpdate(
+        'UPDATE Result SET score = ? WHERE playerId = ? AND sessionId = ?',
+        [result.score, result.playerId, result.sessionId],
+      );
     } catch (e) {
       throw Exception('結果の更新中にエラーが発生しました。');
     }
   }
 
   @override
-  Future<void> updateRank(Session session, Transaction txc) async {
+  Future<void> updateRank(Result result, Transaction txc) async {
     try {
-      int rank = 1;
-
-      final resultsForRank = await getResult(session, txc);
-
-      for (int index = 0; index < resultsForRank.length; index++) {
-        if (index >= 1 &&
-            resultsForRank[index].score == resultsForRank[index - 1].score) {
-          // 同じスコアの場合は同じ順位にする
-          await txc.rawUpdate(
-            'UPDATE Result SET rank = ? WHERE id = ?',
-            [rank, resultsForRank[index].id],
-          );
-        } else {
-          rank = index + 1;
-          await txc.rawUpdate(
-            'UPDATE Result SET rank = ? WHERE id = ?',
-            [rank, resultsForRank[index].id],
-          );
-        }
-      }
+      await txc.rawUpdate(
+        'UPDATE Result SET rank = ? WHERE playerId = ? AND sessionId = ?',
+        [result.rank, result.playerId, result.sessionId],
+      );
     } catch (e) {
       throw Exception('順位の更新中にエラーが発生しました。');
     }

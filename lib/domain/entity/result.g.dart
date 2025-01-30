@@ -7,7 +7,7 @@ part of 'result.dart';
 // **************************************************************************
 
 _$ResultImpl _$$ResultImplFromJson(Map<String, dynamic> json) => _$ResultImpl(
-      id: (json['id'] as num).toInt(),
+      id: (json['id'] as num?)?.toInt(),
       playerId: (json['playerId'] as num).toInt(),
       sessionId: (json['sessionId'] as num).toInt(),
       score: (json['score'] as num).toInt(),

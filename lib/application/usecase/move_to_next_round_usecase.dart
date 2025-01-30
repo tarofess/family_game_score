@@ -14,7 +14,7 @@ class MoveToNextRoundUsecase {
       await DatabaseHelper.instance.database.transaction((txc) async {
         await _sessionNotifier.addSession(txc);
         await _sessionNotifier.updateRound(txc);
-        await _resultNotifier.addOrUpdateResult(txc);
+        await _resultNotifier.saveResult(txc);
       });
       return const Success();
     } catch (e) {
